@@ -645,7 +645,7 @@ namespace D3Hot
 
         private void lb_auth_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("http://horadric.ru/forum/viewtopic.php?f=16&t=26771");
+            System.Diagnostics.Process.Start("http://glasscannon.ru/forum/viewtopic.php?f=5&t=1988");
             //if (bt_lang.Text == "ENG") System.Diagnostics.Process.Start("http://horadric.ru/forum/viewtopic.php?f=16&t=26771");
             //else System.Diagnostics.Process.Start("http://www.diablofans.com/forums/diablo-iii-general-forums/diablo-iii-general-discussion/89743-offline-dps-calculator-diablo-3");
         }
