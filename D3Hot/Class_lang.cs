@@ -10,8 +10,9 @@ namespace D3Hot
         public string
             lb_trig1, lb_trig2, lb_trig3, lb_trig4,
             lb_key1, lb_key2, lb_key3, lb_key4,
-            lb_tmr_sec,
-            lb_about, lb_area, lb_stop, lb_auth, lang_sec
+            lb_tmr_sec, lb_prof,
+            lb_about, lb_area, lb_stop, lb_auth, lang_sec,
+            tt_start, tt_stop
             ;
 
 
@@ -23,9 +24,9 @@ namespace D3Hot
             lb_trig4 = "Триггер 4";
 
             lb_key1 = "Клавиша 1";
-            lb_key2 = "Клавиша 1";
-            lb_key3 = "Клавиша 1";
-            lb_key4 = "Клавиша 1";
+            lb_key2 = "Клавиша 2";
+            lb_key3 = "Клавиша 3";
+            lb_key4 = "Клавиша 4";
 
             lb_tmr_sec = "Пауза..мс";
 
@@ -34,6 +35,10 @@ namespace D3Hot
             lb_stop = "Приостановка";
             lb_auth = "Автор: Dmitry Olenin";
             lang_sec = "сек.";
+            lb_prof = "Профиль";
+
+            tt_start = "F11 для запуска";
+            tt_stop = "F11 для остановки";
         }
         public void Lang_eng()
         {
@@ -54,6 +59,10 @@ namespace D3Hot
             lb_stop = "Pause";
             lb_auth = "Author: Dmitry Olenin";
             lang_sec = "sec.";
+            lb_prof = "Profile";
+
+            tt_start = "F11 to start";
+            tt_stop = "F11 to stop";
         }
 
     }

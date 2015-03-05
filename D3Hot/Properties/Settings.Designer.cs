@@ -85,7 +85,7 @@ namespace D3Hot.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int cb_key2 {
             get {
                 return ((int)(this["cb_key2"]));
@@ -97,7 +97,7 @@ namespace D3Hot.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
         public int cb_key3 {
             get {
                 return ((int)(this["cb_key3"]));
@@ -109,7 +109,7 @@ namespace D3Hot.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
         public int cb_key4 {
             get {
                 return ((int)(this["cb_key4"]));
@@ -200,6 +200,18 @@ namespace D3Hot.Properties {
             }
             set {
                 this["lb_lang"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int prof_curr {
+            get {
+                return ((int)(this["prof_curr"]));
+            }
+            set {
+                this["prof_curr"] = value;
             }
         }
     }

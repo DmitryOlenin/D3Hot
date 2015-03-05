@@ -18,13 +18,13 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="cb_key2" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="cb_key3" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
+      <Value Profile="(Default)">2</Value>
     </Setting>
     <Setting Name="cb_key4" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
+      <Value Profile="(Default)">3</Value>
     </Setting>
     <Setting Name="nud_tmr1" Type="System.Decimal" Scope="User">
       <Value Profile="(Default)">0</Value>
@@ -46,6 +46,9 @@
     </Setting>
     <Setting Name="lb_lang" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="prof_curr" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>
 </SettingsFile>
