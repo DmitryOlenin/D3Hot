@@ -214,5 +214,113 @@ namespace D3Hot.Properties {
                 this["prof_curr"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int cb_trig_tmr5 {
+            get {
+                return ((int)(this["cb_trig_tmr5"]));
+            }
+            set {
+                this["cb_trig_tmr5"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int cb_trig_tmr6 {
+            get {
+                return ((int)(this["cb_trig_tmr6"]));
+            }
+            set {
+                this["cb_trig_tmr6"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("4")]
+        public int cb_key5 {
+            get {
+                return ((int)(this["cb_key5"]));
+            }
+            set {
+                this["cb_key5"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int cb_key6 {
+            get {
+                return ((int)(this["cb_key6"]));
+            }
+            set {
+                this["cb_key6"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal nud_tmr5 {
+            get {
+                return ((decimal)(this["nud_tmr5"]));
+            }
+            set {
+                this["nud_tmr5"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal nud_tmr6 {
+            get {
+                return ((decimal)(this["nud_tmr6"]));
+            }
+            set {
+                this["nud_tmr6"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("11")]
+        public int cb_startstop {
+            get {
+                return ((int)(this["cb_startstop"]));
+            }
+            set {
+                this["cb_startstop"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("T")]
+        public string cb_tp {
+            get {
+                return ((string)(this["cb_tp"]));
+            }
+            set {
+                this["cb_tp"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("7")]
+        public int cb_tpdelay {
+            get {
+                return ((int)(this["cb_tpdelay"]));
+            }
+            set {
+                this["cb_tpdelay"] = value;
+            }
+        }
     }
 }

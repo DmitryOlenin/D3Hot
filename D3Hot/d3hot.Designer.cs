@@ -65,10 +65,30 @@
             this.lb_lang = new System.Windows.Forms.Label();
             this.cb_prof = new System.Windows.Forms.ComboBox();
             this.lb_prof = new System.Windows.Forms.Label();
+            this.cb_key5 = new System.Windows.Forms.ComboBox();
+            this.lb_key5 = new System.Windows.Forms.Label();
+            this.cb_trig_tmr5 = new System.Windows.Forms.ComboBox();
+            this.lb_tmr5_sec = new System.Windows.Forms.Label();
+            this.lb_trig5 = new System.Windows.Forms.Label();
+            this.nud_tmr5 = new System.Windows.Forms.NumericUpDown();
+            this.cb_key6 = new System.Windows.Forms.ComboBox();
+            this.lb_key6 = new System.Windows.Forms.Label();
+            this.cb_trig_tmr6 = new System.Windows.Forms.ComboBox();
+            this.lb_tmr6_sec = new System.Windows.Forms.Label();
+            this.lb_trig6 = new System.Windows.Forms.Label();
+            this.nud_tmr6 = new System.Windows.Forms.NumericUpDown();
+            this.cb_startstop = new System.Windows.Forms.ComboBox();
+            this.lb_startstop = new System.Windows.Forms.Label();
+            this.lb_tp = new System.Windows.Forms.Label();
+            this.cb_tp = new System.Windows.Forms.ComboBox();
+            this.lb_tpdelay = new System.Windows.Forms.Label();
+            this.cb_tpdelay = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nud_tmr5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nud_tmr6)).BeginInit();
             this.SuspendLayout();
             // 
             // nud_tmr1
@@ -160,7 +180,7 @@
             "Diablo 3"});
             this.cb_prog.Location = new System.Drawing.Point(228, 233);
             this.cb_prog.Name = "cb_prog";
-            this.cb_prog.Size = new System.Drawing.Size(71, 21);
+            this.cb_prog.Size = new System.Drawing.Size(73, 21);
             this.cb_prog.TabIndex = 15;
             this.cb_prog.SelectedIndexChanged += new System.EventHandler(this.cb_prog_SelectedIndexChanged);
             // 
@@ -339,6 +359,7 @@
             "X",
             "C",
             "V",
+            "Space",
             "LMouse",
             "RMouse"});
             this.cb_key4.Location = new System.Drawing.Point(240, 63);
@@ -367,6 +388,7 @@
             "X",
             "C",
             "V",
+            "Space",
             "LMouse",
             "RMouse"});
             this.cb_key3.Location = new System.Drawing.Point(165, 63);
@@ -395,6 +417,7 @@
             "X",
             "C",
             "V",
+            "Space",
             "LMouse",
             "RMouse"});
             this.cb_key2.Location = new System.Drawing.Point(90, 63);
@@ -423,6 +446,7 @@
             "X",
             "C",
             "V",
+            "Space",
             "LMouse",
             "RMouse"});
             this.cb_key1.Location = new System.Drawing.Point(15, 63);
@@ -481,13 +505,14 @@
             this.cb_pause.FormattingEnabled = true;
             this.cb_pause.Items.AddRange(new object[] {
             "",
-            "T",
+            "Tp",
             "Enter",
-            "T / Enter"});
+            "Tp / Enter"});
             this.cb_pause.Location = new System.Drawing.Point(228, 207);
             this.cb_pause.Name = "cb_pause";
-            this.cb_pause.Size = new System.Drawing.Size(71, 21);
+            this.cb_pause.Size = new System.Drawing.Size(73, 21);
             this.cb_pause.TabIndex = 14;
+            this.cb_pause.SelectedIndexChanged += new System.EventHandler(this.cb_pause_SelectedIndexChanged);
             // 
             // mouseKeyEventProvider1
             // 
@@ -499,7 +524,7 @@
             // 
             this.lb_auth.AutoSize = true;
             this.lb_auth.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lb_auth.Location = new System.Drawing.Point(204, 263);
+            this.lb_auth.Location = new System.Drawing.Point(354, 263);
             this.lb_auth.Name = "lb_auth";
             this.lb_auth.Size = new System.Drawing.Size(105, 13);
             this.lb_auth.TabIndex = 17;
@@ -512,7 +537,7 @@
             // 
             this.lb_lang.AutoSize = true;
             this.lb_lang.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lb_lang.Location = new System.Drawing.Point(121, 262);
+            this.lb_lang.Location = new System.Drawing.Point(271, 262);
             this.lb_lang.Name = "lb_lang";
             this.lb_lang.Size = new System.Drawing.Size(26, 13);
             this.lb_lang.TabIndex = 16;
@@ -530,7 +555,7 @@
             "Profile 3"});
             this.cb_prof.Location = new System.Drawing.Point(228, 181);
             this.cb_prof.Name = "cb_prof";
-            this.cb_prof.Size = new System.Drawing.Size(71, 21);
+            this.cb_prof.Size = new System.Drawing.Size(73, 21);
             this.cb_prof.TabIndex = 13;
             this.cb_prof.SelectionChangeCommitted += new System.EventHandler(this.cb_prof_SelectionChangeCommitted);
             // 
@@ -543,11 +568,304 @@
             this.lb_prof.TabIndex = 50;
             this.lb_prof.Text = "Профиль";
             // 
+            // cb_key5
+            // 
+            this.cb_key5.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_key5.FormattingEnabled = true;
+            this.cb_key5.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "3",
+            "4",
+            "Q",
+            "W",
+            "E",
+            "R",
+            "A",
+            "S",
+            "D",
+            "F",
+            "Z",
+            "X",
+            "C",
+            "V",
+            "Space",
+            "LMouse",
+            "RMouse"});
+            this.cb_key5.Location = new System.Drawing.Point(315, 63);
+            this.cb_key5.Name = "cb_key5";
+            this.cb_key5.Size = new System.Drawing.Size(58, 21);
+            this.cb_key5.TabIndex = 52;
+            // 
+            // lb_key5
+            // 
+            this.lb_key5.AutoSize = true;
+            this.lb_key5.Location = new System.Drawing.Point(312, 87);
+            this.lb_key5.Name = "lb_key5";
+            this.lb_key5.Size = new System.Drawing.Size(61, 13);
+            this.lb_key5.TabIndex = 56;
+            this.lb_key5.Text = "Клавиша 5";
+            // 
+            // cb_trig_tmr5
+            // 
+            this.cb_trig_tmr5.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_trig_tmr5.FormattingEnabled = true;
+            this.cb_trig_tmr5.Items.AddRange(new object[] {
+            "",
+            "Shift",
+            "Scroll L",
+            "Caps L",
+            "Num L"});
+            this.cb_trig_tmr5.Location = new System.Drawing.Point(315, 15);
+            this.cb_trig_tmr5.Name = "cb_trig_tmr5";
+            this.cb_trig_tmr5.Size = new System.Drawing.Size(58, 21);
+            this.cb_trig_tmr5.TabIndex = 51;
+            // 
+            // lb_tmr5_sec
+            // 
+            this.lb_tmr5_sec.AutoSize = true;
+            this.lb_tmr5_sec.Location = new System.Drawing.Point(312, 136);
+            this.lb_tmr5_sec.Name = "lb_tmr5_sec";
+            this.lb_tmr5_sec.Size = new System.Drawing.Size(58, 13);
+            this.lb_tmr5_sec.TabIndex = 55;
+            this.lb_tmr5_sec.Text = "Пауза..мс";
+            this.lb_tmr5_sec.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lb_trig5
+            // 
+            this.lb_trig5.AutoSize = true;
+            this.lb_trig5.Location = new System.Drawing.Point(312, 39);
+            this.lb_trig5.Name = "lb_trig5";
+            this.lb_trig5.Size = new System.Drawing.Size(57, 13);
+            this.lb_trig5.TabIndex = 54;
+            this.lb_trig5.Text = "Триггер 5";
+            // 
+            // nud_tmr5
+            // 
+            this.nud_tmr5.Increment = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nud_tmr5.Location = new System.Drawing.Point(315, 113);
+            this.nud_tmr5.Maximum = new decimal(new int[] {
+            600000,
+            0,
+            0,
+            0});
+            this.nud_tmr5.Name = "nud_tmr5";
+            this.nud_tmr5.Size = new System.Drawing.Size(59, 20);
+            this.nud_tmr5.TabIndex = 53;
+            // 
+            // cb_key6
+            // 
+            this.cb_key6.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_key6.FormattingEnabled = true;
+            this.cb_key6.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "3",
+            "4",
+            "Q",
+            "W",
+            "E",
+            "R",
+            "A",
+            "S",
+            "D",
+            "F",
+            "Z",
+            "X",
+            "C",
+            "V",
+            "Space",
+            "LMouse",
+            "RMouse"});
+            this.cb_key6.Location = new System.Drawing.Point(390, 63);
+            this.cb_key6.Name = "cb_key6";
+            this.cb_key6.Size = new System.Drawing.Size(58, 21);
+            this.cb_key6.TabIndex = 58;
+            // 
+            // lb_key6
+            // 
+            this.lb_key6.AutoSize = true;
+            this.lb_key6.Location = new System.Drawing.Point(387, 87);
+            this.lb_key6.Name = "lb_key6";
+            this.lb_key6.Size = new System.Drawing.Size(61, 13);
+            this.lb_key6.TabIndex = 62;
+            this.lb_key6.Text = "Клавиша 6";
+            // 
+            // cb_trig_tmr6
+            // 
+            this.cb_trig_tmr6.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_trig_tmr6.FormattingEnabled = true;
+            this.cb_trig_tmr6.Items.AddRange(new object[] {
+            "",
+            "Shift",
+            "Scroll L",
+            "Caps L",
+            "Num L"});
+            this.cb_trig_tmr6.Location = new System.Drawing.Point(390, 15);
+            this.cb_trig_tmr6.Name = "cb_trig_tmr6";
+            this.cb_trig_tmr6.Size = new System.Drawing.Size(58, 21);
+            this.cb_trig_tmr6.TabIndex = 57;
+            // 
+            // lb_tmr6_sec
+            // 
+            this.lb_tmr6_sec.AutoSize = true;
+            this.lb_tmr6_sec.Location = new System.Drawing.Point(387, 136);
+            this.lb_tmr6_sec.Name = "lb_tmr6_sec";
+            this.lb_tmr6_sec.Size = new System.Drawing.Size(58, 13);
+            this.lb_tmr6_sec.TabIndex = 61;
+            this.lb_tmr6_sec.Text = "Пауза..мс";
+            this.lb_tmr6_sec.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lb_trig6
+            // 
+            this.lb_trig6.AutoSize = true;
+            this.lb_trig6.Location = new System.Drawing.Point(387, 39);
+            this.lb_trig6.Name = "lb_trig6";
+            this.lb_trig6.Size = new System.Drawing.Size(57, 13);
+            this.lb_trig6.TabIndex = 60;
+            this.lb_trig6.Text = "Триггер 6";
+            // 
+            // nud_tmr6
+            // 
+            this.nud_tmr6.Increment = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nud_tmr6.Location = new System.Drawing.Point(390, 113);
+            this.nud_tmr6.Maximum = new decimal(new int[] {
+            600000,
+            0,
+            0,
+            0});
+            this.nud_tmr6.Name = "nud_tmr6";
+            this.nud_tmr6.Size = new System.Drawing.Size(59, 20);
+            this.nud_tmr6.TabIndex = 59;
+            // 
+            // cb_startstop
+            // 
+            this.cb_startstop.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_startstop.FormattingEnabled = true;
+            this.cb_startstop.Items.AddRange(new object[] {
+            "",
+            "F1",
+            "F2",
+            "F3",
+            "F4",
+            "F5",
+            "F6",
+            "F7",
+            "F8",
+            "F9",
+            "F10",
+            "F11",
+            "F12"});
+            this.cb_startstop.Location = new System.Drawing.Point(391, 181);
+            this.cb_startstop.Name = "cb_startstop";
+            this.cb_startstop.Size = new System.Drawing.Size(58, 21);
+            this.cb_startstop.TabIndex = 63;
+            this.cb_startstop.SelectedIndexChanged += new System.EventHandler(this.cb_startstop_SelectedIndexChanged);
+            // 
+            // lb_startstop
+            // 
+            this.lb_startstop.AutoSize = true;
+            this.lb_startstop.Location = new System.Drawing.Point(305, 184);
+            this.lb_startstop.Name = "lb_startstop";
+            this.lb_startstop.Size = new System.Drawing.Size(81, 13);
+            this.lb_startstop.TabIndex = 64;
+            this.lb_startstop.Text = "Хоткей запуск";
+            // 
+            // lb_tp
+            // 
+            this.lb_tp.AutoSize = true;
+            this.lb_tp.Location = new System.Drawing.Point(305, 210);
+            this.lb_tp.Name = "lb_tp";
+            this.lb_tp.Size = new System.Drawing.Size(57, 13);
+            this.lb_tp.TabIndex = 66;
+            this.lb_tp.Text = "Хоткей тп";
+            // 
+            // cb_tp
+            // 
+            this.cb_tp.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_tp.FormattingEnabled = true;
+            this.cb_tp.Items.AddRange(new object[] {
+            "T",
+            "Y",
+            "U",
+            "I",
+            "O",
+            "P",
+            "G",
+            "H",
+            "J",
+            "K",
+            "L",
+            "B",
+            "N",
+            "M"});
+            this.cb_tp.Location = new System.Drawing.Point(391, 207);
+            this.cb_tp.Name = "cb_tp";
+            this.cb_tp.Size = new System.Drawing.Size(58, 21);
+            this.cb_tp.TabIndex = 65;
+            this.cb_tp.SelectedIndexChanged += new System.EventHandler(this.cb_tp_SelectedIndexChanged);
+            // 
+            // lb_tpdelay
+            // 
+            this.lb_tpdelay.AutoSize = true;
+            this.lb_tpdelay.Location = new System.Drawing.Point(305, 236);
+            this.lb_tpdelay.Name = "lb_tpdelay";
+            this.lb_tpdelay.Size = new System.Drawing.Size(72, 13);
+            this.lb_tpdelay.TabIndex = 68;
+            this.lb_tpdelay.Text = "Задержка тп";
+            // 
+            // cb_tpdelay
+            // 
+            this.cb_tpdelay.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_tpdelay.FormattingEnabled = true;
+            this.cb_tpdelay.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"});
+            this.cb_tpdelay.Location = new System.Drawing.Point(391, 233);
+            this.cb_tpdelay.Name = "cb_tpdelay";
+            this.cb_tpdelay.Size = new System.Drawing.Size(58, 21);
+            this.cb_tpdelay.TabIndex = 67;
+            this.cb_tpdelay.SelectedIndexChanged += new System.EventHandler(this.cb_tpdelay_SelectedIndexChanged);
+            // 
             // d3hot
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(310, 282);
+            this.ClientSize = new System.Drawing.Size(459, 282);
+            this.Controls.Add(this.lb_tpdelay);
+            this.Controls.Add(this.cb_tpdelay);
+            this.Controls.Add(this.lb_tp);
+            this.Controls.Add(this.cb_tp);
+            this.Controls.Add(this.lb_startstop);
+            this.Controls.Add(this.cb_startstop);
+            this.Controls.Add(this.cb_key6);
+            this.Controls.Add(this.lb_key6);
+            this.Controls.Add(this.cb_trig_tmr6);
+            this.Controls.Add(this.lb_tmr6_sec);
+            this.Controls.Add(this.lb_trig6);
+            this.Controls.Add(this.nud_tmr6);
+            this.Controls.Add(this.cb_key5);
+            this.Controls.Add(this.lb_key5);
+            this.Controls.Add(this.cb_trig_tmr5);
+            this.Controls.Add(this.lb_tmr5_sec);
+            this.Controls.Add(this.lb_trig5);
+            this.Controls.Add(this.nud_tmr5);
             this.Controls.Add(this.cb_prof);
             this.Controls.Add(this.lb_prof);
             this.Controls.Add(this.lb_lang);
@@ -585,13 +903,15 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "d3hot";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Diablo 3 Hotkeys ver. 1.1";
+            this.Text = "Diablo 3 Hotkeys ver. 1.2";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.d3hot_FormClosing);
             this.Load += new System.EventHandler(this.d3hot_Load);
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nud_tmr5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nud_tmr6)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -635,6 +955,24 @@
         private System.Windows.Forms.Label lb_lang;
         private System.Windows.Forms.ComboBox cb_prof;
         private System.Windows.Forms.Label lb_prof;
+        private System.Windows.Forms.ComboBox cb_key5;
+        private System.Windows.Forms.Label lb_key5;
+        private System.Windows.Forms.ComboBox cb_trig_tmr5;
+        private System.Windows.Forms.Label lb_tmr5_sec;
+        private System.Windows.Forms.Label lb_trig5;
+        private System.Windows.Forms.NumericUpDown nud_tmr5;
+        private System.Windows.Forms.ComboBox cb_key6;
+        private System.Windows.Forms.Label lb_key6;
+        private System.Windows.Forms.ComboBox cb_trig_tmr6;
+        private System.Windows.Forms.Label lb_tmr6_sec;
+        private System.Windows.Forms.Label lb_trig6;
+        private System.Windows.Forms.NumericUpDown nud_tmr6;
+        private System.Windows.Forms.ComboBox cb_startstop;
+        private System.Windows.Forms.Label lb_startstop;
+        private System.Windows.Forms.Label lb_tp;
+        private System.Windows.Forms.ComboBox cb_tp;
+        private System.Windows.Forms.Label lb_tpdelay;
+        private System.Windows.Forms.ComboBox cb_tpdelay;
     }
 }
 

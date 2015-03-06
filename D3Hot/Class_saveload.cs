@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Linq;
 using System.Windows.Forms;
 using D3Hot.Properties;
 using System.Xml.Serialization;
@@ -16,22 +17,32 @@ namespace D3Hot
         /// <param name="i"></param>
         public void Save_settings(int i)
         {
+            foreach (NumericUpDown numud in this.Controls.OfType<NumericUpDown>()) if (numud.Text == "") numud.Value = 0;
             Settings.Default.cb_key1 = cb_key1.SelectedIndex;
             Settings.Default.cb_key2 = cb_key2.SelectedIndex;
             Settings.Default.cb_key3 = cb_key3.SelectedIndex;
             Settings.Default.cb_key4 = cb_key4.SelectedIndex;
+            Settings.Default.cb_key5 = cb_key5.SelectedIndex;
+            Settings.Default.cb_key6 = cb_key6.SelectedIndex;
             Settings.Default.cb_trig_tmr1 = cb_trig_tmr1.SelectedIndex;
             Settings.Default.cb_trig_tmr2 = cb_trig_tmr2.SelectedIndex;
             Settings.Default.cb_trig_tmr3 = cb_trig_tmr3.SelectedIndex;
             Settings.Default.cb_trig_tmr4 = cb_trig_tmr4.SelectedIndex;
+            Settings.Default.cb_trig_tmr5 = cb_trig_tmr5.SelectedIndex;
+            Settings.Default.cb_trig_tmr6 = cb_trig_tmr6.SelectedIndex;
+            Settings.Default.cb_startstop = cb_startstop.SelectedIndex;
             Settings.Default.cb_prog = cb_prog.SelectedIndex;
             Settings.Default.cb_pause = cb_pause.SelectedIndex;
             Settings.Default.nud_tmr1 = nud_tmr1.Value;
             Settings.Default.nud_tmr2 = nud_tmr2.Value;
             Settings.Default.nud_tmr3 = nud_tmr3.Value;
             Settings.Default.nud_tmr4 = nud_tmr4.Value;
+            Settings.Default.nud_tmr5 = nud_tmr5.Value;
+            Settings.Default.nud_tmr6 = nud_tmr6.Value;
             Settings.Default.lb_lang = lb_lang.Text;
             if (i == 1) Settings.Default.prof_curr = cb_prof.SelectedIndex;
+            Settings.Default.cb_tp = (string)cb_tp.Text;
+            Settings.Default.cb_tpdelay = cb_tpdelay.SelectedIndex;
             Settings.Default.Save();
             curr_save();
         }
@@ -92,18 +103,27 @@ namespace D3Hot
             cb_key2.SelectedIndex = Settings.Default.cb_key2;
             cb_key3.SelectedIndex = Settings.Default.cb_key3;
             cb_key4.SelectedIndex = Settings.Default.cb_key4;
+            cb_key5.SelectedIndex = Settings.Default.cb_key5;
+            cb_key6.SelectedIndex = Settings.Default.cb_key6;
             cb_trig_tmr1.SelectedIndex = Settings.Default.cb_trig_tmr1;
             cb_trig_tmr2.SelectedIndex = Settings.Default.cb_trig_tmr2;
             cb_trig_tmr3.SelectedIndex = Settings.Default.cb_trig_tmr3;
             cb_trig_tmr4.SelectedIndex = Settings.Default.cb_trig_tmr4;
+            cb_trig_tmr5.SelectedIndex = Settings.Default.cb_trig_tmr5;
+            cb_trig_tmr6.SelectedIndex = Settings.Default.cb_trig_tmr6;
+            cb_startstop.SelectedIndex = Settings.Default.cb_startstop;
             cb_prog.SelectedIndex = Settings.Default.cb_prog;
             cb_pause.SelectedIndex = Settings.Default.cb_pause;
             nud_tmr1.Value = Settings.Default.nud_tmr1;
             nud_tmr2.Value = Settings.Default.nud_tmr2;
             nud_tmr3.Value = Settings.Default.nud_tmr3;
             nud_tmr4.Value = Settings.Default.nud_tmr4;
+            nud_tmr5.Value = Settings.Default.nud_tmr5;
+            nud_tmr6.Value = Settings.Default.nud_tmr6;
             cb_prof.SelectedIndex = Settings.Default.prof_curr;
             lb_lang.Text = Settings.Default.lb_lang;
+            cb_tp.SelectedIndex = cb_tp.FindStringExact(Settings.Default.cb_tp);
+            cb_tpdelay.SelectedIndex = Settings.Default.cb_tpdelay;
         }
 
         public class SettingsTable
@@ -139,6 +159,7 @@ namespace D3Hot
             for (int i = 0; i < overview.dataset.Tables[0].Rows.Count; i++)
             {
                 if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "lb_lang") Settings.Default.lb_lang = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
+                if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_tp") Settings.Default.cb_tp = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
             }
             for (int j = 0; j < overview.dataset.Tables[1].Rows.Count; j++)
             {
@@ -148,6 +169,8 @@ namespace D3Hot
                     case "nud_tmr2": Settings.Default.nud_tmr2 = Convert.ToDecimal(overview.dataset.Tables[1].Rows[j][1]); break;
                     case "nud_tmr3": Settings.Default.nud_tmr3 = Convert.ToDecimal(overview.dataset.Tables[1].Rows[j][1]); break;
                     case "nud_tmr4": Settings.Default.nud_tmr4 = Convert.ToDecimal(overview.dataset.Tables[1].Rows[j][1]); break;
+                    case "nud_tmr5": Settings.Default.nud_tmr5 = Convert.ToDecimal(overview.dataset.Tables[1].Rows[j][1]); break;
+                    case "nud_tmr6": Settings.Default.nud_tmr6 = Convert.ToDecimal(overview.dataset.Tables[1].Rows[j][1]); break;
                 }
             }
             for (int k = 0; k < overview.dataset.Tables[2].Rows.Count; k++)
@@ -158,15 +181,21 @@ namespace D3Hot
                     case "cb_trig_tmr2": Settings.Default.cb_trig_tmr2 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "cb_trig_tmr3": Settings.Default.cb_trig_tmr3 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "cb_trig_tmr4": Settings.Default.cb_trig_tmr4 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    case "cb_trig_tmr5": Settings.Default.cb_trig_tmr5 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    case "cb_trig_tmr6": Settings.Default.cb_trig_tmr6 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    case "cb_startstop": Settings.Default.cb_startstop = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
 
                     case "cb_key1": Settings.Default.cb_key1 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "cb_key2": Settings.Default.cb_key2 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "cb_key3": Settings.Default.cb_key3 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "cb_key4": Settings.Default.cb_key4 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    case "cb_key5": Settings.Default.cb_key5 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    case "cb_key6": Settings.Default.cb_key6 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
 
                     case "cb_prog": Settings.Default.cb_prog = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "cb_pause": Settings.Default.cb_pause = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "prof_curr": Settings.Default.prof_curr = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    case "cb_tpdelay": Settings.Default.cb_tpdelay = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                 }
             }
 
