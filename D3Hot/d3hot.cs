@@ -7,14 +7,15 @@ using WindowsInput;
 using WindowsInput.Native;
 using D3Hot.Properties;
 using System.Globalization;
-using System.IO; 
+using System.IO;
+using System.Diagnostics; //11.03.2015 
 
 namespace D3Hot
 {
     public partial class d3hot : Form
     {
         public System.Timers.Timer tmr1, tmr2, tmr3, tmr4, tmr5, tmr6, tmr_all;
-        public Boolean shift = false, d3prog = false;
+        public Boolean shift = false, d3prog = false, d3proc = false;
         public InputSimulator inp = new InputSimulator();
         public int trig1 = 0, trig2 = 0, trig3 = 0, trig4 = 0, trig5 = 0, trig6 = 0,
             key1 = 0, key2 = 0, key3 = 0, key4 = 0, key5 = 0, key6 = 0,
@@ -24,7 +25,7 @@ namespace D3Hot
 
         public double tmr1_i = 0, tmr2_i = 0, tmr3_i = 0, tmr4_i = 0, tmr5_i = 0, tmr6_i = 0;
         public static int t_press = 0, return_press = 0, r_press = 0, return_press_count = 0;
-        public static string tp_key = "";
+        public static string tp_key = "", proc_curr = "";
         public static SettingsTable overview;
 
         public Class_lang lng = new Class_lang();
@@ -38,8 +39,8 @@ namespace D3Hot
         [DllImport("user32.dll")]
         static extern IntPtr GetForegroundWindow();
 
-        //[DllImport("user32.dll", SetLastError = true)]
-        //static extern uint GetWindowThreadProcessId(IntPtr hWnd, out int lpdwProcessId);
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out int lpdwProcessId); //11.03.2015 
 
         [DllImport("user32.dll")]
         static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
@@ -121,7 +122,7 @@ namespace D3Hot
         /// <param name="e"></param>
         private void mouseKeyEventProvider1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode.ToString() == tp_key) t_press += 1;
+            if (e.KeyCode.ToString() == tp_key) t_press = 1;
             if (e.KeyCode.ToString() == "Return") return_press = 1;
         }
 
@@ -202,10 +203,13 @@ namespace D3Hot
         private bool key_press(int i)
         {
             bool result=false;
-            if (i == 1) result = Control.ModifierKeys == Keys.Shift; else
-            if (i == 2) result = Control.IsKeyLocked(Keys.Scroll); else
-            if (i == 3) result = Control.IsKeyLocked(Keys.CapsLock); else
-            if (i == 4) result = Control.IsKeyLocked(Keys.NumLock); 
+            switch (i)
+            {
+                case 1: result = Control.ModifierKeys == Keys.Shift; break;
+                case 2: result = Control.IsKeyLocked(Keys.Scroll); break;
+                case 3: result = Control.IsKeyLocked(Keys.CapsLock); break;
+                case 4: result = Control.IsKeyLocked(Keys.NumLock); break;
+            }
             return result;
         }
 
@@ -217,25 +221,28 @@ namespace D3Hot
         private VirtualKeyCode virt_code(int i)
         {
             VirtualKeyCode vkc = VirtualKeyCode.VK_0;
-            if (i == 0) vkc = VirtualKeyCode.VK_1; else
-            if (i == 1) vkc = VirtualKeyCode.VK_2; else
-            if (i == 2) vkc = VirtualKeyCode.VK_3; else
-            if (i == 3) vkc = VirtualKeyCode.VK_4; else
-            if (i == 4) vkc = VirtualKeyCode.VK_Q; else
-            if (i == 5) vkc = VirtualKeyCode.VK_W; else
-            if (i == 6) vkc = VirtualKeyCode.VK_E; else
-            if (i == 7) vkc = VirtualKeyCode.VK_R; else
-            if (i == 8) vkc = VirtualKeyCode.VK_A; else
-            if (i == 9) vkc = VirtualKeyCode.VK_S; else
-            if (i == 10) vkc = VirtualKeyCode.VK_D; else
-            if (i == 11) vkc = VirtualKeyCode.VK_F; else
-            if (i == 12) vkc = VirtualKeyCode.VK_Z; else
-            if (i == 13) vkc = VirtualKeyCode.VK_X; else
-            if (i == 14) vkc = VirtualKeyCode.VK_C; else
-            if (i == 15) vkc = VirtualKeyCode.VK_V; else
-            if (i == 16) vkc = VirtualKeyCode.SPACE; else
-            if (i == 17) vkc = VirtualKeyCode.LBUTTON; else
-            if (i == 18) vkc = VirtualKeyCode.RBUTTON;
+            switch (i)
+            {
+                case 0: vkc = VirtualKeyCode.VK_1; break;
+                case 1: vkc = VirtualKeyCode.VK_2; break;
+                case 2: vkc = VirtualKeyCode.VK_3; break;
+                case 3: vkc = VirtualKeyCode.VK_4; break;
+                case 4: vkc = VirtualKeyCode.VK_Q; break;
+                case 5: vkc = VirtualKeyCode.VK_W; break;
+                case 6: vkc = VirtualKeyCode.VK_E; break;
+                case 7: vkc = VirtualKeyCode.VK_R; break;
+                case 8: vkc = VirtualKeyCode.VK_A; break;
+                case 9: vkc = VirtualKeyCode.VK_S; break;
+                case 10: vkc = VirtualKeyCode.VK_D; break;
+                case 11: vkc = VirtualKeyCode.VK_F; break;
+                case 12: vkc = VirtualKeyCode.VK_Z; break;
+                case 13: vkc = VirtualKeyCode.VK_X; break;
+                case 14: vkc = VirtualKeyCode.VK_C; break;
+                case 15: vkc = VirtualKeyCode.VK_V; break;
+                case 16: vkc = VirtualKeyCode.SPACE; break;
+                case 17: vkc = VirtualKeyCode.LBUTTON; break;
+                case 18: vkc = VirtualKeyCode.RBUTTON; break;
+            }
             return vkc;
         }
 
@@ -374,8 +381,8 @@ namespace D3Hot
                         }
                         else
                         {
-                            timer_unload(5);
                             tmr5_r = 0;
+                            timer_unload(5);
                         }
                     }
 
@@ -403,28 +410,36 @@ namespace D3Hot
             else
             {
                 timer_unload(88);
-                return_press = 0; r_press = 0; t_press = 0; 
+                return_press = 0; r_press = 0; t_press = 0; tmr_all.Interval = 1;
                 tmr1_r = 0; tmr2_r = 0; tmr3_r = 0; tmr4_r = 0; tmr5_r = 0; tmr6_r = 0;
             }
         }
 
         public void tmr_Elapsed(object sender, EventArgs e)
         {
-            int f = 1;
             var tmr = (System.Timers.Timer)sender;
+            bool proc_right=false;
 
+            //Проверка окна на ниличе слова "Diablo", если область действия соответствующая.
             string title = "";
             if (GetActiveWindowTitle() != null) title = GetActiveWindowTitle();
 
-                    //int PID;
-                    //GetWindowThreadProcessId(GetForegroundWindow(), out PID);
-                    //Process proc = Process.GetProcessById(PID);
-                    //MessageBox.Show(proc.ProcessName);
+            //11.03.2015
+            int PID;
+            if (d3proc)
+            {
+                GetWindowThreadProcessId(GetForegroundWindow(), out PID);
+                Process proc = Process.GetProcessById(PID);
+                //MessageBox.Show(proc.ProcessName);
+                if (proc_curr.Contains(proc.Id.ToString())) proc_right = true;
+            }
 
-            //Проверка окна на ниличе слова "Diablo", если область действия соответствующая.
-            if (d3prog && !title.ToLower().Contains("diablo")) f = 0; 
             //Если всё в порядке, нажимаем соответствующую клавишу.
-            if (f == 1)
+            if (
+                (!d3prog || (d3prog && title.ToLower().Contains("diablo")))
+                && 
+                (!d3proc || (d3proc && proc_right))
+                )
             {
                 VirtualKeyCode key = VirtualKeyCode.VK_0; 
 
@@ -434,9 +449,10 @@ namespace D3Hot
                 if (tmr == tmr4 && key_press(trig4)) key = virt_code(key4);
                 if (tmr == tmr5 && key_press(trig5)) key = virt_code(key5);
                 if (tmr == tmr6 && key_press(trig6)) key = virt_code(key6);
+                
+                if (key == VirtualKeyCode.LBUTTON) inp.Mouse.LeftButtonClick(); else
+                if (key == VirtualKeyCode.RBUTTON) inp.Mouse.RightButtonClick(); else
                 if (key != VirtualKeyCode.VK_0) inp.Keyboard.KeyPress(key);
-                if (key == VirtualKeyCode.LBUTTON) inp.Mouse.LeftButtonClick();
-                if (key == VirtualKeyCode.RBUTTON) inp.Mouse.RightButtonClick();
             }
 
         }
@@ -451,8 +467,9 @@ namespace D3Hot
             timer_unload(99);
             tmr1_f = 0; tmr2_f = 0; tmr3_f = 0; tmr4_f = 0; tmr5_f = 0; tmr6_f = 0;
             tmr1_r = 0; tmr2_r = 0; tmr3_r = 0; tmr4_r = 0; tmr5_r = 0; tmr6_r = 0;
-            trig1 = 0; trig2 = 0; trig3 = 0; trig4 = 0; trig5 = 0; trig6 = 0;
             tmr1_i = 0; tmr2_i = 0; tmr3_i = 0; tmr4_i = 0; tmr5_i = 0; tmr6_i = 0;
+            trig1 = 0; trig2 = 0; trig3 = 0; trig4 = 0; trig5 = 0; trig6 = 0;
+            t_press = 0; return_press = 0; r_press = 0;
 
             foreach (NumericUpDown numud in this.Controls.OfType<NumericUpDown>()) if (numud.Text == "") numud.Value = 0;
 
@@ -467,8 +484,6 @@ namespace D3Hot
                 i++;
 
             if (i == 0) cb_start.Checked = false;
-
-            t_press = 0; return_press = 0; r_press = 0;
 
             if (cb_start.Checked)
             {
@@ -547,24 +562,13 @@ namespace D3Hot
 
                 timer_unload(99);
 
-                tmr1_f = 0; tmr2_f = 0; tmr3_f = 0; tmr4_f = 0; tmr5_f = 0; tmr6_f = 0;
-                tmr1_r = 0; tmr2_r = 0; tmr3_r = 0; tmr4_r = 0; tmr5_r = 0; tmr6_r = 0;
-                tmr1_i = 0; tmr2_i = 0; tmr3_i = 0; tmr4_i = 0; tmr5_i = 0; tmr6_i = 0;
+                //tmr1_f = 0; tmr2_f = 0; tmr3_f = 0; tmr4_f = 0; tmr5_f = 0; tmr6_f = 0;
+                //tmr1_r = 0; tmr2_r = 0; tmr3_r = 0; tmr4_r = 0; tmr5_r = 0; tmr6_r = 0;
+                //tmr1_i = 0; tmr2_i = 0; tmr3_i = 0; tmr4_i = 0; tmr5_i = 0; tmr6_i = 0;
 
                 Lang();
             }
 
-        }
-
-        /// <summary>
-        /// Выбор области действия программы.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void cb_prog_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (cb_prog.SelectedIndex == 1) d3prog = true;
-            if (cb_prog.SelectedIndex == 0) d3prog = false;
         }
 
         /// <summary>
@@ -601,7 +605,7 @@ namespace D3Hot
         }
 
         /// <summary>
-        /// Языковые методы.
+        /// Метод выбора языка
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -620,6 +624,9 @@ namespace D3Hot
             Lang();
         }
 
+        /// <summary>
+        /// Метод обработки языка
+        /// </summary>
         public void Lang()
         {
             lb_trig1.Text = lng.lb_trig1;
@@ -645,6 +652,7 @@ namespace D3Hot
 
             lb_about.Text = lng.lb_about;
             lb_area.Text = lng.lb_area;
+            lb_proc.Text = lng.lb_proc;
             lb_stop.Text = lng.lb_stop;
             lb_auth.Text = lng.lb_auth;
             lb_prof.Text = lng.lb_prof;
@@ -672,6 +680,10 @@ namespace D3Hot
             }
 
             if (path != "" && File.Exists(path)) ReadXML(path);
+
+            cb_prog_SelectionChangeCommitted(null, null);
+            cb_proc.SelectedIndex = 0;
+            cb_proc_SelectionChangeCommitted(null, null);
         }
 
         public void reghotkey()
@@ -698,22 +710,42 @@ namespace D3Hot
             }
         }
 
+        /// <summary>
+        /// Метод регистрации хоткея запуска/остановки
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void cb_startstop_SelectedIndexChanged(object sender, EventArgs e)
         {
             UnregisterHotKey(this.Handle, 0);
             reghotkey();
         }
 
+        /// <summary>
+        /// Метод выбора кнопки для хоткея приостановки (телепорта)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void cb_tp_SelectedIndexChanged(object sender, EventArgs e)
         {
             if ((string)cb_tp.Items[cb_tp.SelectedIndex] != "") tp_key = (string)cb_tp.Items[cb_tp.SelectedIndex].ToString();
         }
 
+        /// <summary>
+        /// Метод установки задержки приостановки (при телепорте)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void cb_tpdelay_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cb_tpdelay.SelectedIndex > -1) tp_delay = Convert.ToInt32(cb_tpdelay.Items[cb_tpdelay.SelectedIndex]);
         }
 
+        /// <summary>
+        /// Метод установки режима доступа к настройкам задержки, если она возможна
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void cb_pause_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cb_pause.SelectedIndex == 1 || cb_pause.SelectedIndex == 3)
@@ -725,6 +757,85 @@ namespace D3Hot
             {
                 cb_tp.Enabled = false;
                 cb_tpdelay.Enabled = false;
+            }
+        }
+
+        /// <summary>
+        /// Метод выбора процессов в памяти >400Мб
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cb_proc_Click(object sender, EventArgs e)
+        {
+            cb_proc.Items.Clear();
+            Process[] processlist = Process.GetProcesses();
+
+            cb_proc.Items.Add("");
+            try
+            {
+                foreach (Process p in processlist)
+                {
+                    if (p.PagedMemorySize64 > 400000000) cb_proc.Items.Add(p.ProcessName + " " + p.Id.ToString());
+                }
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// Метод установки режима доступа к области действия в зависимости от установки меню процесса
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cb_proc_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            proc_curr = (string)cb_proc.Items[cb_proc.SelectedIndex].ToString();
+            if (proc_curr != "")
+            {
+                d3proc = true;
+                d3prog = false;
+                cb_prog.SelectedIndex = 0;
+                cb_prog.Enabled = false;
+            }
+            else
+            {
+                d3proc = false;
+                cb_prog.Enabled = true;
+            }
+        }
+
+        /// <summary>
+        /// Метод выбора области действия программы
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cb_prog_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cb_prog.SelectedIndex == 1)
+            {
+                d3prog = true;
+            }
+            if (cb_prog.SelectedIndex == 0)
+            {
+                d3prog = false;
+            }
+        }
+
+        /// <summary>
+        /// Метод отключения/выключения списка процессов из-за активной/неактивной области действия
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cb_prog_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            if (cb_prog.SelectedIndex == 1)
+            {
+                cb_proc.Enabled = false;
+                cb_proc.SelectedIndex = 0;
+                d3proc = false;
+            }
+            if (cb_prog.SelectedIndex == 0)
+            {
+                cb_proc.Enabled = true;
             }
         }
 

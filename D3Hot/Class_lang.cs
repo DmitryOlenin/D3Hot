@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿
 namespace D3Hot
 {
     public class Class_lang
@@ -11,7 +7,7 @@ namespace D3Hot
             lb_trig1, lb_trig2, lb_trig3, lb_trig4, lb_trig5, lb_trig6,
             lb_key1, lb_key2, lb_key3, lb_key4, lb_key5, lb_key6,
             lb_tmr_sec, lb_prof,
-            lb_about, lb_area, lb_stop, lb_auth, lang_sec,
+            lb_about, lb_area, lb_proc, lb_stop, lb_auth, lang_sec,
             tt_start, tt_stop,
             lb_startstop, lb_tp, lb_tpdelay
             ;
@@ -40,6 +36,7 @@ namespace D3Hot
 
             lb_about = "Задержка в миллисекундах (1s = 1000ms)";
             lb_area = "Область действия";
+            lb_proc = "Процесс действия";
             lb_stop = "Приостановка";
             lb_auth = "Автор: Dmitry Olenin";
             lang_sec = "сек.";
@@ -71,6 +68,7 @@ namespace D3Hot
 
             lb_about = "Delay in milleseconds (1s = 1000ms)";
             lb_area = "Using area";
+            lb_proc = "Using process";
             lb_stop = "Pause";
             lb_auth = "Author: Dmitry Olenin";
             lang_sec = "sec.";
