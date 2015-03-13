@@ -86,6 +86,7 @@
             this.cb_proc = new System.Windows.Forms.ComboBox();
             this.lb_proc = new System.Windows.Forms.Label();
             this.lb_lang_name = new System.Windows.Forms.Label();
+            this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr3)).BeginInit();
@@ -365,7 +366,9 @@
             "V",
             "Space",
             "LMouse",
-            "RMouse"});
+            "RMouse",
+            "Shift+LM",
+            "Shift+RM"});
             this.cb_key4.Location = new System.Drawing.Point(240, 63);
             this.cb_key4.Name = "cb_key4";
             this.cb_key4.Size = new System.Drawing.Size(58, 21);
@@ -394,7 +397,9 @@
             "V",
             "Space",
             "LMouse",
-            "RMouse"});
+            "RMouse",
+            "Shift+LM",
+            "Shift+RM"});
             this.cb_key3.Location = new System.Drawing.Point(165, 63);
             this.cb_key3.Name = "cb_key3";
             this.cb_key3.Size = new System.Drawing.Size(58, 21);
@@ -423,7 +428,9 @@
             "V",
             "Space",
             "LMouse",
-            "RMouse"});
+            "RMouse",
+            "Shift+LM",
+            "Shift+RM"});
             this.cb_key2.Location = new System.Drawing.Point(90, 63);
             this.cb_key2.Name = "cb_key2";
             this.cb_key2.Size = new System.Drawing.Size(58, 21);
@@ -452,7 +459,9 @@
             "V",
             "Space",
             "LMouse",
-            "RMouse"});
+            "RMouse",
+            "Shift+LM",
+            "Shift+RM"});
             this.cb_key1.Location = new System.Drawing.Point(15, 63);
             this.cb_key1.Name = "cb_key1";
             this.cb_key1.Size = new System.Drawing.Size(58, 21);
@@ -595,7 +604,9 @@
             "V",
             "Space",
             "LMouse",
-            "RMouse"});
+            "RMouse",
+            "Shift+LM",
+            "Shift+RM"});
             this.cb_key5.Location = new System.Drawing.Point(315, 63);
             this.cb_key5.Name = "cb_key5";
             this.cb_key5.Size = new System.Drawing.Size(58, 21);
@@ -684,7 +695,9 @@
             "V",
             "Space",
             "LMouse",
-            "RMouse"});
+            "RMouse",
+            "Shift+LM",
+            "Shift+RM"});
             this.cb_key6.Location = new System.Drawing.Point(390, 63);
             this.cb_key6.Name = "cb_key6";
             this.cb_key6.Size = new System.Drawing.Size(58, 21);
@@ -766,8 +779,7 @@
             "F8",
             "F9",
             "F10",
-            "F11",
-            "F12"});
+            "F11"});
             this.cb_startstop.Location = new System.Drawing.Point(391, 181);
             this.cb_startstop.Name = "cb_startstop";
             this.cb_startstop.Size = new System.Drawing.Size(58, 21);
@@ -876,6 +888,11 @@
             this.lb_lang_name.TabIndex = 72;
             this.lb_lang_name.Text = "Language: ";
             // 
+            // notifyIcon
+            // 
+            this.notifyIcon.Text = "notifyIcon1";
+            this.notifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseClick);
+            // 
             // d3hot
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -939,9 +956,10 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "d3hot";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Diablo 3 Hotkeys ver. 1.3";
+            this.Text = "Diablo 3 Hotkeys ver. 1.4";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.d3hot_FormClosing);
             this.Load += new System.EventHandler(this.d3hot_Load);
+            this.Resize += new System.EventHandler(this.d3hot_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr3)).EndInit();
@@ -1012,6 +1030,7 @@
         private System.Windows.Forms.ComboBox cb_proc;
         private System.Windows.Forms.Label lb_proc;
         private System.Windows.Forms.Label lb_lang_name;
+        private System.Windows.Forms.NotifyIcon notifyIcon;
     }
 }
 

@@ -154,6 +154,7 @@ namespace D3Hot
         private void d3hot_Load(object sender, EventArgs e)
         {
             this.Icon = D3Hot.Properties.Resources.diablo_hot;
+            notifyIcon.Icon = D3Hot.Properties.Resources.diablo_hot;
 
             Load_settings();
 
@@ -242,6 +243,8 @@ namespace D3Hot
                 case 16: vkc = VirtualKeyCode.SPACE; break;
                 case 17: vkc = VirtualKeyCode.LBUTTON; break;
                 case 18: vkc = VirtualKeyCode.RBUTTON; break;
+                case 19: vkc = VirtualKeyCode.XBUTTON1; break;
+                case 20: vkc = VirtualKeyCode.XBUTTON2; break;
             }
             return vkc;
         }
@@ -300,7 +303,9 @@ namespace D3Hot
                                 tmr1_r = 1;
                                 timer_load(1);
                                 tmr_Elapsed(tmr1, null);
-                                tmr1.Enabled = true;
+                                if (tmr1 != null)
+                                    try { tmr1.Enabled = true; }
+                                    catch { }
                             }
                         }
                         else
@@ -319,7 +324,9 @@ namespace D3Hot
                                 tmr2_r = 1;
                                 timer_load(2);
                                 tmr_Elapsed(tmr2, null);
-                                tmr2.Enabled = true;
+                                if (tmr2 != null)
+                                    try { tmr2.Enabled = true; }
+                                    catch { }
                             }
                         }
                         else
@@ -338,7 +345,9 @@ namespace D3Hot
                                 tmr3_r = 1;
                                 timer_load(3);
                                 tmr_Elapsed(tmr3, null);
-                                tmr3.Enabled = true;
+                                if (tmr3 != null)
+                                    try { tmr3.Enabled = true; }
+                                    catch { }
                             }
                         }
                         else
@@ -357,7 +366,9 @@ namespace D3Hot
                                 tmr4_r = 1;
                                 timer_load(4);
                                 tmr_Elapsed(tmr4, null);
-                                tmr4.Enabled = true;
+                                if (tmr4 != null)
+                                    try { tmr4.Enabled = true; }
+                                    catch { }
                             }
                         }
                         else
@@ -376,7 +387,9 @@ namespace D3Hot
                                 tmr5_r = 1;
                                 timer_load(5);
                                 tmr_Elapsed(tmr5, null);
-                                tmr5.Enabled = true;
+                                if (tmr5 != null)
+                                    try { tmr5.Enabled = true; }
+                                    catch { }
                             }
                         }
                         else
@@ -395,7 +408,9 @@ namespace D3Hot
                                 tmr6_r = 1;
                                 timer_load(6);
                                 tmr_Elapsed(tmr6, null);
-                                tmr6.Enabled = true;
+                                if (tmr6 != null)
+                                    try { tmr6.Enabled = true; }
+                                    catch { }
                             }
                         }
                         else
@@ -439,7 +454,9 @@ namespace D3Hot
                 (!d3prog || (d3prog && title.ToLower().Contains("diablo")))
                 && 
                 (!d3proc || (d3proc && proc_right))
-                )
+                &&
+                !title.ToLower().Contains("hotkeys")
+               )
             {
                 VirtualKeyCode key = VirtualKeyCode.VK_0; 
 
@@ -449,16 +466,37 @@ namespace D3Hot
                 if (tmr == tmr4 && key_press(trig4)) key = virt_code(key4);
                 if (tmr == tmr5 && key_press(trig5)) key = virt_code(key5);
                 if (tmr == tmr6 && key_press(trig6)) key = virt_code(key6);
+
+                switch (key)
+                {
+                    case VirtualKeyCode.LBUTTON: inp.Mouse.LeftButtonClick(); break;
+                    case VirtualKeyCode.RBUTTON: inp.Mouse.RightButtonClick(); break;
+                    case VirtualKeyCode.XBUTTON1: shift_click(1); break;
+                    case VirtualKeyCode.XBUTTON2: shift_click(2); break;
+                    case VirtualKeyCode.VK_0: break;
+                    default: inp.Keyboard.KeyPress(key); break;
+                }
                 
-                if (key == VirtualKeyCode.LBUTTON) inp.Mouse.LeftButtonClick(); else
-                if (key == VirtualKeyCode.RBUTTON) inp.Mouse.RightButtonClick(); else
-                if (key != VirtualKeyCode.VK_0) inp.Keyboard.KeyPress(key);
             }
 
         }
 
         /// <summary>
-        /// Метод при запуске программы или её остановке (Start/Stop/F11).
+        /// Метод нажатия Shift+Click
+        /// </summary>
+        /// <param name="i"></param>
+        private void shift_click(int i)
+        {
+            inp.Keyboard.KeyDown(VirtualKeyCode.SHIFT);
+            inp.Keyboard.Sleep(50);
+            if (i==1) inp.Mouse.LeftButtonClick(); 
+            else inp.Mouse.RightButtonClick();
+            inp.Keyboard.Sleep(50);
+            inp.Keyboard.KeyUp(VirtualKeyCode.SHIFT);
+        }
+
+        /// <summary>
+        /// Метод при запуске программы или её остановке (Start/Stop/F11)
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -474,6 +512,11 @@ namespace D3Hot
             foreach (NumericUpDown numud in this.Controls.OfType<NumericUpDown>()) if (numud.Text == "") numud.Value = 0;
 
             int i = 0;
+
+            if (cb_key1.SelectedIndex > 18 || cb_key2.SelectedIndex > 18 || cb_key3.SelectedIndex > 18
+                || cb_key4.SelectedIndex > 18 || cb_key5.SelectedIndex > 18 || cb_key6.SelectedIndex > 18)
+                foreach (ComboBox cb in this.Controls.OfType<ComboBox>())
+                    if (cb.Name.Contains("trig") && cb.SelectedIndex == 1) cb.SelectedIndex = 0;
 
             if  ((cb_trig_tmr1.SelectedIndex != 0 && nud_tmr1.Value != 0) ||
                 (cb_trig_tmr2.SelectedIndex != 0 && nud_tmr2.Value != 0) ||
@@ -705,7 +748,6 @@ namespace D3Hot
                     case 9: RegisterHotKey(this.Handle, id, (int)KeyModifier.None, Keys.F9.GetHashCode()); break;//Глобальный хоткей запуска/остановки F9 
                     case 10: RegisterHotKey(this.Handle, id, (int)KeyModifier.None, Keys.F10.GetHashCode()); break;//Глобальный хоткей запуска/остановки F10
                     case 11: RegisterHotKey(this.Handle, id, (int)KeyModifier.None, Keys.F11.GetHashCode()); break;//Глобальный хоткей запуска/остановки F11 
-                    case 12: RegisterHotKey(this.Handle, id, (int)KeyModifier.None, Keys.F12.GetHashCode()); break;//Глобальный хоткей запуска/остановки F12 
                 }
             }
         }
@@ -837,6 +879,22 @@ namespace D3Hot
             {
                 cb_proc.Enabled = true;
             }
+        }
+
+        private void d3hot_Resize(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Minimized)
+            {
+                this.Hide();
+                notifyIcon.Visible = true;
+            }
+        }
+
+        private void notifyIcon_MouseClick(object sender, MouseEventArgs e)
+        {
+            this.Show();
+            this.WindowState = FormWindowState.Normal;
+            notifyIcon.Visible = false;
         }
 
     }
