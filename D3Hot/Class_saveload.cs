@@ -43,6 +43,11 @@ namespace D3Hot
             if (i == 1) Settings.Default.prof_curr = cb_prof.SelectedIndex;
             Settings.Default.cb_tp = (string)cb_tp.Text;
             Settings.Default.cb_tpdelay = cb_tpdelay.SelectedIndex;
+            Settings.Default.chb_tray = chb_tray.Checked ? 1 : 0;
+            Settings.Default.chb_mult = chb_mult.Checked ? 1 : 0;
+            Settings.Default.nud_key_delay_ms = nud_key_delay_ms.Value;
+            Settings.Default.cb_key_delay = cb_key_delay.SelectedIndex;
+
             Settings.Default.Save();
             curr_save();
         }
@@ -124,6 +129,10 @@ namespace D3Hot
             lb_lang.Text = Settings.Default.lb_lang;
             cb_tp.SelectedIndex = cb_tp.FindStringExact(Settings.Default.cb_tp);
             cb_tpdelay.SelectedIndex = Settings.Default.cb_tpdelay;
+            chb_tray.Checked = Settings.Default.chb_tray == 1 ? true : false;
+            chb_mult.Checked = Settings.Default.chb_mult == 1 ? true : false;
+            nud_key_delay_ms.Value = Settings.Default.nud_key_delay_ms;
+            cb_key_delay.SelectedIndex = Settings.Default.cb_key_delay;
         }
 
         public class SettingsTable
@@ -171,6 +180,7 @@ namespace D3Hot
                     case "nud_tmr4": Settings.Default.nud_tmr4 = Convert.ToDecimal(overview.dataset.Tables[1].Rows[j][1]); break;
                     case "nud_tmr5": Settings.Default.nud_tmr5 = Convert.ToDecimal(overview.dataset.Tables[1].Rows[j][1]); break;
                     case "nud_tmr6": Settings.Default.nud_tmr6 = Convert.ToDecimal(overview.dataset.Tables[1].Rows[j][1]); break;
+                    case "nud_key_delay_ms": Settings.Default.nud_key_delay_ms = Convert.ToDecimal(overview.dataset.Tables[1].Rows[j][1]); break;
                 }
             }
             for (int k = 0; k < overview.dataset.Tables[2].Rows.Count; k++)
@@ -191,11 +201,14 @@ namespace D3Hot
                     case "cb_key4": Settings.Default.cb_key4 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "cb_key5": Settings.Default.cb_key5 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "cb_key6": Settings.Default.cb_key6 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    case "cb_key_delay": Settings.Default.cb_key_delay = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
 
                     case "cb_prog": Settings.Default.cb_prog = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "cb_pause": Settings.Default.cb_pause = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "prof_curr": Settings.Default.prof_curr = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "cb_tpdelay": Settings.Default.cb_tpdelay = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    case "chb_tray": Settings.Default.chb_tray = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    case "chb_mult": Settings.Default.chb_mult = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                 }
             }
 

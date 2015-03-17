@@ -322,5 +322,53 @@ namespace D3Hot.Properties {
                 this["cb_tpdelay"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int chb_tray {
+            get {
+                return ((int)(this["chb_tray"]));
+            }
+            set {
+                this["chb_tray"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int chb_mult {
+            get {
+                return ((int)(this["chb_mult"]));
+            }
+            set {
+                this["chb_mult"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int cb_key_delay {
+            get {
+                return ((int)(this["cb_key_delay"]));
+            }
+            set {
+                this["cb_key_delay"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal nud_key_delay_ms {
+            get {
+                return ((decimal)(this["nud_key_delay_ms"]));
+            }
+            set {
+                this["nud_key_delay_ms"] = value;
+            }
+        }
     }
 }

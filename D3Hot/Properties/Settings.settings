@@ -77,5 +77,17 @@
     <Setting Name="cb_tpdelay" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">7</Value>
     </Setting>
+    <Setting Name="chb_tray" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="chb_mult" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="cb_key_delay" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="nud_key_delay_ms" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
