@@ -8,7 +8,7 @@ namespace D3Hot
             lb_key1, lb_key2, lb_key3, lb_key4, lb_key5, lb_key6,
             lb_tmr_sec, lb_prof,
             lb_about, lb_area, lb_proc, lb_stop, lb_auth, lang_sec,
-            tt_start, tt_stop,
+            tt_start, tt_stop, tt_key, tt_delay, tt_trig,
             lb_startstop, lb_tp, lb_tpdelay,
             chb_tray, chb_mult, b_opt, lb_key_delay, lb_key_delay_ms
             ;
@@ -35,7 +35,7 @@ namespace D3Hot
             lb_tp = "Хоткей тп";
             lb_tpdelay = "Задержка тп";
 
-            lb_about = "Задержка в миллисекундах (1s = 1000ms)";
+            tt_delay = "Задержка в миллисекундах (1s = 1000ms)";
             lb_area = "Область действия";
             lb_proc = "Процесс действия";
             lb_stop = "Приостановка";
@@ -45,6 +45,8 @@ namespace D3Hot
 
             tt_start = "Запуск";
             tt_stop = "Остановка";
+            tt_key = "Отметьте для зажатия";
+            tt_trig = "Выберите кнопку для активации прожима";
 
             chb_tray = "Сворачивать в трей";
             chb_mult = "Мультизапуск";
@@ -74,7 +76,7 @@ namespace D3Hot
             lb_tp = "Teleport hotkey";
             lb_tpdelay = "Teleport delay";
 
-            lb_about = "Delay in milleseconds (1s = 1000ms)";
+            tt_delay = "Delay in milleseconds (1s = 1000ms)";
             lb_area = "Using area";
             lb_proc = "Using process";
             lb_stop = "Pause";
@@ -84,6 +86,8 @@ namespace D3Hot
 
             tt_start = "Start";
             tt_stop = "Stop";
+            tt_key = "Check for holding";
+            tt_trig = "Choose a key to activate process";
 
             chb_tray = "Hide minimized";
             chb_mult = "Multiprocess";

@@ -370,5 +370,77 @@ namespace D3Hot.Properties {
                 this["nud_key_delay_ms"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int chb_key1 {
+            get {
+                return ((int)(this["chb_key1"]));
+            }
+            set {
+                this["chb_key1"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int chb_key2 {
+            get {
+                return ((int)(this["chb_key2"]));
+            }
+            set {
+                this["chb_key2"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int chb_key3 {
+            get {
+                return ((int)(this["chb_key3"]));
+            }
+            set {
+                this["chb_key3"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int chb_key4 {
+            get {
+                return ((int)(this["chb_key4"]));
+            }
+            set {
+                this["chb_key4"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int chb_key5 {
+            get {
+                return ((int)(this["chb_key5"]));
+            }
+            set {
+                this["chb_key5"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int chb_key6 {
+            get {
+                return ((int)(this["chb_key6"]));
+            }
+            set {
+                this["chb_key6"] = value;
+            }
+        }
     }
 }

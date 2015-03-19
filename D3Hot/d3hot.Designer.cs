@@ -36,7 +36,6 @@
             this.cb_start = new System.Windows.Forms.CheckBox();
             this.cb_prog = new System.Windows.Forms.ComboBox();
             this.lb_area = new System.Windows.Forms.Label();
-            this.lb_about = new System.Windows.Forms.Label();
             this.lb_trig1 = new System.Windows.Forms.Label();
             this.lb_trig2 = new System.Windows.Forms.Label();
             this.lb_trig3 = new System.Windows.Forms.Label();
@@ -89,20 +88,21 @@
             this.notify_d3h = new System.Windows.Forms.NotifyIcon(this.components);
             this.b_opt = new System.Windows.Forms.Button();
             this.pan_opt = new System.Windows.Forms.Panel();
-            this.chb_tray = new System.Windows.Forms.CheckBox();
-            this.chb_mult = new System.Windows.Forms.CheckBox();
-            this.pan_main = new System.Windows.Forms.Panel();
+            this.lb_key_delay_desc = new System.Windows.Forms.Label();
+            this.nud_key_delay_ms = new System.Windows.Forms.NumericUpDown();
             this.cb_key_delay = new System.Windows.Forms.ComboBox();
             this.lb_key_delay = new System.Windows.Forms.Label();
             this.lb_key_delay_ms = new System.Windows.Forms.Label();
-            this.nud_key_delay_ms = new System.Windows.Forms.NumericUpDown();
-            this.lb_key_delay_desc = new System.Windows.Forms.Label();
-            this.chb_key1 = new System.Windows.Forms.CheckBox();
-            this.chb_key2 = new System.Windows.Forms.CheckBox();
-            this.chb_key3 = new System.Windows.Forms.CheckBox();
-            this.chb_key4 = new System.Windows.Forms.CheckBox();
-            this.chb_key5 = new System.Windows.Forms.CheckBox();
+            this.chb_mult = new System.Windows.Forms.CheckBox();
+            this.chb_tray = new System.Windows.Forms.CheckBox();
+            this.pan_main = new System.Windows.Forms.Panel();
             this.chb_key6 = new System.Windows.Forms.CheckBox();
+            this.chb_key5 = new System.Windows.Forms.CheckBox();
+            this.chb_key4 = new System.Windows.Forms.CheckBox();
+            this.chb_key3 = new System.Windows.Forms.CheckBox();
+            this.chb_key2 = new System.Windows.Forms.CheckBox();
+            this.chb_key1 = new System.Windows.Forms.CheckBox();
+            this.tt_key = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr3)).BeginInit();
@@ -110,8 +110,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr6)).BeginInit();
             this.pan_opt.SuspendLayout();
-            this.pan_main.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nud_key_delay_ms)).BeginInit();
+            this.pan_main.SuspendLayout();
             this.SuspendLayout();
             // 
             // nud_tmr1
@@ -216,15 +216,6 @@
             this.lb_area.Size = new System.Drawing.Size(100, 13);
             this.lb_area.TabIndex = 18;
             this.lb_area.Text = "Область действия";
-            // 
-            // lb_about
-            // 
-            this.lb_about.AutoSize = true;
-            this.lb_about.Location = new System.Drawing.Point(9, 156);
-            this.lb_about.Name = "lb_about";
-            this.lb_about.Size = new System.Drawing.Size(217, 13);
-            this.lb_about.TabIndex = 19;
-            this.lb_about.Text = "Задержка в миллисекундах (1s = 1000ms)";
             // 
             // lb_trig1
             // 
@@ -550,6 +541,7 @@
             // 
             this.mouseKeyEventProvider1.Enabled = true;
             this.mouseKeyEventProvider1.HookType = MouseKeyboardActivityMonitor.Controls.HookType.Global;
+            this.mouseKeyEventProvider1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mouseKeyEventProvider1_MouseDown);
             this.mouseKeyEventProvider1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.mouseKeyEventProvider1_KeyDown);
             // 
             // lb_auth
@@ -946,15 +938,82 @@
             this.pan_opt.TabIndex = 74;
             this.pan_opt.Visible = false;
             // 
-            // chb_tray
+            // lb_key_delay_desc
             // 
-            this.chb_tray.AutoSize = true;
-            this.chb_tray.Location = new System.Drawing.Point(196, 114);
-            this.chb_tray.Name = "chb_tray";
-            this.chb_tray.Size = new System.Drawing.Size(126, 17);
-            this.chb_tray.TabIndex = 69;
-            this.chb_tray.Text = "Сворачивать в трей";
-            this.chb_tray.UseVisualStyleBackColor = true;
+            this.lb_key_delay_desc.AutoSize = true;
+            this.lb_key_delay_desc.Location = new System.Drawing.Point(300, 65);
+            this.lb_key_delay_desc.Name = "lb_key_delay_desc";
+            this.lb_key_delay_desc.Size = new System.Drawing.Size(58, 13);
+            this.lb_key_delay_desc.TabIndex = 76;
+            this.lb_key_delay_desc.Text = "Пауза..мс";
+            this.lb_key_delay_desc.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // nud_key_delay_ms
+            // 
+            this.nud_key_delay_ms.Enabled = false;
+            this.nud_key_delay_ms.Increment = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nud_key_delay_ms.Location = new System.Drawing.Point(303, 44);
+            this.nud_key_delay_ms.Maximum = new decimal(new int[] {
+            600000,
+            0,
+            0,
+            0});
+            this.nud_key_delay_ms.Name = "nud_key_delay_ms";
+            this.nud_key_delay_ms.Size = new System.Drawing.Size(59, 20);
+            this.nud_key_delay_ms.TabIndex = 75;
+            // 
+            // cb_key_delay
+            // 
+            this.cb_key_delay.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_key_delay.FormattingEnabled = true;
+            this.cb_key_delay.Items.AddRange(new object[] {
+            "",
+            "1",
+            "2",
+            "3",
+            "4",
+            "Q",
+            "W",
+            "E",
+            "R",
+            "A",
+            "S",
+            "D",
+            "F",
+            "Z",
+            "X",
+            "C",
+            "V",
+            "Space",
+            "LMouse",
+            "RMouse"});
+            this.cb_key_delay.Location = new System.Drawing.Point(303, 7);
+            this.cb_key_delay.Name = "cb_key_delay";
+            this.cb_key_delay.Size = new System.Drawing.Size(58, 21);
+            this.cb_key_delay.TabIndex = 71;
+            this.cb_key_delay.SelectedIndexChanged += new System.EventHandler(this.cb_key_delay_SelectedIndexChanged);
+            // 
+            // lb_key_delay
+            // 
+            this.lb_key_delay.AutoSize = true;
+            this.lb_key_delay.Location = new System.Drawing.Point(193, 10);
+            this.lb_key_delay.Name = "lb_key_delay";
+            this.lb_key_delay.Size = new System.Drawing.Size(99, 13);
+            this.lb_key_delay.TabIndex = 72;
+            this.lb_key_delay.Text = "Клавиша с паузой";
+            // 
+            // lb_key_delay_ms
+            // 
+            this.lb_key_delay_ms.AutoSize = true;
+            this.lb_key_delay_ms.Location = new System.Drawing.Point(193, 45);
+            this.lb_key_delay_ms.Name = "lb_key_delay_ms";
+            this.lb_key_delay_ms.Size = new System.Drawing.Size(105, 13);
+            this.lb_key_delay_ms.TabIndex = 74;
+            this.lb_key_delay_ms.Text = "Задержка клавиши";
             // 
             // chb_mult
             // 
@@ -965,6 +1024,16 @@
             this.chb_mult.TabIndex = 70;
             this.chb_mult.Text = "Мультизапуск";
             this.chb_mult.UseVisualStyleBackColor = true;
+            // 
+            // chb_tray
+            // 
+            this.chb_tray.AutoSize = true;
+            this.chb_tray.Location = new System.Drawing.Point(196, 114);
+            this.chb_tray.Name = "chb_tray";
+            this.chb_tray.Size = new System.Drawing.Size(126, 17);
+            this.chb_tray.TabIndex = 69;
+            this.chb_tray.Text = "Сворачивать в трей";
+            this.chb_tray.UseVisualStyleBackColor = true;
             // 
             // pan_main
             // 
@@ -1015,120 +1084,15 @@
             this.pan_main.Size = new System.Drawing.Size(437, 145);
             this.pan_main.TabIndex = 75;
             // 
-            // cb_key_delay
+            // chb_key6
             // 
-            this.cb_key_delay.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cb_key_delay.FormattingEnabled = true;
-            this.cb_key_delay.Items.AddRange(new object[] {
-            "",
-            "1",
-            "2",
-            "3",
-            "4",
-            "Q",
-            "W",
-            "E",
-            "R",
-            "A",
-            "S",
-            "D",
-            "F",
-            "Z",
-            "X",
-            "C",
-            "V",
-            "Space"});
-            this.cb_key_delay.Location = new System.Drawing.Point(303, 7);
-            this.cb_key_delay.Name = "cb_key_delay";
-            this.cb_key_delay.Size = new System.Drawing.Size(58, 21);
-            this.cb_key_delay.TabIndex = 71;
-            this.cb_key_delay.SelectedIndexChanged += new System.EventHandler(this.cb_key_delay_SelectedIndexChanged);
-            // 
-            // lb_key_delay
-            // 
-            this.lb_key_delay.AutoSize = true;
-            this.lb_key_delay.Location = new System.Drawing.Point(193, 10);
-            this.lb_key_delay.Name = "lb_key_delay";
-            this.lb_key_delay.Size = new System.Drawing.Size(99, 13);
-            this.lb_key_delay.TabIndex = 72;
-            this.lb_key_delay.Text = "Клавиша с паузой";
-            // 
-            // lb_key_delay_ms
-            // 
-            this.lb_key_delay_ms.AutoSize = true;
-            this.lb_key_delay_ms.Location = new System.Drawing.Point(193, 45);
-            this.lb_key_delay_ms.Name = "lb_key_delay_ms";
-            this.lb_key_delay_ms.Size = new System.Drawing.Size(105, 13);
-            this.lb_key_delay_ms.TabIndex = 74;
-            this.lb_key_delay_ms.Text = "Задержка клавиши";
-            // 
-            // nud_key_delay_ms
-            // 
-            this.nud_key_delay_ms.Enabled = false;
-            this.nud_key_delay_ms.Increment = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.nud_key_delay_ms.Location = new System.Drawing.Point(303, 44);
-            this.nud_key_delay_ms.Maximum = new decimal(new int[] {
-            600000,
-            0,
-            0,
-            0});
-            this.nud_key_delay_ms.Name = "nud_key_delay_ms";
-            this.nud_key_delay_ms.Size = new System.Drawing.Size(59, 20);
-            this.nud_key_delay_ms.TabIndex = 75;
-            // 
-            // lb_key_delay_desc
-            // 
-            this.lb_key_delay_desc.AutoSize = true;
-            this.lb_key_delay_desc.Location = new System.Drawing.Point(300, 65);
-            this.lb_key_delay_desc.Name = "lb_key_delay_desc";
-            this.lb_key_delay_desc.Size = new System.Drawing.Size(58, 13);
-            this.lb_key_delay_desc.TabIndex = 76;
-            this.lb_key_delay_desc.Text = "Пауза..мс";
-            this.lb_key_delay_desc.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // chb_key1
-            // 
-            this.chb_key1.AutoSize = true;
-            this.chb_key1.Location = new System.Drawing.Point(45, 55);
-            this.chb_key1.Name = "chb_key1";
-            this.chb_key1.Size = new System.Drawing.Size(15, 14);
-            this.chb_key1.TabIndex = 63;
-            this.chb_key1.UseVisualStyleBackColor = true;
-            this.chb_key1.Visible = false;
-            // 
-            // chb_key2
-            // 
-            this.chb_key2.AutoSize = true;
-            this.chb_key2.Location = new System.Drawing.Point(120, 55);
-            this.chb_key2.Name = "chb_key2";
-            this.chb_key2.Size = new System.Drawing.Size(15, 14);
-            this.chb_key2.TabIndex = 64;
-            this.chb_key2.UseVisualStyleBackColor = true;
-            this.chb_key2.Visible = false;
-            // 
-            // chb_key3
-            // 
-            this.chb_key3.AutoSize = true;
-            this.chb_key3.Location = new System.Drawing.Point(195, 55);
-            this.chb_key3.Name = "chb_key3";
-            this.chb_key3.Size = new System.Drawing.Size(15, 14);
-            this.chb_key3.TabIndex = 65;
-            this.chb_key3.UseVisualStyleBackColor = true;
-            this.chb_key3.Visible = false;
-            // 
-            // chb_key4
-            // 
-            this.chb_key4.AutoSize = true;
-            this.chb_key4.Location = new System.Drawing.Point(270, 55);
-            this.chb_key4.Name = "chb_key4";
-            this.chb_key4.Size = new System.Drawing.Size(15, 14);
-            this.chb_key4.TabIndex = 66;
-            this.chb_key4.UseVisualStyleBackColor = true;
-            this.chb_key4.Visible = false;
+            this.chb_key6.AutoSize = true;
+            this.chb_key6.Location = new System.Drawing.Point(420, 55);
+            this.chb_key6.Name = "chb_key6";
+            this.chb_key6.Size = new System.Drawing.Size(15, 14);
+            this.chb_key6.TabIndex = 68;
+            this.chb_key6.UseVisualStyleBackColor = true;
+            this.chb_key6.CheckedChanged += new System.EventHandler(this.chb_key_CheckedChanged);
             // 
             // chb_key5
             // 
@@ -1138,17 +1102,47 @@
             this.chb_key5.Size = new System.Drawing.Size(15, 14);
             this.chb_key5.TabIndex = 67;
             this.chb_key5.UseVisualStyleBackColor = true;
-            this.chb_key5.Visible = false;
+            this.chb_key5.CheckedChanged += new System.EventHandler(this.chb_key_CheckedChanged);
             // 
-            // chb_key6
+            // chb_key4
             // 
-            this.chb_key6.AutoSize = true;
-            this.chb_key6.Location = new System.Drawing.Point(420, 55);
-            this.chb_key6.Name = "chb_key6";
-            this.chb_key6.Size = new System.Drawing.Size(15, 14);
-            this.chb_key6.TabIndex = 68;
-            this.chb_key6.UseVisualStyleBackColor = true;
-            this.chb_key6.Visible = false;
+            this.chb_key4.AutoSize = true;
+            this.chb_key4.Location = new System.Drawing.Point(270, 55);
+            this.chb_key4.Name = "chb_key4";
+            this.chb_key4.Size = new System.Drawing.Size(15, 14);
+            this.chb_key4.TabIndex = 66;
+            this.chb_key4.UseVisualStyleBackColor = true;
+            this.chb_key4.CheckedChanged += new System.EventHandler(this.chb_key_CheckedChanged);
+            // 
+            // chb_key3
+            // 
+            this.chb_key3.AutoSize = true;
+            this.chb_key3.Location = new System.Drawing.Point(195, 55);
+            this.chb_key3.Name = "chb_key3";
+            this.chb_key3.Size = new System.Drawing.Size(15, 14);
+            this.chb_key3.TabIndex = 65;
+            this.chb_key3.UseVisualStyleBackColor = true;
+            this.chb_key3.CheckedChanged += new System.EventHandler(this.chb_key_CheckedChanged);
+            // 
+            // chb_key2
+            // 
+            this.chb_key2.AutoSize = true;
+            this.chb_key2.Location = new System.Drawing.Point(120, 55);
+            this.chb_key2.Name = "chb_key2";
+            this.chb_key2.Size = new System.Drawing.Size(15, 14);
+            this.chb_key2.TabIndex = 64;
+            this.chb_key2.UseVisualStyleBackColor = true;
+            this.chb_key2.CheckedChanged += new System.EventHandler(this.chb_key_CheckedChanged);
+            // 
+            // chb_key1
+            // 
+            this.chb_key1.AutoSize = true;
+            this.chb_key1.Location = new System.Drawing.Point(45, 55);
+            this.chb_key1.Name = "chb_key1";
+            this.chb_key1.Size = new System.Drawing.Size(15, 14);
+            this.chb_key1.TabIndex = 63;
+            this.chb_key1.UseVisualStyleBackColor = true;
+            this.chb_key1.CheckedChanged += new System.EventHandler(this.chb_key_CheckedChanged);
             // 
             // d3hot
             // 
@@ -1163,7 +1157,6 @@
             this.Controls.Add(this.cb_prof);
             this.Controls.Add(this.lb_prof);
             this.Controls.Add(this.lb_auth);
-            this.Controls.Add(this.lb_about);
             this.Controls.Add(this.lb_area);
             this.Controls.Add(this.cb_prog);
             this.Controls.Add(this.cb_start);
@@ -1172,7 +1165,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "d3hot";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Diablo 3 Hotkeys ver. 1.5";
+            this.Text = "Diablo 3 Hotkeys ver. 1.6";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.d3hot_FormClosing);
             this.Load += new System.EventHandler(this.d3hot_Load);
             this.Resize += new System.EventHandler(this.d3hot_Resize);
@@ -1184,9 +1177,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr6)).EndInit();
             this.pan_opt.ResumeLayout(false);
             this.pan_opt.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nud_key_delay_ms)).EndInit();
             this.pan_main.ResumeLayout(false);
             this.pan_main.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nud_key_delay_ms)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1201,7 +1194,6 @@
         private System.Windows.Forms.CheckBox cb_start;
         private System.Windows.Forms.ComboBox cb_prog;
         private System.Windows.Forms.Label lb_area;
-        private System.Windows.Forms.Label lb_about;
         private System.Windows.Forms.Label lb_trig1;
         private System.Windows.Forms.Label lb_trig2;
         private System.Windows.Forms.Label lb_trig3;
@@ -1268,6 +1260,7 @@
         private System.Windows.Forms.CheckBox chb_key4;
         private System.Windows.Forms.CheckBox chb_key3;
         private System.Windows.Forms.CheckBox chb_key2;
+        private System.Windows.Forms.ToolTip tt_key;
     }
 }
 

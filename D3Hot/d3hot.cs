@@ -8,27 +8,32 @@ using WindowsInput.Native;
 using D3Hot.Properties;
 using System.Globalization;
 using System.IO;
-using System.Diagnostics; //11.03.2015 
+using System.Diagnostics;
+using Microsoft.Win32;
+using System.Collections.Generic; //11.03.2015 
 
 namespace D3Hot
 {
     public partial class d3hot : Form
     {
         public System.Timers.Timer tmr1, tmr2, tmr3, tmr4, tmr5, tmr6, tmr_all;
+        public System.Timers.Timer StartTimer1, RepeatTimer1, StartTimer2, RepeatTimer2, StartTimer3, RepeatTimer3,
+                                    StartTimer4, RepeatTimer4, StartTimer5, RepeatTimer5, StartTimer6, RepeatTimer6;
         public Boolean shift = false, d3prog = false, d3proc = false;
         public InputSimulator inp = new InputSimulator();
         public int trig1 = 0, trig2 = 0, trig3 = 0, trig4 = 0, trig5 = 0, trig6 = 0,
             key1 = 0, key2 = 0, key3 = 0, key4 = 0, key5 = 0, key6 = 0,
             tmr1_f = 0, tmr2_f = 0, tmr3_f = 0, tmr4_f = 0, tmr5_f = 0, tmr6_f = 0,
             tmr1_r = 0, tmr2_r = 0, tmr3_r = 0, tmr4_r = 0, tmr5_r = 0, tmr6_r = 0,
-            pause = 0, prof_prev, tp_delay=0,
-            hold_key1 = 0, hold_key2 = 0, hold_key3 = 0, hold_key4 = 0, hold_key5 = 0, hold_key6 = 0
+            pause = 0, prof_prev, tp_delay=0, tmr_all_counter=0
+            ,hold_key0 = 0, hold_key1 = 0, hold_key2 = 0, hold_key3 = 0, hold_key4 = 0, hold_key5 = 0
             ;
 
         public double tmr1_i = 0, tmr2_i = 0, tmr3_i = 0, tmr4_i = 0, tmr5_i = 0, tmr6_i = 0;
         public static int t_press = 0, return_press = 0, r_press = 0, return_press_count = 0, delay_press = 0, delay_press_interval = 0; 
         public static string tp_key = "", proc_curr = "", key_delay = "";
         public static SettingsTable overview;
+        public int[] hold = new int[] { 0, 0, 0, 0, 0, 0 }; //17.03.2015
 
         public Class_lang lng = new Class_lang();
 
@@ -52,6 +57,15 @@ namespace D3Hot
 
         [DllImport("user32.dll")]
         public static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, uint dwExtraInfo); //17.03.2015
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName); //17.03.2015
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string lclassName, string windowTitle); //17.03.2015
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool PostMessage(IntPtr hWnd, uint Msg, int wParam, int lParam); //17.03.2015
 
         enum KeyModifier
         {
@@ -108,6 +122,7 @@ namespace D3Hot
             }
         }
 
+
         /// <summary>
         /// Метод удаления таймеров при остановке. 99 - всё. 88 - все, кроме главного потока.
         /// </summary>
@@ -133,6 +148,13 @@ namespace D3Hot
             if (e.KeyCode.ToString() == key_delay) delay_press = 1;
             if (e.KeyCode.ToString() == tp_key) t_press = 1;
             if (e.KeyCode.ToString() == "Return") return_press = 1;
+        }
+
+        private void mouseKeyEventProvider1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if ((key_delay == "LMouse" && e.Button.ToString() == "Left") 
+                || (key_delay == "RMouse" && e.Button.ToString() == "Right"))
+                    delay_press = 1;
         }
 
         public d3hot()
@@ -274,6 +296,39 @@ namespace D3Hot
         }
 
         /// <summary>
+        /// Метод для установки клавиш для залипания.
+        /// </summary>
+        /// <param name="i"></param>
+        /// <returns></returns>
+        private int key_hold_code(int i)
+        {
+            int key_code = 0;
+            switch (i)
+            {
+                case 0: key_code = (int)Keys.D1; break;
+                case 1: key_code = (int)Keys.D2; break;
+                case 2: key_code = (int)Keys.D3; break;
+                case 3: key_code = (int)Keys.D4; break;
+                case 4: key_code = (int)Keys.Q; break;
+                case 5: key_code = (int)Keys.W; break;
+                case 6: key_code = (int)Keys.E; break;
+                case 7: key_code = (int)Keys.R; break;
+                case 8: key_code = (int)Keys.A; break;
+                case 9: key_code = (int)Keys.S; break;
+                case 10: key_code = (int)Keys.D; break;
+                case 11: key_code = (int)Keys.F; break;
+                case 12: key_code = (int)Keys.Z; break;
+                case 13: key_code = (int)Keys.X; break;
+                case 14: key_code = (int)Keys.C; break;
+                case 15: key_code = (int)Keys.V; break;
+                case 16: key_code = (int)Keys.Space; break;
+                case 17: key_code = (int)Keys.LButton; break;
+                case 18: key_code = (int)Keys.RButton; break;
+            }
+            return key_code;
+        }
+
+        /// <summary>
         /// Основной метод после запуска процесса - срабатывание главного таймера.
         /// </summary>
         /// <param name="sender"></param>
@@ -306,7 +361,7 @@ namespace D3Hot
                     timer_unload(88);
                     tmr1_r = 0; tmr2_r = 0; tmr3_r = 0; tmr4_r = 0; tmr5_r = 0; tmr6_r = 0;
                     r_press = 1; return_press = 0;
-                    //tmr_all.Interval = 100;
+                    hold_clear(88);
                 }
 
                 if (r_press == 1 && return_press == 1)
@@ -326,6 +381,7 @@ namespace D3Hot
                 {
                     timer_unload(88);
                     tmr1_r = 0; tmr2_r = 0; tmr3_r = 0; tmr4_r = 0; tmr5_r = 0; tmr6_r = 0;
+                    hold_clear(88);
                     tmr_all.Interval = tp_delay * 1000;
                 }
 
@@ -342,6 +398,7 @@ namespace D3Hot
                 {
                     timer_unload(88);
                     tmr1_r = 0; tmr2_r = 0; tmr3_r = 0; tmr4_r = 0; tmr5_r = 0; tmr6_r = 0;
+                    hold_clear(88);
                     tmr_all.Interval = delay_press_interval;
                 }
 
@@ -350,87 +407,85 @@ namespace D3Hot
                 //Если T|Enter не нажаты, запускаем таймеры триггеров 1-2-3-4-5-6 при активном состоянии и останавливаем при отключенном.
                 if (t_press == 0 && r_press == 0 && delay_press == 0)
                 {
+                    tmr_all_counter = 5;
                     if (tmr1_f == 1)
                     {
-                        if (hold_key1 == 1) //17.03.2015
+                        if (key_press(trig1))
                         {
-                            keybd_event((byte)virt_code(key1), 0, 0, 0); //Hold a key 1
+                            if (hold_key0 == 1 && hold[0] == 0)  //18.03.2015
+                            {
+                                hold[0] = 1;
+                                key_hold(1);
+                            } 
+                            else if (tmr1_r == 0 && hold_key0 == 0)
+                            {
+                                tmr1_r = 1;
+                                timer_load(1);
+                                tmr_Elapsed(tmr1, null);
+                                if (tmr1 != null)
+                                    try { tmr1.Enabled = true; }
+                                    catch { }
+                            }
                         }
                         else
                         {
-                            if (key_press(trig1))
-                            {
-                                if (tmr1_r == 0)
-                                {
-                                    tmr1_r = 1;
-                                    timer_load(1);
-                                    tmr_Elapsed(tmr1, null);
-                                    if (tmr1 != null)
-                                        try { tmr1.Enabled = true; }
-                                        catch { }
-                                }
-                            }
-                            else
-                            {
-                                timer_unload(1);
-                                tmr1_r = 0;
-                            }
+                            if (hold_key0 == 1) hold_clear (0);
+                            timer_unload(1);
+                            tmr1_r = 0;
                         }
                     }
 
                     if (tmr2_f == 1)
                     {
-                        if (hold_key2 == 1) //17.03.2015
+                        if (key_press(trig2))
                         {
-                            keybd_event((byte)virt_code(key2), 0, 0, 0); //Hold a key 2
+                            if (hold_key1 == 1 && hold[1] == 0)  //18.03.2015
+                            {
+                                hold[1] = 1;
+                                key_hold(2);
+                            }
+                            else if (tmr2_r == 0 && hold_key1 == 0)
+                            {
+                                tmr2_r = 1;
+                                timer_load(2);
+                                tmr_Elapsed(tmr2, null);
+                                if (tmr2 != null)
+                                    try { tmr2.Enabled = true; }
+                                    catch { }
+                            }
                         }
                         else
                         {
-                            if (key_press(trig2))
-                            {
-                                if (tmr2_r == 0)
-                                {
-                                    tmr2_r = 1;
-                                    timer_load(2);
-                                    tmr_Elapsed(tmr2, null);
-                                    if (tmr2 != null)
-                                        try { tmr2.Enabled = true; }
-                                        catch { }
-                                }
-                            }
-                            else
-                            {
-                                timer_unload(2);
-                                tmr2_r = 0;
-                            }
+                            if (hold_key1 == 1) hold_clear(1);
+                            timer_unload(2);
+                            tmr2_r = 0;
                         }
                     }
 
                     if (tmr3_f == 1)
                     {
-                        if (hold_key3 == 1) //17.03.2015
+                        if (key_press(trig3))
                         {
-                            keybd_event((byte)virt_code(key3), 0, 0, 0); //Hold a key 3
+                            if (hold_key2 == 1 && hold[2] == 0)  //18.03.2015
+                            {
+                                hold[2] = 1;
+                                key_hold(3);
+                            }
+                            else if (tmr3_r == 0 && hold_key2 == 0)
+                            {
+                                tmr3_r = 1;
+                                timer_load(3);
+                                tmr_Elapsed(tmr3, null);
+                                if (tmr3 != null)
+                                    try { tmr3.Enabled = true; }
+                                    catch { }
+                            }
                         }
                         else
                         {
-                            if (key_press(trig3))
-                            {
-                                if (tmr3_r == 0)
-                                {
-                                    tmr3_r = 1;
-                                    timer_load(3);
-                                    tmr_Elapsed(tmr3, null);
-                                    if (tmr3 != null)
-                                        try { tmr3.Enabled = true; }
-                                        catch { }
-                                }
-                            }
-                            else
-                            {
-                                timer_unload(3);
-                                tmr3_r = 0;
-                            }
+                            if (hold_key2 == 1) hold_clear(2);
+                            timer_unload(3);
+                            tmr3_r = 0;
                         }
                     }
 
@@ -438,7 +493,12 @@ namespace D3Hot
                     {
                         if (key_press(trig4))
                         {
-                            if (tmr4_r == 0)
+                            if (hold_key3 == 1 && hold[3] == 0)  //18.03.2015
+                            {
+                                hold[3] = 1;
+                                key_hold(4);
+                            }
+                            else if (tmr4_r == 0 && hold_key3 == 0)
                             {
                                 tmr4_r = 1;
                                 timer_load(4);
@@ -450,7 +510,8 @@ namespace D3Hot
                         }
                         else
                         {
-                            timer_unload(4); 
+                            if (hold_key3 == 1) hold_clear(3);
+                            timer_unload(4);
                             tmr4_r = 0;
                         }
                     }
@@ -459,7 +520,12 @@ namespace D3Hot
                     {
                         if (key_press(trig5))
                         {
-                            if (tmr5_r == 0)
+                            if (hold_key4 == 1 && hold[4] == 0)  //18.03.2015
+                            {
+                                hold[4] = 1;
+                                key_hold(5);
+                            }
+                            else if (tmr5_r == 0 && hold_key4 == 0)
                             {
                                 tmr5_r = 1;
                                 timer_load(5);
@@ -471,8 +537,9 @@ namespace D3Hot
                         }
                         else
                         {
-                            tmr5_r = 0;
+                            if (hold_key4 == 1) hold_clear(4);
                             timer_unload(5);
+                            tmr5_r = 0;
                         }
                     }
 
@@ -480,7 +547,12 @@ namespace D3Hot
                     {
                         if (key_press(trig6))
                         {
-                            if (tmr6_r == 0)
+                            if (hold_key5 == 1 && hold[5] == 0)  //18.03.2015
+                            {
+                                hold[5] = 1;
+                                key_hold(6);
+                            }
+                            else if (tmr6_r == 0 && hold_key5 == 0)
                             {
                                 tmr6_r = 1;
                                 timer_load(6);
@@ -492,6 +564,7 @@ namespace D3Hot
                         }
                         else
                         {
+                            if (hold_key5 == 1) hold_clear(5);
                             timer_unload(6);
                             tmr6_r = 0;
                         }
@@ -504,16 +577,53 @@ namespace D3Hot
                 timer_unload(88);
                 return_press = 0; r_press = 0; t_press = 0; tmr_all.Interval = 1; delay_press = 0;
                 tmr1_r = 0; tmr2_r = 0; tmr3_r = 0; tmr4_r = 0; tmr5_r = 0; tmr6_r = 0;
-                if (hold_key1 == 1) keybd_event((byte)virt_code(key1), 0, 2, 0); //Release key if holded 17.03.2015                            
+                if (tmr_all_counter>0) 
+                {
+                    tmr_all_counter--;
+                    hold_clear (88);                
+                }                
             }
         }
 
-        public void tmr_Elapsed(object sender, EventArgs e)
+        public void hold_clear(int i)
         {
-            var tmr = (System.Timers.Timer)sender;
-            bool proc_right=false;
+            if (i < 6)
+            {
+                if (hold[i] > 0)
+                {
+                    hold_unload(i + 1);
+                    hold[i] = 0;
+                }
+            }
+            else
+            {
+                for (int j = 0; j < 6; j++)
+                {
+                    if (hold[j] > 0)
+                    {
+                        hold_unload(j + 1);
+                        hold[j] = 0;
+                    }
+                }
+            }
+        }
 
-            //Проверка окна на ниличе слова "Diablo", если область действия соответствующая.
+        //public enum WMessages : int //Убрал 19.03.2015
+        //{
+        //    WM_LBUTTONDOWN = 0x201,
+        //    WM_LBUTTONUP = 0x202
+        //}
+
+        /// <summary>
+        /// Метод для проверки области использования.
+        /// </summary>
+        /// <returns></returns>
+        public bool usage_area()
+        {
+            bool proc_right = false;
+            bool result = false;
+
+            //Проверка окна на наличе слова "Diablo", если область действия соответствующая.
             string title = "";
             if (GetActiveWindowTitle() != null) title = GetActiveWindowTitle();
 
@@ -527,33 +637,106 @@ namespace D3Hot
                 if (proc_curr.Contains(proc.Id.ToString())) proc_right = true;
             }
 
-            //Если всё в порядке, нажимаем соответствующую клавишу.
             if (
                 (!d3prog || (d3prog && title.ToLower().Contains("diablo")))
-                && 
+                &&
                 (!d3proc || (d3proc && proc_right))
                 &&
                 !title.ToLower().Contains("hotkeys")
-               )
-            {
-                VirtualKeyCode key = VirtualKeyCode.VK_0; 
+               ) result = true;
 
-                if (tmr == tmr1 && key_press(trig1)) key = virt_code(key1);
-                if (tmr == tmr2 && key_press(trig2)) key = virt_code(key2);
-                if (tmr == tmr3 && key_press(trig3)) key = virt_code(key3);
-                if (tmr == tmr4 && key_press(trig4)) key = virt_code(key4);
-                if (tmr == tmr5 && key_press(trig5)) key = virt_code(key5);
+
+            return result;
+
+        }
+        
+
+        public void tmr_Elapsed(object sender, EventArgs e)
+        {
+            var tmr = (System.Timers.Timer)sender;
+            //int hold_key = 0;
+
+
+            //IntPtr hWindow;
+            //const uint WM_KEYDOWN = 256;
+            //const uint WM_KEYUP = 257;
+            //if (d3prog && title.ToLower().Contains("калькулятор"))//diablo
+            //{
+            //    hWindow = FindWindow(null, "akelpad");
+            //    //MessageBox.Show(hWindow.ToString());
+            //    hWindow = FindWindowEx(hWindow, IntPtr.Zero, "AkelEditW", null);
+            //    //MessageBox.Show(hWindow.ToString());
+                
+            //    //MessageBox.Show(hWindow.ToString());
+            //    int t1 = (int)Keys.B;
+            //    //int t1 = (int)Keys.D3;
+            //    //PostMessage(hWindow, WM_KEYUP, t1, 0);
+            //    PostMessage(hWindow, WM_KEYDOWN, t1, 0);
+            //}
+
+            //Если всё в порядке, нажимаем соответствующую клавишу.
+            if (usage_area())
+            {
+                VirtualKeyCode key = VirtualKeyCode.VK_0;
+                //MessageBox.Show(GetForegroundWindow().ToString());
+
+                if (tmr == tmr1 && key_press(trig1)) key = virt_code(key1); else 
+                if (tmr == tmr2 && key_press(trig2)) key = virt_code(key2); else
+                if (tmr == tmr3 && key_press(trig3)) key = virt_code(key3); else
+                if (tmr == tmr4 && key_press(trig4)) key = virt_code(key4); else
+                if (tmr == tmr5 && key_press(trig5)) key = virt_code(key5); else
                 if (tmr == tmr6 && key_press(trig6)) key = virt_code(key6);
 
-                switch (key)
-                {
-                    case VirtualKeyCode.LBUTTON: inp.Mouse.LeftButtonClick(); break;
-                    case VirtualKeyCode.RBUTTON: inp.Mouse.RightButtonClick(); break;
-                    case VirtualKeyCode.XBUTTON1: shift_click(1); break;
-                    case VirtualKeyCode.XBUTTON2: shift_click(2); break;
-                    case VirtualKeyCode.VK_0: break;
-                    default: inp.Keyboard.KeyPress(key); break;
-                }
+                //if ((hold_key0 == 1) && (key == virt_code(key1))) hold_key = 1; else
+                //if ((hold_key1 == 1) && (key == virt_code(key2))) hold_key = 2; else
+                //if ((hold_key2 == 1) && (key == virt_code(key3))) hold_key = 3; else
+                //if ((hold_key3 == 1) && (key == virt_code(key4))) hold_key = 4; else
+                //if ((hold_key4 == 1) && (key == virt_code(key5))) hold_key = 5; else
+                //if ((hold_key5 == 1) && (key == virt_code(key6))) hold_key = 6;
+
+                //if (hold_key == 0)
+                //{
+                    switch (key)
+                    {
+                        case VirtualKeyCode.LBUTTON: inp.Mouse.LeftButtonClick(); break;
+                        case VirtualKeyCode.RBUTTON: inp.Mouse.RightButtonClick(); break;
+                        case VirtualKeyCode.XBUTTON1: shift_click(1); break;
+                        case VirtualKeyCode.XBUTTON2: shift_click(2); break;
+                        case VirtualKeyCode.VK_0: break;
+                        default: inp.Keyboard.KeyPress(key); break;
+                    }
+                //}
+                //else
+                //{
+                //    switch (hold_key) //Hold a keys //17.03.2015
+                //    {
+                //        case 1: 
+                //            if (hold[0] == 0) keybd_event((byte)virt_code(key1), 0, 0, 0);
+                //            hold[0] = 1;
+                //            tmr1.AutoReset = false;
+                //            break;
+                //        case 2:
+                //            if (hold[1] == 0) keybd_event((byte)virt_code(key2), 0, 0, 0);
+                //            hold[1] = 1;
+                //            break;
+                //        case 3:
+                //            if (hold[2] == 0) keybd_event((byte)virt_code(key3), 0, 0, 0);
+                //            hold[2] = 1;
+                //            break;
+                //        case 4:
+                //            if (hold[3] == 0) keybd_event((byte)virt_code(key4), 0, 0, 0);
+                //            hold[3] = 1;
+                //            break;
+                //        case 5:
+                //            if (hold[4] == 0) keybd_event((byte)virt_code(key5), 0, 0, 0);
+                //            hold[4] = 1;
+                //            break;
+                //        case 6:
+                //            if (hold[5] == 0) keybd_event((byte)virt_code(key6), 0, 0, 0);
+                //            hold[5] = 1;
+                //            break;
+                //    }
+                //}
             }
 
         }
@@ -584,7 +767,7 @@ namespace D3Hot
             tmr1_r = 0; tmr2_r = 0; tmr3_r = 0; tmr4_r = 0; tmr5_r = 0; tmr6_r = 0;
             tmr1_i = 0; tmr2_i = 0; tmr3_i = 0; tmr4_i = 0; tmr5_i = 0; tmr6_i = 0;
             trig1 = 0; trig2 = 0; trig3 = 0; trig4 = 0; trig5 = 0; trig6 = 0;
-            hold_key1 = 0; hold_key2 = 0; hold_key3 = 0; hold_key4 = 0; hold_key5 = 0; hold_key6 = 0; //17.03.2015
+            hold_key0 = 0; hold_key1 = 0; hold_key2 = 0; hold_key3 = 0; hold_key4 = 0; hold_key5 = 0; //17.03.2015
             t_press = 0; return_press = 0; r_press = 0; delay_press = 0; return_press_count = 0;
 
             foreach (NumericUpDown numud in this.pan_main.Controls.OfType<NumericUpDown>()) if (numud.Text == "") numud.Value = 0;
@@ -608,15 +791,16 @@ namespace D3Hot
 
             if (cb_start.Checked)
             {
+                hold = new int[] { 0, 0, 0, 0, 0, 0 }; //17.03.2015
                 if (pan_opt.Visible) b_opt_Click(null, null);
                 if (nud_key_delay_ms.Value>0) delay_press_interval = Convert.ToInt32(nud_key_delay_ms.Value);
 
-                if (chb_key1.Checked) hold_key1 = 1; //17.03.2015
-                if (chb_key2.Checked) hold_key2 = 1;
-                if (chb_key3.Checked) hold_key3 = 1;
-                if (chb_key4.Checked) hold_key4 = 1;
-                if (chb_key5.Checked) hold_key5 = 1;
-                if (chb_key6.Checked) hold_key6 = 1;
+                if (chb_key1.Checked) hold_key0 = 1; //17.03.2015
+                if (chb_key2.Checked) hold_key1 = 1;
+                if (chb_key3.Checked) hold_key2 = 1;
+                if (chb_key4.Checked) hold_key3 = 1;
+                if (chb_key5.Checked) hold_key4 = 1;
+                if (chb_key6.Checked) hold_key5 = 1;
 
                 pause = cb_pause.SelectedIndex;
                 cb_start.Text = "Stop";
@@ -625,6 +809,8 @@ namespace D3Hot
                 //Блокирование элементов настройки, пока программа работает
                 foreach (NumericUpDown numud in this.pan_main.Controls.OfType<NumericUpDown>()) numud.Enabled = false;
                 foreach (ComboBox cb in this.pan_main.Controls.OfType<ComboBox>()) cb.Enabled = false;
+                foreach (ComboBox cbm in this.Controls.OfType<ComboBox>()) cbm.Enabled = false;
+                foreach (CheckBox chb in this.pan_main.Controls.OfType<CheckBox>()) chb.Enabled = false;
                 b_opt.Enabled = false;
 
                 if (nud_tmr1.Value > 0 && cb_trig_tmr1.SelectedIndex > 0)
@@ -681,6 +867,7 @@ namespace D3Hot
                 if (tmr1_f == 1 || tmr2_f == 1 || tmr3_f == 1 || tmr4_f == 1 || tmr5_f == 1 || tmr6_f == 1)
                 {
                     timer_load(0);
+                    tmr_all_counter = 0;
                     if (!tmr_all.Enabled) tmr_all.Enabled = true;
                 }
             }
@@ -688,12 +875,20 @@ namespace D3Hot
             {
                 foreach (NumericUpDown numud in this.pan_main.Controls.OfType<NumericUpDown>()) numud.Enabled = true;
                 foreach (ComboBox cb in this.pan_main.Controls.OfType<ComboBox>()) cb.Enabled = true;
+                foreach (ComboBox cbm in this.Controls.OfType<ComboBox>()) cbm.Enabled = true;
+                foreach (CheckBox chb in this.pan_main.Controls.OfType<CheckBox>())
+                {
+                    chb.Enabled = true;
+                    chb_key_CheckedChanged(chb, null);
+                }
                 b_opt.Enabled = true;
 
                 cb_start.Text = "Start";
                 tt_start.SetToolTip(cb_start, lng.tt_start);
 
                 timer_unload(99);
+
+                hold_clear(88);
 
                 //tmr1_f = 0; tmr2_f = 0; tmr3_f = 0; tmr4_f = 0; tmr5_f = 0; tmr6_f = 0;
                 //tmr1_r = 0; tmr2_r = 0; tmr3_r = 0; tmr4_r = 0; tmr5_r = 0; tmr6_r = 0;
@@ -784,7 +979,7 @@ namespace D3Hot
             lb_tmr6_sec.Text = lng.lb_tmr_sec;
             lb_key_delay_desc.Text = lng.lb_tmr_sec;
 
-            lb_about.Text = lng.lb_about;
+            //lb_about.Text = lng.lb_about;
             lb_area.Text = lng.lb_area;
             lb_proc.Text = lng.lb_proc;
             lb_stop.Text = lng.lb_stop;
@@ -801,6 +996,13 @@ namespace D3Hot
             lb_key_delay.Text = lng.lb_key_delay;
 
             tt_start.SetToolTip(cb_start, lng.tt_start);
+            foreach (ComboBox cb in this.pan_main.Controls.OfType<ComboBox>())
+            {
+                if (cb.Name.Contains ("key")) tt_key.SetToolTip(cb, lng.tt_key);
+                else tt_key.SetToolTip(cb, lng.tt_trig);
+            }
+            foreach (CheckBox chb in this.pan_main.Controls.OfType<CheckBox>()) tt_key.SetToolTip(chb, lng.tt_key);
+            foreach (NumericUpDown nud in this.pan_main.Controls.OfType<NumericUpDown>()) tt_key.SetToolTip(nud, lng.tt_delay);
         }
 
         /// <summary>
@@ -906,6 +1108,7 @@ namespace D3Hot
         /// <param name="e"></param>
         private void cb_proc_Click(object sender, EventArgs e)
         {
+            proc_handle = new Dictionary<string, IntPtr>();
             cb_proc.Items.Clear();
             Process[] processlist = Process.GetProcesses();
 
@@ -914,7 +1117,14 @@ namespace D3Hot
             {
                 foreach (Process p in processlist)
                 {
-                    if (p.PagedMemorySize64 > 400000000) cb_proc.Items.Add(p.ProcessName + " " + p.Id.ToString());
+                    if (p.PagedMemorySize64 > 400000000) //cb_proc.Items.Add(p.ProcessName + " " + p.Id.ToString());
+                    //if (p.ProcessName.ToLower().Contains("notepad"))
+                    {
+                        cb_proc.Items.Add(p.ProcessName + " " + p.Id.ToString());
+                        proc_handle.Add(p.ProcessName + " " + p.Id.ToString(), p.MainWindowHandle);
+                        //cb_proc.Items.Add("блокнот" + " " + p.Id.ToString());
+                        //proc_handle.Add("блокнот" + " " + p.Id.ToString(), p.MainWindowHandle);
+                    }
                 }
             }
             catch { }
@@ -935,6 +1145,7 @@ namespace D3Hot
                 d3prog = false;
                 cb_prog.SelectedIndex = 0;
                 cb_prog.Enabled = false;
+                handle = proc_handle[proc_curr];
             }
             else
             {
@@ -1013,6 +1224,7 @@ namespace D3Hot
             if ((string)cb_key_delay.Items[cb_key_delay.SelectedIndex] != "")
             {
                 key_delay = (string)cb_key_delay.Items[cb_key_delay.SelectedIndex].ToString();
+                if (key_delay == "1" || key_delay == "2" || key_delay == "3" || key_delay == "4") key_delay = "D" + key_delay;
                 nud_key_delay_ms.Enabled = true;
             }
             else
@@ -1020,6 +1232,154 @@ namespace D3Hot
                 nud_key_delay_ms.Value = 0;
                 nud_key_delay_ms.Enabled = false;
                 key_delay = "";
+            }
+        }
+
+        private void chb_key_CheckedChanged(object sender, EventArgs e)
+        {
+            var cb = (CheckBox)sender;
+            var chb = ((CheckBox)sender).Name;
+            switch (chb)
+            {
+                case "chb_key1":
+                    if (cb.Checked)
+                    {
+                        nud_tmr1.Enabled = false;
+                        if (cb_key1.Items.Count > 20)
+                        {
+                            if (cb_key1.SelectedIndex == 19) cb_key1.SelectedIndex = 17;
+                            if (cb_key1.SelectedIndex == 20) cb_key1.SelectedIndex = 18;
+                            cb_key1.Items.Remove(cb_key1.Items[20]);
+                            cb_key1.Items.Remove(cb_key1.Items[19]);
+                        }
+                    }
+                    else
+                    {
+                        nud_tmr1.Enabled = true;
+                        if (cb_key1.Items.Count < 20)
+                        {
+                            cb_key1.Items.Add("Shift+LM");
+                            cb_key1.Items.Add("Shift+RM");
+                        }
+                    }
+                    break;
+
+                case "chb_key2":
+                    if (cb.Checked)
+                    {
+                        nud_tmr2.Enabled = false;
+                        if (cb_key2.Items.Count > 20)
+                        {
+                            if (cb_key2.SelectedIndex == 19) cb_key2.SelectedIndex = 17;
+                            if (cb_key2.SelectedIndex == 20) cb_key2.SelectedIndex = 18;
+                            cb_key2.Items.Remove(cb_key2.Items[20]);
+                            cb_key2.Items.Remove(cb_key2.Items[19]);
+                        }
+                    }
+                    else
+                    {
+                        nud_tmr2.Enabled = true;
+                        if (cb_key2.Items.Count < 20)
+                        {
+                            cb_key2.Items.Add("Shift+LM");
+                            cb_key2.Items.Add("Shift+RM");
+                        }
+                    }
+                    break;
+
+                case "chb_key3":
+                    if (cb.Checked)
+                    {
+                        nud_tmr3.Enabled = false;
+                        if (cb_key3.Items.Count > 20)
+                        {
+                            if (cb_key3.SelectedIndex == 19) cb_key3.SelectedIndex = 17;
+                            if (cb_key3.SelectedIndex == 20) cb_key3.SelectedIndex = 18;
+                            cb_key3.Items.Remove(cb_key3.Items[20]);
+                            cb_key3.Items.Remove(cb_key3.Items[19]);
+                        }
+                    }
+                    else
+                    {
+                        nud_tmr3.Enabled = true;
+                        if (cb_key3.Items.Count < 20)
+                        {
+                            cb_key3.Items.Add("Shift+LM");
+                            cb_key3.Items.Add("Shift+RM");
+                        }
+                    }
+                    break;
+
+                case "chb_key4":
+                    if (cb.Checked)
+                    {
+                        nud_tmr4.Enabled = false;
+                        if (cb_key4.Items.Count > 20)
+                        {
+                            if (cb_key4.SelectedIndex == 19) cb_key4.SelectedIndex = 17;
+                            if (cb_key4.SelectedIndex == 20) cb_key4.SelectedIndex = 18;
+                            cb_key4.Items.Remove(cb_key4.Items[20]);
+                            cb_key4.Items.Remove(cb_key4.Items[19]);
+                        }
+                    }
+                    else
+                    {
+                        nud_tmr4.Enabled = true;
+                        if (cb_key4.Items.Count < 20)
+                        {
+                            cb_key4.Items.Add("Shift+LM");
+                            cb_key4.Items.Add("Shift+RM");
+                            
+                        }
+                    }
+                    break;
+
+                case "chb_key5":
+                    if (cb.Checked)
+                    {
+                        nud_tmr5.Enabled = false;
+                        if (cb_key5.Items.Count > 20)
+                        {
+                            if (cb_key5.SelectedIndex == 19) cb_key5.SelectedIndex = 17;
+                            if (cb_key5.SelectedIndex == 20) cb_key5.SelectedIndex = 18;
+                            cb_key5.Items.Remove(cb_key5.Items[20]);
+                            cb_key5.Items.Remove(cb_key5.Items[19]);
+                        }
+                    }
+                    else
+                    {
+                        nud_tmr5.Enabled = true;
+                        if (cb_key5.Items.Count < 20)
+                        {
+                            cb_key5.Items.Add("Shift+LM");
+                            cb_key5.Items.Add("Shift+RM");
+                        }
+                    }
+                    break;
+
+                case "chb_key6":
+                    if (cb.Checked)
+                    {
+                        nud_tmr6.Enabled = false;
+                        if (cb_key6.Items.Count > 20)
+                        {
+                            if (cb_key6.SelectedIndex == 19) cb_key6.SelectedIndex = 17;
+                            if (cb_key6.SelectedIndex == 20) cb_key6.SelectedIndex = 18;
+                            cb_key6.Items.Remove(cb_key6.Items[20]);
+                            cb_key6.Items.Remove(cb_key6.Items[19]);
+                        }
+                    }
+                    else
+                    {
+                        nud_tmr6.Enabled = true;
+                        if (cb_key6.Items.Count < 20)
+                        {
+                            cb_key6.Items.Add("Shift+LM");
+                            cb_key6.Items.Add("Shift+RM");
+
+                        }
+                    }
+                    break;
             }
         }
 

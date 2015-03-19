@@ -66,6 +66,9 @@
     <Compile Include="d3hot.Designer.cs">
       <DependentUpon>d3hot.cs</DependentUpon>
     </Compile>
+    <Compile Include="Keyboard.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="d3hot.resx">
