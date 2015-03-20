@@ -103,6 +103,9 @@
             this.chb_key2 = new System.Windows.Forms.CheckBox();
             this.chb_key1 = new System.Windows.Forms.CheckBox();
             this.tt_key = new System.Windows.Forms.ToolTip(this.components);
+            this.chb_hold = new System.Windows.Forms.CheckBox();
+            this.lb_hold = new System.Windows.Forms.Label();
+            this.chb_mpress = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr3)).BeginInit();
@@ -917,6 +920,8 @@
             // pan_opt
             // 
             this.pan_opt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pan_opt.Controls.Add(this.chb_mpress);
+            this.pan_opt.Controls.Add(this.chb_hold);
             this.pan_opt.Controls.Add(this.lb_key_delay_desc);
             this.pan_opt.Controls.Add(this.nud_key_delay_ms);
             this.pan_opt.Controls.Add(this.cb_key_delay);
@@ -1018,7 +1023,7 @@
             // chb_mult
             // 
             this.chb_mult.AutoSize = true;
-            this.chb_mult.Location = new System.Drawing.Point(196, 79);
+            this.chb_mult.Location = new System.Drawing.Point(196, 81);
             this.chb_mult.Name = "chb_mult";
             this.chb_mult.Size = new System.Drawing.Size(98, 17);
             this.chb_mult.TabIndex = 70;
@@ -1028,7 +1033,7 @@
             // chb_tray
             // 
             this.chb_tray.AutoSize = true;
-            this.chb_tray.Location = new System.Drawing.Point(196, 114);
+            this.chb_tray.Location = new System.Drawing.Point(196, 119);
             this.chb_tray.Name = "chb_tray";
             this.chb_tray.Size = new System.Drawing.Size(126, 17);
             this.chb_tray.TabIndex = 69;
@@ -1092,6 +1097,7 @@
             this.chb_key6.Size = new System.Drawing.Size(15, 14);
             this.chb_key6.TabIndex = 68;
             this.chb_key6.UseVisualStyleBackColor = true;
+            this.chb_key6.Visible = false;
             this.chb_key6.CheckedChanged += new System.EventHandler(this.chb_key_CheckedChanged);
             // 
             // chb_key5
@@ -1102,6 +1108,7 @@
             this.chb_key5.Size = new System.Drawing.Size(15, 14);
             this.chb_key5.TabIndex = 67;
             this.chb_key5.UseVisualStyleBackColor = true;
+            this.chb_key5.Visible = false;
             this.chb_key5.CheckedChanged += new System.EventHandler(this.chb_key_CheckedChanged);
             // 
             // chb_key4
@@ -1112,6 +1119,7 @@
             this.chb_key4.Size = new System.Drawing.Size(15, 14);
             this.chb_key4.TabIndex = 66;
             this.chb_key4.UseVisualStyleBackColor = true;
+            this.chb_key4.Visible = false;
             this.chb_key4.CheckedChanged += new System.EventHandler(this.chb_key_CheckedChanged);
             // 
             // chb_key3
@@ -1122,6 +1130,7 @@
             this.chb_key3.Size = new System.Drawing.Size(15, 14);
             this.chb_key3.TabIndex = 65;
             this.chb_key3.UseVisualStyleBackColor = true;
+            this.chb_key3.Visible = false;
             this.chb_key3.CheckedChanged += new System.EventHandler(this.chb_key_CheckedChanged);
             // 
             // chb_key2
@@ -1132,6 +1141,7 @@
             this.chb_key2.Size = new System.Drawing.Size(15, 14);
             this.chb_key2.TabIndex = 64;
             this.chb_key2.UseVisualStyleBackColor = true;
+            this.chb_key2.Visible = false;
             this.chb_key2.CheckedChanged += new System.EventHandler(this.chb_key_CheckedChanged);
             // 
             // chb_key1
@@ -1142,13 +1152,47 @@
             this.chb_key1.Size = new System.Drawing.Size(15, 14);
             this.chb_key1.TabIndex = 63;
             this.chb_key1.UseVisualStyleBackColor = true;
+            this.chb_key1.Visible = false;
             this.chb_key1.CheckedChanged += new System.EventHandler(this.chb_key_CheckedChanged);
+            // 
+            // chb_hold
+            // 
+            this.chb_hold.AutoSize = true;
+            this.chb_hold.Location = new System.Drawing.Point(330, 81);
+            this.chb_hold.Name = "chb_hold";
+            this.chb_hold.Size = new System.Drawing.Size(109, 17);
+            this.chb_hold.TabIndex = 77;
+            this.chb_hold.Text = "Зажатие кнопок";
+            this.chb_hold.UseVisualStyleBackColor = true;
+            this.chb_hold.CheckedChanged += new System.EventHandler(this.chb_hold_CheckedChanged);
+            // 
+            // lb_hold
+            // 
+            this.lb_hold.AutoSize = true;
+            this.lb_hold.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lb_hold.Location = new System.Drawing.Point(15, 155);
+            this.lb_hold.Name = "lb_hold";
+            this.lb_hold.Size = new System.Drawing.Size(309, 13);
+            this.lb_hold.TabIndex = 76;
+            this.lb_hold.Text = "Выберите процесс для передачи зажатых клавиш.";
+            this.lb_hold.Visible = false;
+            // 
+            // chb_mpress
+            // 
+            this.chb_mpress.AutoSize = true;
+            this.chb_mpress.Location = new System.Drawing.Point(330, 119);
+            this.chb_mpress.Name = "chb_mpress";
+            this.chb_mpress.Size = new System.Drawing.Size(106, 17);
+            this.chb_mpress.TabIndex = 78;
+            this.chb_mpress.Text = "Мультинажатие";
+            this.chb_mpress.UseVisualStyleBackColor = true;
             // 
             // d3hot
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(459, 285);
+            this.Controls.Add(this.lb_hold);
             this.Controls.Add(this.b_opt);
             this.Controls.Add(this.lb_lang_name);
             this.Controls.Add(this.lb_proc);
@@ -1160,12 +1204,12 @@
             this.Controls.Add(this.lb_area);
             this.Controls.Add(this.cb_prog);
             this.Controls.Add(this.cb_start);
-            this.Controls.Add(this.pan_main);
             this.Controls.Add(this.pan_opt);
+            this.Controls.Add(this.pan_main);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "d3hot";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Diablo 3 Hotkeys ver. 1.6";
+            this.Text = "Diablo 3 Hotkeys ver. 1.7";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.d3hot_FormClosing);
             this.Load += new System.EventHandler(this.d3hot_Load);
             this.Resize += new System.EventHandler(this.d3hot_Resize);
@@ -1261,6 +1305,9 @@
         private System.Windows.Forms.CheckBox chb_key3;
         private System.Windows.Forms.CheckBox chb_key2;
         private System.Windows.Forms.ToolTip tt_key;
+        private System.Windows.Forms.CheckBox chb_hold;
+        private System.Windows.Forms.Label lb_hold;
+        private System.Windows.Forms.CheckBox chb_mpress;
     }
 }
 

@@ -55,6 +55,9 @@ namespace D3Hot
             Settings.Default.chb_key5 = chb_key5.Checked ? 1 : 0;
             Settings.Default.chb_key6 = chb_key6.Checked ? 1 : 0;
 
+            Settings.Default.chb_hold = chb_hold.Checked ? 1 : 0;
+            Settings.Default.chb_mpress = chb_mpress.Checked ? 1 : 0;
+
             Settings.Default.Save();
             curr_save();
         }
@@ -147,6 +150,9 @@ namespace D3Hot
             chb_key4.Checked = Settings.Default.chb_key4 == 1 ? true : false;
             chb_key5.Checked = Settings.Default.chb_key5 == 1 ? true : false;
             chb_key6.Checked = Settings.Default.chb_key6 == 1 ? true : false;
+
+            chb_hold.Checked = Settings.Default.chb_hold == 1 ? true : false;
+            chb_mpress.Checked = Settings.Default.chb_mpress == 1 ? true : false;
         }
 
         public class SettingsTable
@@ -230,6 +236,9 @@ namespace D3Hot
                     case "chb_key4": Settings.Default.chb_key4 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "chb_key5": Settings.Default.chb_key5 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "chb_key6": Settings.Default.chb_key6 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+
+                    case "chb_hold": Settings.Default.chb_hold = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    case "chb_mpress": Settings.Default.chb_mpress = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                 }
             }
 

@@ -10,7 +10,8 @@ namespace D3Hot
             lb_about, lb_area, lb_proc, lb_stop, lb_auth, lang_sec,
             tt_start, tt_stop, tt_key, tt_delay, tt_trig,
             lb_startstop, lb_tp, lb_tpdelay,
-            chb_tray, chb_mult, b_opt, lb_key_delay, lb_key_delay_ms
+            chb_tray, chb_mult, b_opt, lb_key_delay, lb_key_delay_ms,
+            lb_hold, chb_hold, chb_mpress
             ;
 
 
@@ -54,6 +55,10 @@ namespace D3Hot
 
             lb_key_delay = "Клавиша с паузой";
             lb_key_delay_ms = "Задержка клавиши";
+
+            lb_hold = "Выберите процесс для передачи зажатых клавиш.";
+            chb_hold = "Зажатие кнопок";
+            chb_mpress = "Мультинажатие";
         }
         public void Lang_eng()
         {
@@ -95,6 +100,10 @@ namespace D3Hot
 
             lb_key_delay = "Key with delay";
             lb_key_delay_ms = "Key delay time";
+
+            lb_hold = "Choose a process for keys pressing.";
+            chb_hold = "Holding keys";
+            chb_mpress = "Multi keypress";
         }
 
     }

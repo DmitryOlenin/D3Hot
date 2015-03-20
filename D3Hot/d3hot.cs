@@ -9,7 +9,6 @@ using D3Hot.Properties;
 using System.Globalization;
 using System.IO;
 using System.Diagnostics;
-using Microsoft.Win32;
 using System.Collections.Generic; //11.03.2015 
 
 namespace D3Hot
@@ -27,6 +26,7 @@ namespace D3Hot
             tmr1_r = 0, tmr2_r = 0, tmr3_r = 0, tmr4_r = 0, tmr5_r = 0, tmr6_r = 0,
             pause = 0, prof_prev, tp_delay=0, tmr_all_counter=0
             ,hold_key0 = 0, hold_key1 = 0, hold_key2 = 0, hold_key3 = 0, hold_key4 = 0, hold_key5 = 0
+            ,multikeys = 0
             ;
 
         public double tmr1_i = 0, tmr2_i = 0, tmr3_i = 0, tmr4_i = 0, tmr5_i = 0, tmr6_i = 0;
@@ -407,7 +407,7 @@ namespace D3Hot
                 //Если T|Enter не нажаты, запускаем таймеры триггеров 1-2-3-4-5-6 при активном состоянии и останавливаем при отключенном.
                 if (t_press == 0 && r_press == 0 && delay_press == 0)
                 {
-                    tmr_all_counter = 5;
+                    tmr_all_counter = 3;
                     if (tmr1_f == 1)
                     {
                         if (key_press(trig1))
@@ -580,7 +580,7 @@ namespace D3Hot
                 if (tmr_all_counter>0) 
                 {
                     tmr_all_counter--;
-                    hold_clear (88);                
+                    hold_clear(88);                
                 }                
             }
         }
@@ -591,12 +591,18 @@ namespace D3Hot
             {
                 if (hold[i] > 0)
                 {
+                    keyup(i+1); //20.03.2015
                     hold_unload(i + 1);
                     hold[i] = 0;
                 }
             }
             else
             {
+                for (int j = 0; j < 6; j++)
+                {
+                    if (hold[j] > 0) 
+                        keyup(j + 1);
+                }
                 for (int j = 0; j < 6; j++)
                 {
                     if (hold[j] > 0)
@@ -654,31 +660,11 @@ namespace D3Hot
         public void tmr_Elapsed(object sender, EventArgs e)
         {
             var tmr = (System.Timers.Timer)sender;
-            //int hold_key = 0;
-
-
-            //IntPtr hWindow;
-            //const uint WM_KEYDOWN = 256;
-            //const uint WM_KEYUP = 257;
-            //if (d3prog && title.ToLower().Contains("калькулятор"))//diablo
-            //{
-            //    hWindow = FindWindow(null, "akelpad");
-            //    //MessageBox.Show(hWindow.ToString());
-            //    hWindow = FindWindowEx(hWindow, IntPtr.Zero, "AkelEditW", null);
-            //    //MessageBox.Show(hWindow.ToString());
-                
-            //    //MessageBox.Show(hWindow.ToString());
-            //    int t1 = (int)Keys.B;
-            //    //int t1 = (int)Keys.D3;
-            //    //PostMessage(hWindow, WM_KEYUP, t1, 0);
-            //    PostMessage(hWindow, WM_KEYDOWN, t1, 0);
-            //}
-
+            int mult = 1;
             //Если всё в порядке, нажимаем соответствующую клавишу.
             if (usage_area())
             {
                 VirtualKeyCode key = VirtualKeyCode.VK_0;
-                //MessageBox.Show(GetForegroundWindow().ToString());
 
                 if (tmr == tmr1 && key_press(trig1)) key = virt_code(key1); else 
                 if (tmr == tmr2 && key_press(trig2)) key = virt_code(key2); else
@@ -687,15 +673,10 @@ namespace D3Hot
                 if (tmr == tmr5 && key_press(trig5)) key = virt_code(key5); else
                 if (tmr == tmr6 && key_press(trig6)) key = virt_code(key6);
 
-                //if ((hold_key0 == 1) && (key == virt_code(key1))) hold_key = 1; else
-                //if ((hold_key1 == 1) && (key == virt_code(key2))) hold_key = 2; else
-                //if ((hold_key2 == 1) && (key == virt_code(key3))) hold_key = 3; else
-                //if ((hold_key3 == 1) && (key == virt_code(key4))) hold_key = 4; else
-                //if ((hold_key4 == 1) && (key == virt_code(key5))) hold_key = 5; else
-                //if ((hold_key5 == 1) && (key == virt_code(key6))) hold_key = 6;
+                if (multikeys != 0) mult = 3;
 
-                //if (hold_key == 0)
-                //{
+                for (int i = 0; i < mult; i++)
+                {
                     switch (key)
                     {
                         case VirtualKeyCode.LBUTTON: inp.Mouse.LeftButtonClick(); break;
@@ -705,38 +686,7 @@ namespace D3Hot
                         case VirtualKeyCode.VK_0: break;
                         default: inp.Keyboard.KeyPress(key); break;
                     }
-                //}
-                //else
-                //{
-                //    switch (hold_key) //Hold a keys //17.03.2015
-                //    {
-                //        case 1: 
-                //            if (hold[0] == 0) keybd_event((byte)virt_code(key1), 0, 0, 0);
-                //            hold[0] = 1;
-                //            tmr1.AutoReset = false;
-                //            break;
-                //        case 2:
-                //            if (hold[1] == 0) keybd_event((byte)virt_code(key2), 0, 0, 0);
-                //            hold[1] = 1;
-                //            break;
-                //        case 3:
-                //            if (hold[2] == 0) keybd_event((byte)virt_code(key3), 0, 0, 0);
-                //            hold[2] = 1;
-                //            break;
-                //        case 4:
-                //            if (hold[3] == 0) keybd_event((byte)virt_code(key4), 0, 0, 0);
-                //            hold[3] = 1;
-                //            break;
-                //        case 5:
-                //            if (hold[4] == 0) keybd_event((byte)virt_code(key5), 0, 0, 0);
-                //            hold[4] = 1;
-                //            break;
-                //        case 6:
-                //            if (hold[5] == 0) keybd_event((byte)virt_code(key6), 0, 0, 0);
-                //            hold[5] = 1;
-                //            break;
-                //    }
-                //}
+                }
             }
 
         }
@@ -787,10 +737,11 @@ namespace D3Hot
                 (cb_trig_tmr6.SelectedIndex != 0 && nud_tmr6.Value != 0) ) 
                 i++;
 
-            if (i == 0) cb_start.Checked = false;
+            if (i == 0 || lb_hold.Visible) cb_start.Checked = false;
 
             if (cb_start.Checked)
             {
+                multikeys = Settings.Default.chb_mpress;
                 hold = new int[] { 0, 0, 0, 0, 0, 0 }; //17.03.2015
                 if (pan_opt.Visible) b_opt_Click(null, null);
                 if (nud_key_delay_ms.Value>0) delay_press_interval = Convert.ToInt32(nud_key_delay_ms.Value);
@@ -873,14 +824,23 @@ namespace D3Hot
             }
             else
             {
-                foreach (NumericUpDown numud in this.pan_main.Controls.OfType<NumericUpDown>()) numud.Enabled = true;
+                if (!chb_key1.Checked) nud_tmr1.Enabled = true;
+                if (!chb_key2.Checked) nud_tmr2.Enabled = true;
+                if (!chb_key3.Checked) nud_tmr3.Enabled = true;
+                if (!chb_key4.Checked) nud_tmr4.Enabled = true;
+                if (!chb_key5.Checked) nud_tmr5.Enabled = true;
+                if (!chb_key6.Checked) nud_tmr6.Enabled = true;
+
+                //foreach (NumericUpDown numud in this.pan_main.Controls.OfType<NumericUpDown>()) numud.Enabled = true;
                 foreach (ComboBox cb in this.pan_main.Controls.OfType<ComboBox>()) cb.Enabled = true;
                 foreach (ComboBox cbm in this.Controls.OfType<ComboBox>()) cbm.Enabled = true;
                 foreach (CheckBox chb in this.pan_main.Controls.OfType<CheckBox>())
                 {
                     chb.Enabled = true;
-                    chb_key_CheckedChanged(chb, null);
+                    if (chb.Checked) cb_prog.Enabled = false;
                 }
+
+   
                 b_opt.Enabled = true;
 
                 cb_start.Text = "Start";
@@ -1003,6 +963,10 @@ namespace D3Hot
             }
             foreach (CheckBox chb in this.pan_main.Controls.OfType<CheckBox>()) tt_key.SetToolTip(chb, lng.tt_key);
             foreach (NumericUpDown nud in this.pan_main.Controls.OfType<NumericUpDown>()) tt_key.SetToolTip(nud, lng.tt_delay);
+
+            lb_hold.Text = lng.lb_hold;
+            chb_hold.Text = lng.chb_hold;
+            chb_mpress.Text = lng.chb_mpress;
         }
 
         /// <summary>
@@ -1146,11 +1110,22 @@ namespace D3Hot
                 cb_prog.SelectedIndex = 0;
                 cb_prog.Enabled = false;
                 handle = proc_handle[proc_curr];
+
+                handle = FindWindow(null, "akelpad");
+                handle = FindWindowEx(handle, IntPtr.Zero, "AkelEditW", null);
+                lb_hold.Visible = false;
             }
             else
             {
                 d3proc = false;
-                cb_prog.Enabled = true;
+                
+                int i = 0;
+                foreach (CheckBox chb_check in this.pan_main.Controls.OfType<CheckBox>())
+                    if (chb_hold.Checked && chb_check.Checked) i++;
+                if (i>0)
+                    lb_hold.Visible = true;
+                else
+                    cb_prog.Enabled = true;
             }
         }
 
@@ -1239,10 +1214,35 @@ namespace D3Hot
         {
             var cb = (CheckBox)sender;
             var chb = ((CheckBox)sender).Name;
+
+            if (cb.Checked && cb_prog.Enabled)
+            {
+                cb_prog.Enabled = false;
+                cb_prog.SelectedIndex = 0;
+                cb_prog_SelectionChangeCommitted(null, null);
+                if (chb_hold.Checked)
+                {
+                    lb_hold.Visible = true;
+                    cb_proc.SelectedIndex = -1;
+                }
+            }
+            else
+            {
+                int i = 0;
+                foreach (CheckBox chb_check in this.pan_main.Controls.OfType<CheckBox>())
+                    if (chb_check.Checked) i++;
+                if (i == 0 && !cb_prog.Enabled && cb_proc.SelectedIndex<1)
+                {
+                    cb_prog.Enabled = true;
+                    lb_hold.Visible = false;
+                }
+
+            }
+
             switch (chb)
             {
                 case "chb_key1":
-                    if (cb.Checked)
+                    if (cb.Checked && chb_hold.Checked)
                     {
                         nud_tmr1.Enabled = false;
                         if (cb_key1.Items.Count > 20)
@@ -1265,7 +1265,7 @@ namespace D3Hot
                     break;
 
                 case "chb_key2":
-                    if (cb.Checked)
+                    if (cb.Checked && chb_hold.Checked)
                     {
                         nud_tmr2.Enabled = false;
                         if (cb_key2.Items.Count > 20)
@@ -1288,7 +1288,7 @@ namespace D3Hot
                     break;
 
                 case "chb_key3":
-                    if (cb.Checked)
+                    if (cb.Checked && chb_hold.Checked)
                     {
                         nud_tmr3.Enabled = false;
                         if (cb_key3.Items.Count > 20)
@@ -1311,7 +1311,7 @@ namespace D3Hot
                     break;
 
                 case "chb_key4":
-                    if (cb.Checked)
+                    if (cb.Checked && chb_hold.Checked)
                     {
                         nud_tmr4.Enabled = false;
                         if (cb_key4.Items.Count > 20)
@@ -1335,7 +1335,7 @@ namespace D3Hot
                     break;
 
                 case "chb_key5":
-                    if (cb.Checked)
+                    if (cb.Checked && chb_hold.Checked)
                     {
                         nud_tmr5.Enabled = false;
                         if (cb_key5.Items.Count > 20)
@@ -1358,7 +1358,7 @@ namespace D3Hot
                     break;
 
                 case "chb_key6":
-                    if (cb.Checked)
+                    if (cb.Checked && chb_hold.Checked)
                     {
                         nud_tmr6.Enabled = false;
                         if (cb_key6.Items.Count > 20)
@@ -1380,6 +1380,36 @@ namespace D3Hot
                         }
                     }
                     break;
+            }
+        }
+
+        private void chb_hold_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chb_hold.Checked)
+            {
+                foreach (CheckBox chb in this.pan_main.Controls.OfType<CheckBox>())
+                {
+                    if (chb.Name != "cb_start")
+                    {
+                        chb.Visible = true;
+                        chb_key_CheckedChanged(chb, null);
+                        if (chb.Checked && cb_proc.SelectedIndex<1) lb_hold.Visible = true;
+                    }
+                }
+            }
+            else 
+            {
+                foreach (CheckBox chb in this.pan_main.Controls.OfType<CheckBox>())
+                {
+                    if (chb.Name != "cb_start")
+                    {
+                        chb.Visible = false;
+                        chb_key_CheckedChanged(chb, null);
+                    }
+                }
+                lb_hold.Visible = false;
+                if (!cb_prog.Enabled && cb_proc.SelectedIndex < 1)
+                    cb_prog.Enabled = true;
             }
         }
 

@@ -442,5 +442,29 @@ namespace D3Hot.Properties {
                 this["chb_key6"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int chb_hold {
+            get {
+                return ((int)(this["chb_hold"]));
+            }
+            set {
+                this["chb_hold"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int chb_mpress {
+            get {
+                return ((int)(this["chb_mpress"]));
+            }
+            set {
+                this["chb_mpress"] = value;
+            }
+        }
     }
 }
