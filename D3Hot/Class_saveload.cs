@@ -11,6 +11,8 @@ namespace D3Hot
 {
     public partial class d3hot : Form
     {
+        public string path = "";
+
         /// <summary>
         /// Метод для сохранения настроек. Параметр i=1 для сохранения настроек при выходе.
         /// </summary>
@@ -57,6 +59,9 @@ namespace D3Hot
 
             Settings.Default.chb_hold = chb_hold.Checked ? 1 : 0;
             Settings.Default.chb_mpress = chb_mpress.Checked ? 1 : 0;
+            Settings.Default.chb_saveload = chb_saveload.Checked ? 1 : 0;
+
+            Settings.Default.nud_rand = nud_rand.Value;
 
             Settings.Default.Save();
             curr_save();
@@ -98,7 +103,7 @@ namespace D3Hot
                         Ints.Rows.Add(currentProperty.Name.ToString(), Convert.ToInt32(Settings.Default[currentProperty.Name]));
                     }
                 }
-                string path = "";
+                if (path == "")
                 switch (Settings.Default.prof_curr)
                 {
                     case 1: path = Path.Combine(Directory.GetCurrentDirectory(), "d3h_prof1.xml"); break;
@@ -106,6 +111,7 @@ namespace D3Hot
                     case 3: path = Path.Combine(Directory.GetCurrentDirectory(), "d3h_prof3.xml"); break;
                 }
                 if (path != "") WriteXML(path);
+                path = "";
             }
         }
 
@@ -153,6 +159,9 @@ namespace D3Hot
 
             chb_hold.Checked = Settings.Default.chb_hold == 1 ? true : false;
             chb_mpress.Checked = Settings.Default.chb_mpress == 1 ? true : false;
+            chb_saveload.Checked = Settings.Default.chb_saveload == 1 ? true : false;
+
+            nud_rand.Value = Settings.Default.nud_rand;
         }
 
         public class SettingsTable
@@ -164,11 +173,11 @@ namespace D3Hot
         /// Метод для записи XML-файла.
         /// </summary>
         /// <param name="path"></param>
-        public static void WriteXML(string path)
+        public static void WriteXML(string target)
         {
             XmlSerializer writer = new XmlSerializer(typeof(SettingsTable));
             //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "//SerializationOverview.xml";
-            System.IO.FileStream file = System.IO.File.Create(path);
+            System.IO.FileStream file = System.IO.File.Create(target);
             writer.Serialize(file, overview);
             file.Close();
             overview.dataset.Dispose();
@@ -178,10 +187,10 @@ namespace D3Hot
         /// Метод для чтения из XML-файла.
         /// </summary>
         /// <param name="path"></param>
-        public void ReadXML(string path)
+        public void ReadXML(string target)
         {
             System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(SettingsTable));
-            System.IO.StreamReader file = new System.IO.StreamReader(path);
+            System.IO.StreamReader file = new System.IO.StreamReader(target);
             SettingsTable overview = new SettingsTable();
             overview = (SettingsTable)reader.Deserialize(file);
 
@@ -201,6 +210,7 @@ namespace D3Hot
                     case "nud_tmr5": Settings.Default.nud_tmr5 = Convert.ToDecimal(overview.dataset.Tables[1].Rows[j][1]); break;
                     case "nud_tmr6": Settings.Default.nud_tmr6 = Convert.ToDecimal(overview.dataset.Tables[1].Rows[j][1]); break;
                     case "nud_key_delay_ms": Settings.Default.nud_key_delay_ms = Convert.ToDecimal(overview.dataset.Tables[1].Rows[j][1]); break;
+                    case "nud_rand": Settings.Default.nud_rand = Convert.ToDecimal(overview.dataset.Tables[1].Rows[j][1]); break;
                 }
             }
             for (int k = 0; k < overview.dataset.Tables[2].Rows.Count; k++)
@@ -239,6 +249,8 @@ namespace D3Hot
 
                     case "chb_hold": Settings.Default.chb_hold = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "chb_mpress": Settings.Default.chb_mpress = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    case "chb_saveload": Settings.Default.chb_saveload = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                        
                 }
             }
 

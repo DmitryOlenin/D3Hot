@@ -6,7 +6,7 @@ namespace D3Hot
         public string
             lb_trig1, lb_trig2, lb_trig3, lb_trig4, lb_trig5, lb_trig6,
             lb_key1, lb_key2, lb_key3, lb_key4, lb_key5, lb_key6,
-            lb_tmr_sec, lb_prof,
+            lb_tmr_sec, lb_prof, lb_prof_save, lb_rand,
             lb_about, lb_area, lb_proc, lb_stop, lb_auth, lang_sec,
             tt_start, tt_stop, tt_key, tt_delay, tt_trig,
             lb_startstop, lb_tp, lb_tpdelay,
@@ -43,6 +43,7 @@ namespace D3Hot
             lb_auth = "Автор: Dmitry Olenin";
             lang_sec = "сек.";
             lb_prof = "Профиль";
+            lb_prof_save = "Профиль из файла";
 
             tt_start = "Запуск";
             tt_stop = "Остановка";
@@ -56,9 +57,10 @@ namespace D3Hot
             lb_key_delay = "Клавиша с паузой";
             lb_key_delay_ms = "Задержка клавиши";
 
-            lb_hold = "Выберите процесс для передачи зажатых клавиш.";
+            lb_hold = "Выберите процесс для передачи зажатой клавиши.";
             chb_hold = "Зажатие кнопок";
             chb_mpress = "Мультинажатие";
+            lb_rand = "Случайная задержка";
         }
         public void Lang_eng()
         {
@@ -88,6 +90,7 @@ namespace D3Hot
             lb_auth = "Author: Dmitry Olenin";
             lang_sec = "sec.";
             lb_prof = "Profile";
+            lb_prof_save = "Profile from file";
 
             tt_start = "Start";
             tt_stop = "Stop";
@@ -101,9 +104,10 @@ namespace D3Hot
             lb_key_delay = "Key with delay";
             lb_key_delay_ms = "Key delay time";
 
-            lb_hold = "Choose a process for keys pressing.";
+            lb_hold = "Choose a process for key press.";
             chb_hold = "Holding keys";
             chb_mpress = "Multi keypress";
+            lb_rand = "Random delay";
         }
 
     }

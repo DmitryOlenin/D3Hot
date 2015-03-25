@@ -466,5 +466,29 @@ namespace D3Hot.Properties {
                 this["chb_mpress"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int chb_saveload {
+            get {
+                return ((int)(this["chb_saveload"]));
+            }
+            set {
+                this["chb_saveload"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal nud_rand {
+            get {
+                return ((decimal)(this["nud_rand"]));
+            }
+            set {
+                this["nud_rand"] = value;
+            }
+        }
     }
 }
