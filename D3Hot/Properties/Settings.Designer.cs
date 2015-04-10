@@ -490,5 +490,65 @@ namespace D3Hot.Properties {
                 this["nud_rand"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int cb_hot_prof {
+            get {
+                return ((int)(this["cb_hot_prof"]));
+            }
+            set {
+                this["cb_hot_prof"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string tb_prof_name {
+            get {
+                return ((string)(this["tb_prof_name"]));
+            }
+            set {
+                this["tb_prof_name"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Profile 1")]
+        public string profile1 {
+            get {
+                return ((string)(this["profile1"]));
+            }
+            set {
+                this["profile1"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Profile 2")]
+        public string profile2 {
+            get {
+                return ((string)(this["profile2"]));
+            }
+            set {
+                this["profile2"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Profile 3")]
+        public string profile3 {
+            get {
+                return ((string)(this["profile3"]));
+            }
+            set {
+                this["profile3"] = value;
+            }
+        }
     }
 }

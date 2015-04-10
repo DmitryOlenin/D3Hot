@@ -4,6 +4,8 @@ using Microsoft.Win32;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing;
+using WindowsInput.Native;
+//using InputManager; //26.03.2015
 
 namespace D3Hot
 {
@@ -29,6 +31,7 @@ namespace D3Hot
         const uint WM_KEYDOWN = 0x100;
         const uint WM_KEYUP = 0x101;
         const uint WM_CHAR = 0x102;
+        const uint WM_SYSKEYDOWN = 0x104;
         const uint WM_LBUTTONDOWN = 0x201;
         const uint WM_LBUTTONUP = 0x202;
         const uint WM_RBUTTONDOWN = 0x204;
@@ -60,20 +63,25 @@ namespace D3Hot
 
             ret = _MapVirtualKey(key_for_keyup, 0);
 
-            if ((key_for_keyup == (int)Keys.LButton) || (key_for_keyup == (int)Keys.RButton))
-            {
-                Point defPnt = new Point();
-                GetCursorPos(ref defPnt);
+            //if ((key_for_keyup == (int)Keys.LButton) || (key_for_keyup == (int)Keys.RButton))
+            //{
+                //Point defPnt = new Point();
+                //GetCursorPos(ref defPnt);
 
-                PostMessage(handle,
-                           updown_keys(key_for_keyup)+1,
-                           0, (int)MakeLong(defPnt.X, defPnt.Y));
-            }
+                //PostMessage(handle,
+                //           updown_keys(key_for_keyup)+1,
+                //           0, (int)MakeLong(defPnt.X, defPnt.Y));
+
+            //}
+            if (key_for_keyup == (int)Keys.LButton)
+                inp.Mouse.LeftButtonUp(); //Mouse.ButtonUp(Mouse.MouseKeys.Left);
+            else if (key_for_keyup == (int)Keys.RButton)
+                inp.Mouse.RightButtonUp(); //Mouse.ButtonUp(Mouse.MouseKeys.Right);
             else
             {
                 PostMessage(handle,//hWindow,
                        updown_keys(key_for_keyup) + 1,//(int)WM_KEYUP,
-                       key_for_keyup, (int)(MakeLong(1, ret) + 0xC0000000));
+                       key_for_keyup, (int)(MakeLong(1, ret) + 0xC0000000)); //(int)
             }
         }
 
@@ -114,31 +122,38 @@ namespace D3Hot
 
         public void repeatTimer_Tick(object sender, EventArgs e)
         {
-            System.Timers.Timer timer = sender as System.Timers.Timer;
-            int key_for_hold = timer_key(timer);
-
-            int ret = 0;
-            ret = _MapVirtualKey(key_for_hold, 0);
-
-            if ((key_for_hold == (int)Keys.LButton) || (key_for_hold == (int)Keys.RButton))
+            if (holded)
             {
-                Point defPnt = new Point();
-                GetCursorPos(ref defPnt);
-                PostMessage(handle,
-                            updown_keys(key_for_hold),
-                            key_for_hold, (int)MakeLong(defPnt.X, defPnt.Y));
-            }
-            else
-            {
+                System.Timers.Timer timer = sender as System.Timers.Timer;
+                int key_for_hold = timer_key(timer);
 
-                PostMessage(handle,//hWindow,
-                            updown_keys(key_for_hold),
-                            key_for_hold, (int)(MakeLong(1, ret)));
-            }
+                int ret = 0;
+                ret = _MapVirtualKey(key_for_hold, 0);
 
-                    //PostMessage(handle,//hWindow,
-                    //       updown_keys(key_for_hold),//(int)WM_KEYDOWN,
-                    //       key_for_hold, 0);            
+                if ((key_for_hold == (int)Keys.LButton) || (key_for_hold == (int)Keys.RButton))
+                {
+                    //IntPtr handle1;
+                    //handle1 = FindWindow(null, "akelpad");
+                    //handle1 = FindWindowEx(handle1, IntPtr.Zero, "AkelEditW", null); //For debugging
+                    //if (usage_area() || handle == handle1)
+
+                    if (usage_area())
+                    {
+                        if (key_for_hold == (int)Keys.LButton && inp.InputDeviceState.IsKeyUp(VirtualKeyCode.LBUTTON))
+                            inp.Mouse.LeftButtonDown();
+                        if (key_for_hold == (int)Keys.RButton && inp.InputDeviceState.IsKeyUp(VirtualKeyCode.RBUTTON))
+                            inp.Mouse.RightButtonDown();
+                    }
+                }
+                else
+                {
+
+                    PostMessage(handle,//hWindow,
+                                updown_keys(key_for_hold),
+                                key_for_hold, (int)(MakeLong(1, ret)));
+                }
+
+            }
         }
 
         public void startTimer_Tick(object sender, EventArgs eventArgs)
@@ -186,12 +201,28 @@ namespace D3Hot
             {
                 if (i != 0)
                 {
-                    Point defPnt = new Point();
-                    GetCursorPos(ref defPnt);
+                    //IntPtr handle1;
+                    //handle1 = FindWindow(null, "akelpad");
+                    //handle1 = FindWindowEx(handle1, IntPtr.Zero, "AkelEditW", null);  //For debugging
+                    //if (usage_area() || handle == handle1)
 
-                    PostMessage(handle,
-                               updown_keys(key_for_hold),
-                               key_for_hold, (int)MakeLong(defPnt.X, defPnt.Y));
+                    if (usage_area())
+                    {
+                        if (key_for_hold == (int)Keys.LButton)
+                            inp.Mouse.LeftButtonDown();
+                        if (key_for_hold == (int)Keys.RButton)
+                            inp.Mouse.RightButtonDown();
+                    }
+
+                    //if (key_for_hold == (int)Keys.LButton) Mouse.ButtonDown(Mouse.MouseKeys.Left); //26.03.2015
+                    //if (key_for_hold == (int)Keys.RButton) Mouse.ButtonDown(Mouse.MouseKeys.Right); //26.03.2015
+
+                    //Point defPnt = new Point();
+                    //GetCursorPos(ref defPnt);
+
+                    //PostMessage(handle,
+                    //           updown_keys(key_for_hold),
+                    //           key_for_hold, (int)MakeLong(defPnt.X, defPnt.Y));
                 }
             }
             else
@@ -210,7 +241,7 @@ namespace D3Hot
 
         public void hold_load(int i)
         {
-
+            holded = true;
             int keyboardDelay, keyboardSpeed;
             using (var key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Keyboard"))
             {
@@ -228,72 +259,78 @@ namespace D3Hot
                     StartTimer1.Elapsed += startTimer_Tick;
                     st_timer1_r = 1; 
                     StartTimer1.Start();
-
-                    RepeatTimer1 = new System.Timers.Timer { Interval = keyboardSpeed };
-                    RepeatTimer1.Elapsed += repeatTimer_Tick;
-                    r_timer1_r = 1; 
-                    RepeatTimer1.Start();
-
+                    //if (!mouse(1))
+                    //{
+                        RepeatTimer1 = new System.Timers.Timer { Interval = keyboardSpeed };
+                        RepeatTimer1.Elapsed += repeatTimer_Tick;
+                        r_timer1_r = 1;
+                        RepeatTimer1.Start();
+                    //}
                     break;
                 case 2:
                     StartTimer2 = new System.Timers.Timer { Interval = keyboardDelay };
                     StartTimer2.Elapsed += startTimer_Tick;
                     st_timer2_r = 1; 
                     StartTimer2.Start();
-
-                    RepeatTimer2 = new System.Timers.Timer { Interval = keyboardSpeed };
-                    RepeatTimer2.Elapsed += repeatTimer_Tick;
-                    r_timer2_r = 1; 
-                    RepeatTimer2.Start();
-
+                    //if (!mouse(2))
+                    //{
+                        RepeatTimer2 = new System.Timers.Timer { Interval = keyboardSpeed };
+                        RepeatTimer2.Elapsed += repeatTimer_Tick;
+                        r_timer2_r = 1;
+                        RepeatTimer2.Start();
+                    //}
                     break;
                 case 3:
                     StartTimer3 = new System.Timers.Timer { Interval = keyboardDelay };
                     StartTimer3.Elapsed += startTimer_Tick;
                     st_timer3_r = 1; 
                     StartTimer3.Start();
-
-                    RepeatTimer3 = new System.Timers.Timer { Interval = keyboardSpeed };
-                    RepeatTimer3.Elapsed += repeatTimer_Tick;
-                    r_timer3_r = 1; 
-                    RepeatTimer3.Start();
-
+                    //if (!mouse(3))
+                    //{
+                        RepeatTimer3 = new System.Timers.Timer { Interval = keyboardSpeed };
+                        RepeatTimer3.Elapsed += repeatTimer_Tick;
+                        r_timer3_r = 1;
+                        RepeatTimer3.Start();
+                    //}
                     break;
                 case 4:
                     StartTimer4 = new System.Timers.Timer { Interval = keyboardDelay };
                     StartTimer4.Elapsed += startTimer_Tick;
                     st_timer4_r = 1; 
                     StartTimer4.Start();
-
-                    RepeatTimer4 = new System.Timers.Timer { Interval = keyboardSpeed };
-                    RepeatTimer4.Elapsed += repeatTimer_Tick;
-                    r_timer4_r = 1; 
-                    RepeatTimer4.Start();
-                    
+                    //if (!mouse(4))
+                    //{
+                        RepeatTimer4 = new System.Timers.Timer { Interval = keyboardSpeed };
+                        RepeatTimer4.Elapsed += repeatTimer_Tick;
+                        r_timer4_r = 1;
+                        RepeatTimer4.Start();
+                    //}
                     break;
                 case 5:
                     StartTimer5 = new System.Timers.Timer { Interval = keyboardDelay };
                     StartTimer5.Elapsed += startTimer_Tick;
                     st_timer5_r = 1; 
                     StartTimer5.Start();
-
-                    RepeatTimer5 = new System.Timers.Timer { Interval = keyboardSpeed };
-                    RepeatTimer5.Elapsed += repeatTimer_Tick;
-                    r_timer5_r = 1; 
-                    RepeatTimer5.Start();
-                    
+                    //if (!mouse(5))
+                    //{
+                        RepeatTimer5 = new System.Timers.Timer { Interval = keyboardSpeed };
+                        RepeatTimer5.Elapsed += repeatTimer_Tick;
+                        r_timer5_r = 1;
+                        RepeatTimer5.Start();
+                    //}
                     break;
                 case 6:
                     StartTimer6 = new System.Timers.Timer { Interval = keyboardDelay };
                     StartTimer6.Elapsed += startTimer_Tick;
                     st_timer6_r = 1; 
                     StartTimer6.Start();
-                    
-                    RepeatTimer6 = new System.Timers.Timer { Interval = keyboardSpeed };
-                    RepeatTimer6.Elapsed += repeatTimer_Tick;
-                    r_timer6_r = 1; 
-                    RepeatTimer6.Start();
-
+                    //if (!mouse(6))
+                    //{
+                        RepeatTimer6 = new System.Timers.Timer { Interval = keyboardSpeed };
+                        RepeatTimer6.Elapsed += repeatTimer_Tick;
+                        r_timer6_r = 1;
+                        RepeatTimer6.Start();
+                    //}
                     break;
             }
         }

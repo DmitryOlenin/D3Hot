@@ -9,9 +9,9 @@ namespace D3Hot
             lb_tmr_sec, lb_prof, lb_prof_save, lb_rand,
             lb_about, lb_area, lb_proc, lb_stop, lb_auth, lang_sec,
             tt_start, tt_stop, tt_key, tt_delay, tt_trig,
-            lb_startstop, lb_tp, lb_tpdelay,
+            lb_startstop, lb_tp, lb_tpdelay, tb_prof_name,
             chb_tray, chb_mult, b_opt, lb_key_delay, lb_key_delay_ms,
-            lb_hold, chb_hold, chb_mpress
+            lb_hold, lb_hold_hot, lb_hot_prof, chb_hold, chb_mpress
             ;
 
 
@@ -32,13 +32,13 @@ namespace D3Hot
             lb_key6 = "Клавиша 6";
 
             lb_tmr_sec = "Пауза..мс";
-            lb_startstop = "Хоткей запуск";
+            lb_startstop = "Хоткей старт";
             lb_tp = "Хоткей тп";
             lb_tpdelay = "Задержка тп";
 
             tt_delay = "Задержка в миллисекундах (1s = 1000ms)";
             lb_area = "Область действия";
-            lb_proc = "Процесс действия";
+            lb_proc = "Процесс";
             lb_stop = "Приостановка";
             lb_auth = "Автор: Dmitry Olenin";
             lang_sec = "сек.";
@@ -58,9 +58,12 @@ namespace D3Hot
             lb_key_delay_ms = "Задержка клавиши";
 
             lb_hold = "Выберите процесс для передачи зажатой клавиши.";
+            lb_hold_hot = "Пересечение кнопок глобальных хоткеев.";
             chb_hold = "Зажатие кнопок";
             chb_mpress = "Мультинажатие";
             lb_rand = "Случайная задержка";
+            lb_hot_prof = "Хоткеи профилей";
+            tb_prof_name = "Наименование профиля";
         }
         public void Lang_eng()
         {
@@ -105,9 +108,12 @@ namespace D3Hot
             lb_key_delay_ms = "Key delay time";
 
             lb_hold = "Choose a process for key press.";
+            lb_hold_hot = "Global hotkeys conflict.";
             chb_hold = "Holding keys";
             chb_mpress = "Multi keypress";
             lb_rand = "Random delay";
+            lb_hot_prof = "Profiles hotkeys";
+            tb_prof_name = "Profile name";
         }
 
     }

@@ -63,7 +63,12 @@ namespace D3Hot
 
             Settings.Default.nud_rand = nud_rand.Value;
 
+            Settings.Default.cb_hot_prof = cb_hot_prof.SelectedIndex;
+
+            Settings.Default.tb_prof_name = tb_prof_name.Text;
+
             Settings.Default.Save();
+
             curr_save();
         }
 
@@ -115,6 +120,17 @@ namespace D3Hot
             }
         }
 
+        private void profiles_names()
+        {
+            int k = cb_prof.SelectedIndex;
+            cb_prof.Items.Clear();
+            cb_prof.Items.Add("");
+            cb_prof.Items.Add(Settings.Default.profile1);
+            cb_prof.Items.Add(Settings.Default.profile2);
+            cb_prof.Items.Add(Settings.Default.profile3);
+            cb_prof.SelectedIndex = k;
+        }
+
         /// <summary>
         /// Метод для загрузки настроек
         /// </summary>
@@ -162,6 +178,9 @@ namespace D3Hot
             chb_saveload.Checked = Settings.Default.chb_saveload == 1 ? true : false;
 
             nud_rand.Value = Settings.Default.nud_rand;
+            cb_hot_prof.SelectedIndex = Settings.Default.cb_hot_prof;
+            tb_prof_name.Text = Settings.Default.tb_prof_name;
+
         }
 
         public class SettingsTable
@@ -198,6 +217,7 @@ namespace D3Hot
             {
                 if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "lb_lang") Settings.Default.lb_lang = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
                 if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_tp") Settings.Default.cb_tp = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
+                if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "tb_prof_name") Settings.Default.tb_prof_name = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
             }
             for (int j = 0; j < overview.dataset.Tables[1].Rows.Count; j++)
             {
@@ -250,6 +270,7 @@ namespace D3Hot
                     case "chb_hold": Settings.Default.chb_hold = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "chb_mpress": Settings.Default.chb_mpress = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "chb_saveload": Settings.Default.chb_saveload = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    case "cb_hot_prof": Settings.Default.cb_hot_prof = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;    
                         
                 }
             }

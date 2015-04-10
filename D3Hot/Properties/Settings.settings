@@ -119,5 +119,20 @@
     <Setting Name="nud_rand" Type="System.Decimal" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
+    <Setting Name="cb_hot_prof" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="tb_prof_name" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="profile1" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Profile 1</Value>
+    </Setting>
+    <Setting Name="profile2" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Profile 2</Value>
+    </Setting>
+    <Setting Name="profile3" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Profile 3</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
