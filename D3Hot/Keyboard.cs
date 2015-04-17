@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.Win32;
 using System.Diagnostics;
 using System.Windows.Forms;
-using System.Drawing;
 using WindowsInput.Native;
 //using InputManager; //26.03.2015
 

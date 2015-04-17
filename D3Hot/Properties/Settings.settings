@@ -134,5 +134,17 @@
     <Setting Name="profile3" Type="System.String" Scope="User">
       <Value Profile="(Default)">Profile 3</Value>
     </Setting>
+    <Setting Name="cb_map" Type="System.String" Scope="User">
+      <Value Profile="(Default)">M</Value>
+    </Setting>
+    <Setting Name="cb_mapdelay" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">12</Value>
+    </Setting>
+    <Setting Name="chb_users" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="chb_proconly" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

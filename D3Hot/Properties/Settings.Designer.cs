@@ -550,5 +550,53 @@ namespace D3Hot.Properties {
                 this["profile3"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("M")]
+        public string cb_map {
+            get {
+                return ((string)(this["cb_map"]));
+            }
+            set {
+                this["cb_map"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("12")]
+        public int cb_mapdelay {
+            get {
+                return ((int)(this["cb_mapdelay"]));
+            }
+            set {
+                this["cb_mapdelay"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int chb_users {
+            get {
+                return ((int)(this["chb_users"]));
+            }
+            set {
+                this["chb_users"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int chb_proconly {
+            get {
+                return ((int)(this["chb_proconly"]));
+            }
+            set {
+                this["chb_proconly"] = value;
+            }
+        }
     }
 }

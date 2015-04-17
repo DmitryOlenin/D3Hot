@@ -45,6 +45,8 @@ namespace D3Hot
             if (i == 1) Settings.Default.prof_curr = cb_prof.SelectedIndex;
             Settings.Default.cb_tp = (string)cb_tp.Text;
             Settings.Default.cb_tpdelay = cb_tpdelay.SelectedIndex;
+            Settings.Default.cb_map = (string)cb_map.Text;
+            Settings.Default.cb_mapdelay = cb_mapdelay.SelectedIndex;
             Settings.Default.chb_tray = chb_tray.Checked ? 1 : 0;
             Settings.Default.chb_mult = chb_mult.Checked ? 1 : 0;
             Settings.Default.nud_key_delay_ms = nud_key_delay_ms.Value;
@@ -60,6 +62,8 @@ namespace D3Hot
             Settings.Default.chb_hold = chb_hold.Checked ? 1 : 0;
             Settings.Default.chb_mpress = chb_mpress.Checked ? 1 : 0;
             Settings.Default.chb_saveload = chb_saveload.Checked ? 1 : 0;
+            Settings.Default.chb_users = chb_users.Checked ? 1 : 0;
+            Settings.Default.chb_proconly = chb_proconly.Checked ? 1 : 0;
 
             Settings.Default.nud_rand = nud_rand.Value;
 
@@ -67,9 +71,13 @@ namespace D3Hot
 
             Settings.Default.tb_prof_name = tb_prof_name.Text;
 
-            Settings.Default.Save();
-
-            curr_save();
+            if (!(pan_hold.Visible &&
+                (lb_hold.Text == lng.lb_hold_hot || lb_hold.Text == lng.lb_hold_trig || lb_hold.Text == lng.lb_hold_delay)
+                ))
+            {
+                Settings.Default.Save();
+                curr_save();
+            }
         }
 
         /// <summary>
@@ -161,6 +169,8 @@ namespace D3Hot
             lb_lang.Text = Settings.Default.lb_lang;
             cb_tp.SelectedIndex = cb_tp.FindStringExact(Settings.Default.cb_tp);
             cb_tpdelay.SelectedIndex = Settings.Default.cb_tpdelay;
+            cb_map.SelectedIndex = cb_map.FindStringExact(Settings.Default.cb_map);
+            cb_mapdelay.SelectedIndex = Settings.Default.cb_mapdelay;
             chb_tray.Checked = Settings.Default.chb_tray == 1 ? true : false;
             chb_mult.Checked = Settings.Default.chb_mult == 1 ? true : false;
             nud_key_delay_ms.Value = Settings.Default.nud_key_delay_ms;
@@ -176,11 +186,13 @@ namespace D3Hot
             chb_hold.Checked = Settings.Default.chb_hold == 1 ? true : false;
             chb_mpress.Checked = Settings.Default.chb_mpress == 1 ? true : false;
             chb_saveload.Checked = Settings.Default.chb_saveload == 1 ? true : false;
+            chb_users.Checked = Settings.Default.chb_users == 1 ? true : false;
 
             nud_rand.Value = Settings.Default.nud_rand;
             cb_hot_prof.SelectedIndex = Settings.Default.cb_hot_prof;
             tb_prof_name.Text = Settings.Default.tb_prof_name;
 
+            chb_proconly.Checked = Settings.Default.chb_proconly == 1 ? true : false;
         }
 
         public class SettingsTable
@@ -217,6 +229,7 @@ namespace D3Hot
             {
                 if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "lb_lang") Settings.Default.lb_lang = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
                 if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_tp") Settings.Default.cb_tp = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
+                if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_map") Settings.Default.cb_map = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
                 if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "tb_prof_name") Settings.Default.tb_prof_name = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
             }
             for (int j = 0; j < overview.dataset.Tables[1].Rows.Count; j++)
@@ -257,6 +270,7 @@ namespace D3Hot
                     case "cb_pause": Settings.Default.cb_pause = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "prof_curr": Settings.Default.prof_curr = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "cb_tpdelay": Settings.Default.cb_tpdelay = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    case "cb_mapdelay": Settings.Default.cb_mapdelay = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "chb_tray": Settings.Default.chb_tray = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "chb_mult": Settings.Default.chb_mult = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
 
@@ -270,6 +284,8 @@ namespace D3Hot
                     case "chb_hold": Settings.Default.chb_hold = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "chb_mpress": Settings.Default.chb_mpress = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "chb_saveload": Settings.Default.chb_saveload = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    case "chb_users": Settings.Default.chb_users = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    case "chb_proconly": Settings.Default.chb_proconly = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "cb_hot_prof": Settings.Default.cb_hot_prof = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;    
                         
                 }
