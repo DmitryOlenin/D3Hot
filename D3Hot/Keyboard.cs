@@ -43,6 +43,7 @@ namespace D3Hot
         public uint key_down = 0, key_up=0;
         public int st_timer1_r = 0, st_timer2_r = 0, st_timer3_r = 0, st_timer4_r = 0, st_timer5_r = 0, st_timer6_r = 0,
             r_timer1_r = 0, r_timer2_r = 0, r_timer3_r = 0, r_timer4_r = 0, r_timer5_r = 0, r_timer6_r = 0;
+        public int keyboardDelay, keyboardSpeed;
 
 
         public void keyup(int i)
@@ -73,9 +74,21 @@ namespace D3Hot
 
             //}
             if (key_for_keyup == (int)Keys.LButton)
+            {
                 inp.Mouse.LeftButtonUp(); //Mouse.ButtonUp(Mouse.MouseKeys.Left);
+                System.Threading.Thread.Sleep(50);
+                if (inp.InputDeviceState.IsKeyDown(VirtualKeyCode.LBUTTON))
+                    inp.Mouse.LeftButtonUp();
+                lmousehold = false;
+            }
             else if (key_for_keyup == (int)Keys.RButton)
+            {
                 inp.Mouse.RightButtonUp(); //Mouse.ButtonUp(Mouse.MouseKeys.Right);
+                System.Threading.Thread.Sleep(50);
+                if (inp.InputDeviceState.IsKeyDown(VirtualKeyCode.RBUTTON))
+                    inp.Mouse.RightButtonUp();
+                rmousehold = false;
+            }
             else
             {
                 PostMessage(handle,//hWindow,
@@ -136,12 +149,20 @@ namespace D3Hot
                     //handle1 = FindWindowEx(handle1, IntPtr.Zero, "AkelEditW", null); //For debugging
                     //if (usage_area() || handle == handle1)
 
-                    if (usage_area())
+                        if (usage_area())
                     {
-                        if (key_for_hold == (int)Keys.LButton && inp.InputDeviceState.IsKeyUp(VirtualKeyCode.LBUTTON))
+                        if (key_for_hold == (int)Keys.LButton && !lmousehold) // && inp.InputDeviceState.IsKeyUp(VirtualKeyCode.LBUTTON)
+                        {
+                            //System.Threading.Thread.Sleep(100); 
                             inp.Mouse.LeftButtonDown();
-                        if (key_for_hold == (int)Keys.RButton && inp.InputDeviceState.IsKeyUp(VirtualKeyCode.RBUTTON))
+                            lmousehold = true;
+                        }
+                        if (key_for_hold == (int)Keys.RButton && !rmousehold) // && inp.InputDeviceState.IsKeyUp(VirtualKeyCode.RBUTTON)
+                        {
+                            //System.Threading.Thread.Sleep(100);
                             inp.Mouse.RightButtonDown();
+                            rmousehold = true;
+                        }
                     }
                 }
                 else
@@ -164,32 +185,32 @@ namespace D3Hot
             int i = 0;
             if (timer == StartTimer1 && st_timer1_r > 0)
             {
-                i = st_timer1_r;
+                i = 1;
                 st_timer1_r = 0;
             } 
             else if (timer == StartTimer2 && st_timer2_r > 0)
             {
-                i = st_timer2_r;
+                i = 2;
                 st_timer2_r = 0;
             } 
             else if (timer == StartTimer3 && st_timer3_r > 0)
             {
-                i = st_timer3_r;
+                i = 3;
                 st_timer3_r = 0;
             }
             else if (timer == StartTimer4 && st_timer4_r > 0)
             {
-                i = st_timer4_r;
+                i = 4;
                 st_timer4_r = 0;
             }
             else if (timer == StartTimer5 && st_timer5_r > 0)
             {
-                i = st_timer5_r;
+                i = 5;
                 st_timer5_r = 0;
             }
             else if (timer == StartTimer6 && st_timer6_r > 0)
             {
-                i = st_timer6_r;
+                i = 6;
                 st_timer6_r = 0;
             }
 
@@ -234,6 +255,48 @@ namespace D3Hot
                     //PostMessage(handle,//hWindow,
                     //           updown_keys(key_for_hold),//(int)WM_KEYDOWN,
                     //           key_for_hold, 0);
+
+            if (i > 0)
+                System.Threading.Thread.Sleep(50);
+                switch (i)
+                {
+                    case (1):
+                        RepeatTimer1 = new System.Timers.Timer { Interval = keyboardSpeed };
+                        RepeatTimer1.Elapsed += repeatTimer_Tick;
+                        r_timer1_r = 1;
+                        RepeatTimer1.Start();
+                        break;
+                    case (2):
+                        RepeatTimer2 = new System.Timers.Timer { Interval = keyboardSpeed };
+                        RepeatTimer2.Elapsed += repeatTimer_Tick;
+                        r_timer2_r = 1;
+                        RepeatTimer2.Start();
+                        break;
+                    case (3):
+                        RepeatTimer3 = new System.Timers.Timer { Interval = keyboardSpeed };
+                        RepeatTimer3.Elapsed += repeatTimer_Tick;
+                        r_timer3_r = 1;
+                        RepeatTimer3.Start();
+                        break;
+                    case (4):
+                        RepeatTimer4 = new System.Timers.Timer { Interval = keyboardSpeed };
+                        RepeatTimer4.Elapsed += repeatTimer_Tick;
+                        r_timer4_r = 1;
+                        RepeatTimer4.Start();
+                        break;
+                    case (5):
+                        RepeatTimer5 = new System.Timers.Timer { Interval = keyboardSpeed };
+                        RepeatTimer5.Elapsed += repeatTimer_Tick;
+                        r_timer5_r = 1;
+                        RepeatTimer5.Start();
+                        break;
+                    case (6):
+                        RepeatTimer6 = new System.Timers.Timer { Interval = keyboardSpeed };
+                        RepeatTimer6.Elapsed += repeatTimer_Tick;
+                        r_timer6_r = 1;
+                        RepeatTimer6.Start();
+                        break;
+                }
         }
 
 
@@ -241,7 +304,7 @@ namespace D3Hot
         public void hold_load(int i)
         {
             holded = true;
-            int keyboardDelay, keyboardSpeed;
+            //int keyboardDelay, keyboardSpeed;
             using (var key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Keyboard"))
             {
                 Debug.Assert(key != null);
@@ -260,10 +323,10 @@ namespace D3Hot
                     StartTimer1.Start();
                     //if (!mouse(1))
                     //{
-                        RepeatTimer1 = new System.Timers.Timer { Interval = keyboardSpeed };
-                        RepeatTimer1.Elapsed += repeatTimer_Tick;
-                        r_timer1_r = 1;
-                        RepeatTimer1.Start();
+                        //RepeatTimer1 = new System.Timers.Timer { Interval = keyboardSpeed };
+                        //RepeatTimer1.Elapsed += repeatTimer_Tick;
+                        //r_timer1_r = 1;
+                        //RepeatTimer1.Start();
                     //}
                     break;
                 case 2:
@@ -273,10 +336,10 @@ namespace D3Hot
                     StartTimer2.Start();
                     //if (!mouse(2))
                     //{
-                        RepeatTimer2 = new System.Timers.Timer { Interval = keyboardSpeed };
-                        RepeatTimer2.Elapsed += repeatTimer_Tick;
-                        r_timer2_r = 1;
-                        RepeatTimer2.Start();
+                        //RepeatTimer2 = new System.Timers.Timer { Interval = keyboardSpeed };
+                        //RepeatTimer2.Elapsed += repeatTimer_Tick;
+                        //r_timer2_r = 1;
+                        //RepeatTimer2.Start();
                     //}
                     break;
                 case 3:
@@ -286,23 +349,24 @@ namespace D3Hot
                     StartTimer3.Start();
                     //if (!mouse(3))
                     //{
-                        RepeatTimer3 = new System.Timers.Timer { Interval = keyboardSpeed };
-                        RepeatTimer3.Elapsed += repeatTimer_Tick;
-                        r_timer3_r = 1;
-                        RepeatTimer3.Start();
+                        //RepeatTimer3 = new System.Timers.Timer { Interval = keyboardSpeed };
+                        //RepeatTimer3.Elapsed += repeatTimer_Tick;
+                        //r_timer3_r = 1;
+                        //RepeatTimer3.Start();
                     //}
                     break;
                 case 4:
                     StartTimer4 = new System.Timers.Timer { Interval = keyboardDelay };
                     StartTimer4.Elapsed += startTimer_Tick;
+                    StartTimer4.AutoReset = false;
                     st_timer4_r = 1; 
                     StartTimer4.Start();
                     //if (!mouse(4))
                     //{
-                        RepeatTimer4 = new System.Timers.Timer { Interval = keyboardSpeed };
-                        RepeatTimer4.Elapsed += repeatTimer_Tick;
-                        r_timer4_r = 1;
-                        RepeatTimer4.Start();
+                        //RepeatTimer4 = new System.Timers.Timer { Interval = keyboardSpeed };
+                        //RepeatTimer4.Elapsed += repeatTimer_Tick;
+                        //r_timer4_r = 1;
+                        //RepeatTimer4.Start();
                     //}
                     break;
                 case 5:
@@ -312,10 +376,10 @@ namespace D3Hot
                     StartTimer5.Start();
                     //if (!mouse(5))
                     //{
-                        RepeatTimer5 = new System.Timers.Timer { Interval = keyboardSpeed };
-                        RepeatTimer5.Elapsed += repeatTimer_Tick;
-                        r_timer5_r = 1;
-                        RepeatTimer5.Start();
+                        //RepeatTimer5 = new System.Timers.Timer { Interval = keyboardSpeed };
+                        //RepeatTimer5.Elapsed += repeatTimer_Tick;
+                        //r_timer5_r = 1;
+                        //RepeatTimer5.Start();
                     //}
                     break;
                 case 6:
@@ -325,10 +389,10 @@ namespace D3Hot
                     StartTimer6.Start();
                     //if (!mouse(6))
                     //{
-                        RepeatTimer6 = new System.Timers.Timer { Interval = keyboardSpeed };
-                        RepeatTimer6.Elapsed += repeatTimer_Tick;
-                        r_timer6_r = 1;
-                        RepeatTimer6.Start();
+                        //RepeatTimer6 = new System.Timers.Timer { Interval = keyboardSpeed };
+                        //RepeatTimer6.Elapsed += repeatTimer_Tick;
+                        //r_timer6_r = 1;
+                        //RepeatTimer6.Start();
                     //}
                     break;
             }

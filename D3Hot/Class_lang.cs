@@ -68,7 +68,7 @@ namespace D3Hot
             lb_hold_trig = "Не выбрано ни одного триггера для активации.";
             lb_hold_delay = "Не выставлена ни одна пауза для триггеров.";
 
-            chb_hold = "Зажатие кнопок";
+            chb_hold = "Процесс/Зажатие";
             chb_mpress = "Мультинажатие";
             lb_rand = "Случайная задержка";
             lb_hot_prof = "Хоткеи профилей";
@@ -124,7 +124,7 @@ namespace D3Hot
             lb_hold_hot = "Global hotkeys conflict.";
             lb_hold_trig = "There are no triggers.";
             lb_hold_delay = "There are no delays for active triggers.";
-            chb_hold = "Holding keys";
+            chb_hold = "Process/Holding";
             chb_mpress = "Multi keypress";
             lb_rand = "Random delay";
             lb_hot_prof = "Profiles hotkeys";

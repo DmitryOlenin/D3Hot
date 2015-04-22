@@ -128,6 +128,9 @@
             this.pan_prof_name = new System.Windows.Forms.Panel();
             this.pan_proc = new System.Windows.Forms.Panel();
             this.pan_prog = new System.Windows.Forms.Panel();
+            this.b_key_select = new System.Windows.Forms.Button();
+            this.cb_1 = new System.Windows.Forms.ComboBox();
+            this.cb_2 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr3)).BeginInit();
@@ -240,7 +243,7 @@
             this.cb_prog.Items.AddRange(new object[] {
             "All",
             "Diablo 3"});
-            this.cb_prog.Location = new System.Drawing.Point(102, 3);
+            this.cb_prog.Location = new System.Drawing.Point(100, 3);
             this.cb_prog.Name = "cb_prog";
             this.cb_prog.Size = new System.Drawing.Size(100, 21);
             this.cb_prog.TabIndex = 15;
@@ -949,7 +952,7 @@
             // 
             this.cb_proc.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cb_proc.FormattingEnabled = true;
-            this.cb_proc.Location = new System.Drawing.Point(102, 3);
+            this.cb_proc.Location = new System.Drawing.Point(100, 3);
             this.cb_proc.Name = "cb_proc";
             this.cb_proc.Size = new System.Drawing.Size(100, 21);
             this.cb_proc.TabIndex = 70;
@@ -1063,7 +1066,7 @@
             this.chb_proconly.TabIndex = 90;
             this.chb_proconly.Text = "Только процесс";
             this.chb_proconly.UseVisualStyleBackColor = true;
-            this.chb_proconly.CheckedChanged += new System.EventHandler(this.chb_proconly_CheckedChanged);
+            this.chb_proconly.Visible = false;
             // 
             // chb_users
             // 
@@ -1182,7 +1185,7 @@
             // lb_nud_rand
             // 
             this.lb_nud_rand.AutoSize = true;
-            this.lb_nud_rand.Location = new System.Drawing.Point(255, 117);
+            this.lb_nud_rand.Location = new System.Drawing.Point(255, 108);
             this.lb_nud_rand.Name = "lb_nud_rand";
             this.lb_nud_rand.Size = new System.Drawing.Size(58, 13);
             this.lb_nud_rand.TabIndex = 82;
@@ -1504,7 +1507,7 @@
             // 
             this.pan_hold.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pan_hold.Controls.Add(this.lb_hold);
-            this.pan_hold.Location = new System.Drawing.Point(12, 186);
+            this.pan_hold.Location = new System.Drawing.Point(12, 182);
             this.pan_hold.Name = "pan_hold";
             this.pan_hold.Size = new System.Drawing.Size(310, 18);
             this.pan_hold.TabIndex = 79;
@@ -1530,7 +1533,7 @@
             // 
             this.pan_prof_name.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pan_prof_name.Controls.Add(this.tb_prof_name);
-            this.pan_prof_name.Location = new System.Drawing.Point(124, 181);
+            this.pan_prof_name.Location = new System.Drawing.Point(124, 178);
             this.pan_prof_name.Name = "pan_prof_name";
             this.pan_prof_name.Size = new System.Drawing.Size(215, 25);
             this.pan_prof_name.TabIndex = 81;
@@ -1539,10 +1542,11 @@
             // 
             this.pan_proc.Controls.Add(this.cb_proc);
             this.pan_proc.Controls.Add(this.lb_proc);
-            this.pan_proc.Location = new System.Drawing.Point(124, 268);
+            this.pan_proc.Location = new System.Drawing.Point(125, 238);
             this.pan_proc.Name = "pan_proc";
             this.pan_proc.Size = new System.Drawing.Size(202, 24);
             this.pan_proc.TabIndex = 82;
+            this.pan_proc.Visible = false;
             // 
             // pan_prog
             // 
@@ -1552,13 +1556,50 @@
             this.pan_prog.Name = "pan_prog";
             this.pan_prog.Size = new System.Drawing.Size(202, 24);
             this.pan_prog.TabIndex = 83;
+            this.pan_prog.Visible = false;
+            // 
+            // b_key_select
+            // 
+            this.b_key_select.Location = new System.Drawing.Point(141, 264);
+            this.b_key_select.Name = "b_key_select";
+            this.b_key_select.Size = new System.Drawing.Size(112, 23);
+            this.b_key_select.TabIndex = 84;
+            this.b_key_select.Text = "Выбор кнопки";
+            this.b_key_select.UseVisualStyleBackColor = true;
+            this.b_key_select.Click += new System.EventHandler(this.b_key_select_Click);
+            // 
+            // cb_1
+            // 
+            this.cb_1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_1.FormattingEnabled = true;
+            this.cb_1.Items.AddRange(new object[] {
+            "Выбрать"});
+            this.cb_1.Location = new System.Drawing.Point(116, 293);
+            this.cb_1.Name = "cb_1";
+            this.cb_1.Size = new System.Drawing.Size(72, 21);
+            this.cb_1.TabIndex = 85;
+            this.cb_1.SelectedIndexChanged += new System.EventHandler(this.cb_1_SelectedIndexChanged);
+            // 
+            // cb_2
+            // 
+            this.cb_2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_2.FormattingEnabled = true;
+            this.cb_2.Items.AddRange(new object[] {
+            "Выбрать"});
+            this.cb_2.Location = new System.Drawing.Point(198, 293);
+            this.cb_2.Name = "cb_2";
+            this.cb_2.Size = new System.Drawing.Size(72, 21);
+            this.cb_2.TabIndex = 86;
+            this.cb_2.SelectedIndexChanged += new System.EventHandler(this.cb_1_SelectedIndexChanged);
             // 
             // d3hot
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(459, 316);
-            this.Controls.Add(this.pan_prog);
+            this.Controls.Add(this.cb_2);
+            this.Controls.Add(this.cb_1);
+            this.Controls.Add(this.b_key_select);
             this.Controls.Add(this.pan_proc);
             this.Controls.Add(this.pan_prof_name);
             this.Controls.Add(this.pan_hold);
@@ -1571,8 +1612,9 @@
             this.Controls.Add(this.lb_prof);
             this.Controls.Add(this.lb_auth);
             this.Controls.Add(this.cb_start);
-            this.Controls.Add(this.pan_opt);
+            this.Controls.Add(this.pan_prog);
             this.Controls.Add(this.pan_main);
+            this.Controls.Add(this.pan_opt);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "d3hot";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -1708,6 +1750,9 @@
         private System.Windows.Forms.CheckBox chb_proconly;
         private System.Windows.Forms.Panel pan_proc;
         private System.Windows.Forms.Panel pan_prog;
+        private System.Windows.Forms.Button b_key_select;
+        private System.Windows.Forms.ComboBox cb_1;
+        private System.Windows.Forms.ComboBox cb_2;
     }
 }
 
