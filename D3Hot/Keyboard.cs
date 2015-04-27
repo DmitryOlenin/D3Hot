@@ -53,12 +53,12 @@ namespace D3Hot
 
             switch (i)
             {
-                case 1: key_for_keyup = key_hold_code(key1); break;
-                case 2: key_for_keyup = key_hold_code(key2); break;
-                case 3: key_for_keyup = key_hold_code(key3); break;
-                case 4: key_for_keyup = key_hold_code(key4); break;
-                case 5: key_for_keyup = key_hold_code(key5); break;
-                case 6: key_for_keyup = key_hold_code(key6); break;
+                case 1: key_for_keyup = key1_h; break; //key_hold_code(key1)
+                case 2: key_for_keyup = key2_h; break; //key_hold_code(key2)
+                case 3: key_for_keyup = key3_h; break; //key_hold_code(key3)
+                case 4: key_for_keyup = key4_h; break; //key_hold_code(key4)
+                case 5: key_for_keyup = key5_h; break; //key_hold_code(key5)
+                case 6: key_for_keyup = key6_h; break; //key_hold_code(key6)
             }
 
             ret = _MapVirtualKey(key_for_keyup, 0);
@@ -101,13 +101,13 @@ namespace D3Hot
         {
             int key_for_hold = 0;
 
-                if (timer == RepeatTimer1 || timer == StartTimer1 || timer == tmr1) key_for_hold = key_hold_code(key1); else
-                if (timer == RepeatTimer2 || timer == StartTimer2 || timer == tmr2) key_for_hold = key_hold_code(key2); else
-                if (timer == RepeatTimer3 || timer == StartTimer3 || timer == tmr3) key_for_hold = key_hold_code(key3); else
-                if (timer == RepeatTimer4 || timer == StartTimer4 || timer == tmr4) key_for_hold = key_hold_code(key4); else
-                if (timer == RepeatTimer5 || timer == StartTimer5 || timer == tmr5) key_for_hold = key_hold_code(key5); else
-                if (timer == RepeatTimer6 || timer == StartTimer6 || timer == tmr6) key_for_hold = key_hold_code(key6);
-                
+                if (timer == RepeatTimer1 || timer == StartTimer1 || timer == tmr1) key_for_hold = key1_h; else //key_hold_code(key1)
+                if (timer == RepeatTimer2 || timer == StartTimer2 || timer == tmr2) key_for_hold = key2_h; else //key_hold_code(key2)
+                if (timer == RepeatTimer3 || timer == StartTimer3 || timer == tmr3) key_for_hold = key3_h; else //key_hold_code(key3)
+                if (timer == RepeatTimer4 || timer == StartTimer4 || timer == tmr4) key_for_hold = key4_h; else //key_hold_code(key4)
+                if (timer == RepeatTimer5 || timer == StartTimer5 || timer == tmr5) key_for_hold = key5_h; else //key_hold_code(key5)
+                if (timer == RepeatTimer6 || timer == StartTimer6 || timer == tmr6) key_for_hold = key6_h; //key_hold_code(key6)
+                 
             return key_for_hold;
         }
 
@@ -149,7 +149,9 @@ namespace D3Hot
                     //handle1 = FindWindowEx(handle1, IntPtr.Zero, "AkelEditW", null); //For debugging
                     //if (usage_area() || handle == handle1)
 
-                        if (usage_area())
+                    if (usage_area()
+                        || (lb_debug.Visible && handle == FindWindowEx(FindWindow(null, "akelpad"), IntPtr.Zero, "AkelEditW", null))
+                        )
                     {
                         if (key_for_hold == (int)Keys.LButton && !lmousehold) // && inp.InputDeviceState.IsKeyUp(VirtualKeyCode.LBUTTON)
                         {
@@ -226,7 +228,9 @@ namespace D3Hot
                     //handle1 = FindWindowEx(handle1, IntPtr.Zero, "AkelEditW", null);  //For debugging
                     //if (usage_area() || handle == handle1)
 
-                    if (usage_area())
+                    if (usage_area()
+                        || (lb_debug.Visible && handle == FindWindowEx(FindWindow(null, "akelpad"), IntPtr.Zero, "AkelEditW", null))
+                        )
                     {
                         if (key_for_hold == (int)Keys.LButton)
                             inp.Mouse.LeftButtonDown();

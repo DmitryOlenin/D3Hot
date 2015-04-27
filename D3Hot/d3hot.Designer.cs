@@ -128,9 +128,7 @@
             this.pan_prof_name = new System.Windows.Forms.Panel();
             this.pan_proc = new System.Windows.Forms.Panel();
             this.pan_prog = new System.Windows.Forms.Panel();
-            this.b_key_select = new System.Windows.Forms.Button();
-            this.cb_1 = new System.Windows.Forms.ComboBox();
-            this.cb_2 = new System.Windows.Forms.ComboBox();
+            this.lb_debug = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr3)).BeginInit();
@@ -413,6 +411,7 @@
             this.cb_key4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cb_key4.FormattingEnabled = true;
             this.cb_key4.Items.AddRange(new object[] {
+            "",
             "1",
             "2",
             "3",
@@ -438,12 +437,15 @@
             this.cb_key4.Name = "cb_key4";
             this.cb_key4.Size = new System.Drawing.Size(58, 21);
             this.cb_key4.TabIndex = 7;
+            this.cb_key4.SelectionChangeCommitted += new System.EventHandler(this.key_choose_SelectionChangeCommitted);
+            this.cb_key4.MouseDown += new System.Windows.Forms.MouseEventHandler(this.key_choose_MouseClick);
             // 
             // cb_key3
             // 
             this.cb_key3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cb_key3.FormattingEnabled = true;
             this.cb_key3.Items.AddRange(new object[] {
+            "",
             "1",
             "2",
             "3",
@@ -469,12 +471,15 @@
             this.cb_key3.Name = "cb_key3";
             this.cb_key3.Size = new System.Drawing.Size(58, 21);
             this.cb_key3.TabIndex = 6;
+            this.cb_key3.SelectionChangeCommitted += new System.EventHandler(this.key_choose_SelectionChangeCommitted);
+            this.cb_key3.MouseDown += new System.Windows.Forms.MouseEventHandler(this.key_choose_MouseClick);
             // 
             // cb_key2
             // 
             this.cb_key2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cb_key2.FormattingEnabled = true;
             this.cb_key2.Items.AddRange(new object[] {
+            "",
             "1",
             "2",
             "3",
@@ -500,12 +505,15 @@
             this.cb_key2.Name = "cb_key2";
             this.cb_key2.Size = new System.Drawing.Size(58, 21);
             this.cb_key2.TabIndex = 5;
+            this.cb_key2.SelectionChangeCommitted += new System.EventHandler(this.key_choose_SelectionChangeCommitted);
+            this.cb_key2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.key_choose_MouseClick);
             // 
             // cb_key1
             // 
             this.cb_key1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cb_key1.FormattingEnabled = true;
             this.cb_key1.Items.AddRange(new object[] {
+            "",
             "1",
             "2",
             "3",
@@ -531,6 +539,8 @@
             this.cb_key1.Name = "cb_key1";
             this.cb_key1.Size = new System.Drawing.Size(58, 21);
             this.cb_key1.TabIndex = 4;
+            this.cb_key1.SelectionChangeCommitted += new System.EventHandler(this.key_choose_SelectionChangeCommitted);
+            this.cb_key1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.key_choose_MouseClick);
             // 
             // lb_key4
             // 
@@ -660,6 +670,7 @@
             this.cb_key5.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cb_key5.FormattingEnabled = true;
             this.cb_key5.Items.AddRange(new object[] {
+            "",
             "1",
             "2",
             "3",
@@ -685,6 +696,8 @@
             this.cb_key5.Name = "cb_key5";
             this.cb_key5.Size = new System.Drawing.Size(58, 21);
             this.cb_key5.TabIndex = 52;
+            this.cb_key5.SelectionChangeCommitted += new System.EventHandler(this.key_choose_SelectionChangeCommitted);
+            this.cb_key5.MouseDown += new System.Windows.Forms.MouseEventHandler(this.key_choose_MouseClick);
             // 
             // lb_key5
             // 
@@ -757,6 +770,7 @@
             this.cb_key6.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cb_key6.FormattingEnabled = true;
             this.cb_key6.Items.AddRange(new object[] {
+            "",
             "1",
             "2",
             "3",
@@ -782,6 +796,8 @@
             this.cb_key6.Name = "cb_key6";
             this.cb_key6.Size = new System.Drawing.Size(58, 21);
             this.cb_key6.TabIndex = 58;
+            this.cb_key6.SelectionChangeCommitted += new System.EventHandler(this.key_choose_SelectionChangeCommitted);
+            this.cb_key6.MouseDown += new System.Windows.Forms.MouseEventHandler(this.key_choose_MouseClick);
             // 
             // lb_key6
             // 
@@ -896,6 +912,7 @@
             this.cb_tp.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cb_tp.FormattingEnabled = true;
             this.cb_tp.Items.AddRange(new object[] {
+            "",
             "T",
             "Y",
             "U",
@@ -916,6 +933,7 @@
             this.cb_tp.TabIndex = 65;
             this.cb_tp.SelectedIndexChanged += new System.EventHandler(this.cb_tp_SelectedIndexChanged);
             this.cb_tp.SelectionChangeCommitted += new System.EventHandler(this.cb_op_SelectionChangeCommitted);
+            this.cb_tp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.key_choose_MouseClick);
             // 
             // lb_tpdelay
             // 
@@ -1084,6 +1102,7 @@
             this.cb_map.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cb_map.FormattingEnabled = true;
             this.cb_map.Items.AddRange(new object[] {
+            "",
             "T",
             "Y",
             "U",
@@ -1104,6 +1123,7 @@
             this.cb_map.TabIndex = 85;
             this.cb_map.SelectedIndexChanged += new System.EventHandler(this.cb_map_SelectedIndexChanged);
             this.cb_map.SelectionChangeCommitted += new System.EventHandler(this.cb_op_SelectionChangeCommitted);
+            this.cb_map.MouseDown += new System.Windows.Forms.MouseEventHandler(this.key_choose_MouseClick);
             // 
             // lb_map
             // 
@@ -1314,6 +1334,7 @@
             this.cb_key_delay.TabIndex = 71;
             this.cb_key_delay.SelectedIndexChanged += new System.EventHandler(this.cb_key_delay_SelectedIndexChanged);
             this.cb_key_delay.SelectionChangeCommitted += new System.EventHandler(this.cb_op_SelectionChangeCommitted);
+            this.cb_key_delay.MouseDown += new System.Windows.Forms.MouseEventHandler(this.key_choose_MouseClick);
             // 
             // lb_key_delay
             // 
@@ -1558,49 +1579,21 @@
             this.pan_prog.TabIndex = 83;
             this.pan_prog.Visible = false;
             // 
-            // b_key_select
+            // lb_debug
             // 
-            this.b_key_select.Location = new System.Drawing.Point(141, 264);
-            this.b_key_select.Name = "b_key_select";
-            this.b_key_select.Size = new System.Drawing.Size(112, 23);
-            this.b_key_select.TabIndex = 84;
-            this.b_key_select.Text = "Выбор кнопки";
-            this.b_key_select.UseVisualStyleBackColor = true;
-            this.b_key_select.Click += new System.EventHandler(this.b_key_select_Click);
-            // 
-            // cb_1
-            // 
-            this.cb_1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cb_1.FormattingEnabled = true;
-            this.cb_1.Items.AddRange(new object[] {
-            "Выбрать"});
-            this.cb_1.Location = new System.Drawing.Point(116, 293);
-            this.cb_1.Name = "cb_1";
-            this.cb_1.Size = new System.Drawing.Size(72, 21);
-            this.cb_1.TabIndex = 85;
-            this.cb_1.SelectedIndexChanged += new System.EventHandler(this.cb_1_SelectedIndexChanged);
-            // 
-            // cb_2
-            // 
-            this.cb_2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cb_2.FormattingEnabled = true;
-            this.cb_2.Items.AddRange(new object[] {
-            "Выбрать"});
-            this.cb_2.Location = new System.Drawing.Point(198, 293);
-            this.cb_2.Name = "cb_2";
-            this.cb_2.Size = new System.Drawing.Size(72, 21);
-            this.cb_2.TabIndex = 86;
-            this.cb_2.SelectedIndexChanged += new System.EventHandler(this.cb_1_SelectedIndexChanged);
+            this.lb_debug.AutoSize = true;
+            this.lb_debug.Location = new System.Drawing.Point(123, 293);
+            this.lb_debug.Name = "lb_debug";
+            this.lb_debug.Size = new System.Drawing.Size(37, 13);
+            this.lb_debug.TabIndex = 84;
+            this.lb_debug.Text = "debug";
             // 
             // d3hot
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(459, 316);
-            this.Controls.Add(this.cb_2);
-            this.Controls.Add(this.cb_1);
-            this.Controls.Add(this.b_key_select);
-            this.Controls.Add(this.pan_proc);
+            this.Controls.Add(this.lb_debug);
             this.Controls.Add(this.pan_prof_name);
             this.Controls.Add(this.pan_hold);
             this.Controls.Add(this.b_load);
@@ -1612,6 +1605,7 @@
             this.Controls.Add(this.lb_prof);
             this.Controls.Add(this.lb_auth);
             this.Controls.Add(this.cb_start);
+            this.Controls.Add(this.pan_proc);
             this.Controls.Add(this.pan_prog);
             this.Controls.Add(this.pan_main);
             this.Controls.Add(this.pan_opt);
@@ -1619,6 +1613,8 @@
             this.Name = "d3hot";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Diablo 3 Hotkeys ver. 2.0";
+            this.Activated += new System.EventHandler(this.d3hot_Activated);
+            this.Deactivate += new System.EventHandler(this.d3hot_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.d3hot_FormClosing);
             this.Load += new System.EventHandler(this.d3hot_Load);
             this.Shown += new System.EventHandler(this.d3hot_Shown);
@@ -1750,9 +1746,7 @@
         private System.Windows.Forms.CheckBox chb_proconly;
         private System.Windows.Forms.Panel pan_proc;
         private System.Windows.Forms.Panel pan_prog;
-        private System.Windows.Forms.Button b_key_select;
-        private System.Windows.Forms.ComboBox cb_1;
-        private System.Windows.Forms.ComboBox cb_2;
+        private System.Windows.Forms.Label lb_debug;
     }
 }
 

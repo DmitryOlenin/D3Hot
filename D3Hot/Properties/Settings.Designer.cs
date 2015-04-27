@@ -598,5 +598,113 @@ namespace D3Hot.Properties {
                 this["chb_proconly"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string cb_key1_desc {
+            get {
+                return ((string)(this["cb_key1_desc"]));
+            }
+            set {
+                this["cb_key1_desc"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string cb_key2_desc {
+            get {
+                return ((string)(this["cb_key2_desc"]));
+            }
+            set {
+                this["cb_key2_desc"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string cb_key3_desc {
+            get {
+                return ((string)(this["cb_key3_desc"]));
+            }
+            set {
+                this["cb_key3_desc"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string cb_key4_desc {
+            get {
+                return ((string)(this["cb_key4_desc"]));
+            }
+            set {
+                this["cb_key4_desc"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string cb_key5_desc {
+            get {
+                return ((string)(this["cb_key5_desc"]));
+            }
+            set {
+                this["cb_key5_desc"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string cb_key6_desc {
+            get {
+                return ((string)(this["cb_key6_desc"]));
+            }
+            set {
+                this["cb_key6_desc"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string cb_tp_desc {
+            get {
+                return ((string)(this["cb_tp_desc"]));
+            }
+            set {
+                this["cb_tp_desc"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string cb_map_desc {
+            get {
+                return ((string)(this["cb_map_desc"]));
+            }
+            set {
+                this["cb_map_desc"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string cb_key_delay_desc {
+            get {
+                return ((string)(this["cb_key_delay_desc"]));
+            }
+            set {
+                this["cb_key_delay_desc"] = value;
+            }
+        }
     }
 }

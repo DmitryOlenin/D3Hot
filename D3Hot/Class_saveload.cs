@@ -72,7 +72,7 @@ namespace D3Hot
             Settings.Default.tb_prof_name = tb_prof_name.Text;
 
             if (!(pan_hold.Visible &&
-                (lb_hold.Text == lng.lb_hold_hot || lb_hold.Text == lng.lb_hold_trig || lb_hold.Text == lng.lb_hold_delay)
+                (lb_hold.Text == lng.lb_hold_hot || lb_hold.Text == lng.lb_hold_trig || lb_hold.Text == lng.lb_hold_delay || lb_hold.Text == lng.lb_hold_key)
                 ))
             {
                 Settings.Default.Save();
@@ -144,6 +144,32 @@ namespace D3Hot
         /// </summary>
         public void Load_settings()
         {
+            //if (Settings.Default.cb_key1 > 5) Settings.Default.cb_key1 = 5;
+            //if (Settings.Default.cb_key2 > 5) Settings.Default.cb_key2 = 5;
+            //if (Settings.Default.cb_key3 > 5) Settings.Default.cb_key3 = 5;
+            //if (Settings.Default.cb_key4 > 5) Settings.Default.cb_key4 = 5;
+            //if (Settings.Default.cb_key5 > 5) Settings.Default.cb_key5 = 5;
+            //if (Settings.Default.cb_key6 > 5) Settings.Default.cb_key6 = 5;
+
+            chb_hold.Checked = Settings.Default.chb_hold == 1 ? true : false; //27.04.2015 (перенёс повыше)
+
+            //if (Settings.Default.cb_key1_desc != null && cb_key1.FindString(Settings.Default.cb_key1_desc) < 1) 
+            //    cb_key1.Items.Add(Settings.Default.cb_key1_desc);
+
+            //if (cb_key1.FindString(Settings.Default.cb_key1_desc) < 1) //Settings.Default.cb_key1 > 21 && 
+            //    cb_key1.Items.Add(Settings.Default.cb_key1_desc);
+            //if (cb_key2.FindString(Settings.Default.cb_key2_desc) < 1) //Settings.Default.cb_key2 > 21 && 
+            //    cb_key2.Items.Add(Settings.Default.cb_key2_desc);
+            //if (cb_key3.FindString(Settings.Default.cb_key3_desc) < 1) //Settings.Default.cb_key3 > 21 && 
+            //    cb_key3.Items.Add(Settings.Default.cb_key3_desc);
+            //if (cb_key4.FindString(Settings.Default.cb_key4_desc) < 1) //Settings.Default.cb_key4 > 21 && 
+            //    cb_key4.Items.Add(Settings.Default.cb_key4_desc);
+            //if (cb_key5.FindString(Settings.Default.cb_key5_desc) < 1) //Settings.Default.cb_key5 > 21 && 
+            //    cb_key5.Items.Add(Settings.Default.cb_key5_desc);
+            //if (cb_key6.FindString(Settings.Default.cb_key6_desc) < 1) //Settings.Default.cb_key6 > 21 && 
+            //    cb_key6.Items.Add(Settings.Default.cb_key6_desc);
+
+
             cb_key1.SelectedIndex = Settings.Default.cb_key1;
             cb_key2.SelectedIndex = Settings.Default.cb_key2;
             cb_key3.SelectedIndex = Settings.Default.cb_key3;
@@ -183,7 +209,6 @@ namespace D3Hot
             chb_key5.Checked = Settings.Default.chb_key5 == 1 ? true : false;
             chb_key6.Checked = Settings.Default.chb_key6 == 1 ? true : false;
 
-            chb_hold.Checked = Settings.Default.chb_hold == 1 ? true : false;
             chb_mpress.Checked = Settings.Default.chb_mpress == 1 ? true : false;
             chb_saveload.Checked = Settings.Default.chb_saveload == 1 ? true : false;
             chb_users.Checked = Settings.Default.chb_users == 1 ? true : false;
@@ -231,6 +256,12 @@ namespace D3Hot
                 if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_tp") Settings.Default.cb_tp = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
                 if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_map") Settings.Default.cb_map = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
                 if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "tb_prof_name") Settings.Default.tb_prof_name = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
+                if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_key1_desc") Settings.Default.cb_key1_desc = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
+                if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_key2_desc") Settings.Default.cb_key2_desc = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
+                if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_key3_desc") Settings.Default.cb_key3_desc = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
+                if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_key4_desc") Settings.Default.cb_key4_desc = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
+                if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_key5_desc") Settings.Default.cb_key5_desc = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
+                if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_key6_desc") Settings.Default.cb_key6_desc = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
             }
             for (int j = 0; j < overview.dataset.Tables[1].Rows.Count; j++)
             {

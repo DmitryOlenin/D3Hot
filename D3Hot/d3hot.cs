@@ -11,7 +11,8 @@ using System.IO;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Drawing; //11.03.2015 
+using System.Drawing;
+using System.Windows.Input; //11.03.2015 
 //using InputManager; //26.03.2015
 //InputManager - http://www.codeproject.com/Articles/117657/InputManager-library-Track-user-input-and-simulate
 
@@ -36,6 +37,9 @@ namespace D3Hot
             ,tmr1_left = 0, tmr2_left = 0,  tmr3_left = 0,  tmr4_left = 0,  tmr5_left = 0,  tmr6_left = 0
             ,delay_wait = 0
             ;
+
+        public static int key1_h = 0, key2_h = 0, key3_h = 0, key4_h = 0, key5_h = 0, key6_h = 0;
+        public static VirtualKeyCode key1_v = 0, key2_v = 0, key3_v = 0, key4_v = 0, key5_v = 0, key6_v = 0;
 
         public double tmr1_i = 0, tmr2_i = 0, tmr3_i = 0, tmr4_i = 0, tmr5_i = 0, tmr6_i = 0;
         public static bool holded = false, hotkey_pressed = false, prof_name_changed = false, form_shown = false
@@ -427,19 +431,16 @@ namespace D3Hot
 
         private void d3hot_Load(object sender, EventArgs e)
         {
-            //22.04.2015
-            form_create();
-            
+           
             //this.Icon = D3Hot.Properties.Resources.diablo_hot;
             //notify_d3h.Icon = D3Hot.Properties.Resources.diablo_hot;
 
             Load_settings();
+            //if (cb_key2.SelectedIndex > 19) MessageBox.Show("456");
             profiles_names();
 
             pan_prof_name.Width = tb_prof_name.Width;
             pan_prof_name.Height = tb_prof_name.Height;
-
-            chb_hold_CheckedChanged(null, null);
 
             //pan_main.BackColor = System.Drawing.Color.Transparent; //01.04.2015 - ПЕРВОЕ АПРЕЛЯ ЖЕ!
             //tb_prof_name.Text = "ONE PIECE - FOREVER!"; //01.04.2015 - ПЕРВОЕ АПРЕЛЯ ЖЕ!
@@ -471,6 +472,37 @@ namespace D3Hot
 
             if (chb_users.Checked) person(1);
             else person(0);
+
+            //22.04.2015
+            form_create();
+
+            key_menu();
+            chb_hold_CheckedChanged(null, null);
+        }
+
+        private void key_menu()
+        {
+            foreach (ComboBox cb in this.pan_main.Controls.OfType<ComboBox>())
+            {
+                if (cb.Name.Contains("key"))
+                {
+                    cb.Items[0] = lng.cb_keys_choose;
+                    //if (cb.SelectedIndex > 19) MessageBox.Show("123");
+                }
+
+            }
+        //            int i = cb.SelectedIndex;
+        //            cb.Items.Clear();
+        //            cb.Items.Add(lng.cb_keys_choose);
+        //            cb.Items.Add("1");
+        //            cb.Items.Add("2");
+        //            cb.Items.Add("3");
+        //            cb.Items.Add("4");
+        //            cb.Items.Add("LMouse");
+        //            cb.Items.Add("RMouse");
+        //            cb.Items.Add("Shift+LM");
+        //            cb.Items.Add("Shift+RM");
+        //            cb.SelectedIndex = i;
         }
 
         /// <summary>
@@ -549,71 +581,71 @@ namespace D3Hot
         /// </summary>
         /// <param name="i"></param>
         /// <returns></returns>
-        private VirtualKeyCode virt_code(int i)
-        {
-            VirtualKeyCode vkc = VirtualKeyCode.VK_0;
-            switch (i)
-            {
-                case 0: vkc = VirtualKeyCode.VK_1; break;
-                case 1: vkc = VirtualKeyCode.VK_2; break;
-                case 2: vkc = VirtualKeyCode.VK_3; break;
-                case 3: vkc = VirtualKeyCode.VK_4; break;
-                case 4: vkc = VirtualKeyCode.VK_Q; break;
-                case 5: vkc = VirtualKeyCode.VK_W; break;
-                case 6: vkc = VirtualKeyCode.VK_E; break;
-                case 7: vkc = VirtualKeyCode.VK_R; break;
-                case 8: vkc = VirtualKeyCode.VK_A; break;
-                case 9: vkc = VirtualKeyCode.VK_S; break;
-                case 10: vkc = VirtualKeyCode.VK_D; break;
-                case 11: vkc = VirtualKeyCode.VK_F; break;
-                case 12: vkc = VirtualKeyCode.VK_Z; break;
-                case 13: vkc = VirtualKeyCode.VK_X; break;
-                case 14: vkc = VirtualKeyCode.VK_C; break;
-                case 15: vkc = VirtualKeyCode.VK_V; break;
-                case 16: vkc = VirtualKeyCode.SPACE; break;
-                case 17: vkc = VirtualKeyCode.LBUTTON; break;
-                case 18: vkc = VirtualKeyCode.RBUTTON; break;
-                case 19: vkc = VirtualKeyCode.XBUTTON1; break;
-                case 20: vkc = VirtualKeyCode.XBUTTON2; break;
-            }
-            return vkc;
-        }
+        //private VirtualKeyCode virt_code(int i)
+        //{
+        //    VirtualKeyCode vkc = VirtualKeyCode.VK_0;
+        //    switch (i)
+        //    {
+        //        case 1: vkc = VirtualKeyCode.VK_1; break;
+        //        case 2: vkc = VirtualKeyCode.VK_2; break;
+        //        case 3: vkc = VirtualKeyCode.VK_3; break;
+        //        case 4: vkc = VirtualKeyCode.VK_4; break;
+        //        case 5: vkc = VirtualKeyCode.VK_Q; break;
+        //        case 6: vkc = VirtualKeyCode.VK_W; break;
+        //        case 7: vkc = VirtualKeyCode.VK_E; break;
+        //        case 8: vkc = VirtualKeyCode.VK_R; break;
+        //        case 9: vkc = VirtualKeyCode.VK_A; break;
+        //        case 10: vkc = VirtualKeyCode.VK_S; break;
+        //        case 11: vkc = VirtualKeyCode.VK_D; break;
+        //        case 12: vkc = VirtualKeyCode.VK_F; break;
+        //        case 13: vkc = VirtualKeyCode.VK_Z; break;
+        //        case 14: vkc = VirtualKeyCode.VK_X; break;
+        //        case 15: vkc = VirtualKeyCode.VK_C; break;
+        //        case 16: vkc = VirtualKeyCode.VK_V; break;
+        //        case 17: vkc = VirtualKeyCode.SPACE; break;
+        //        case 18: vkc = VirtualKeyCode.LBUTTON; break;
+        //        case 19: vkc = VirtualKeyCode.RBUTTON; break;
+        //        case 20: vkc = VirtualKeyCode.XBUTTON1; break;
+        //        case 21: vkc = VirtualKeyCode.XBUTTON2; break;
+        //    }
+        //    return vkc;
+        //}
 
         /// <summary>
         /// Метод для установки клавиш для залипания.
         /// </summary>
         /// <param name="i"></param>
         /// <returns></returns>
-        private int key_hold_code(int i)
-        {
-            int key_code = 0;
-            switch (i)
-            {
-                case 0: key_code = (int)Keys.D1; break;
-                case 1: key_code = (int)Keys.D2; break;
-                case 2: key_code = (int)Keys.D3; break;
-                case 3: key_code = (int)Keys.D4; break;
-                case 4: key_code = (int)Keys.Q; break;
-                case 5: key_code = (int)Keys.W; break;
-                case 6: key_code = (int)Keys.E; break;
-                case 7: key_code = (int)Keys.R; break;
-                case 8: key_code = (int)Keys.A; break;
-                case 9: key_code = (int)Keys.S; break;
-                case 10: key_code = (int)Keys.D; break;
-                case 11: key_code = (int)Keys.F; break;
-                case 12: key_code = (int)Keys.Z; break;
-                case 13: key_code = (int)Keys.X; break;
-                case 14: key_code = (int)Keys.C; break;
-                case 15: key_code = (int)Keys.V; break;
-                case 16: key_code = (int)Keys.Space; break;
-                case 17: key_code = (int)Keys.LButton; break;
-                case 18: key_code = (int)Keys.RButton; break;
-                //case 19: key_code = (int)Keys.XButton1; break; //27.03.2015
-                //case 20: key_code = (int)Keys.XButton2; break; //27.03.2015
-                //case 21: key_code = (int)Keys.Shift; break; //27.03.2015
-            }
-            return key_code;
-        }
+        //private int key_hold_code(int i)
+        //{
+        //    int key_code = 0;
+        //    switch (i)
+        //    {
+        //        case 1: key_code = (int)Keys.D1; break;
+        //        case 2: key_code = (int)Keys.D2; break;
+        //        case 3: key_code = (int)Keys.D3; break;
+        //        case 4: key_code = (int)Keys.D4; break;
+        //        case 5: key_code = (int)Keys.Q; break;
+        //        case 6: key_code = (int)Keys.W; break;
+        //        case 7: key_code = (int)Keys.E; break;
+        //        case 8: key_code = (int)Keys.R; break;
+        //        case 9: key_code = (int)Keys.A; break;
+        //        case 10: key_code = (int)Keys.S; break;
+        //        case 11: key_code = (int)Keys.D; break;
+        //        case 12: key_code = (int)Keys.F; break;
+        //        case 13: key_code = (int)Keys.Z; break;
+        //        case 14: key_code = (int)Keys.X; break;
+        //        case 15: key_code = (int)Keys.C; break;
+        //        case 16: key_code = (int)Keys.V; break;
+        //        case 17: key_code = (int)Keys.Space; break;
+        //        case 18: key_code = (int)Keys.LButton; break;
+        //        case 19: key_code = (int)Keys.RButton; break;
+        //        //case 19: key_code = (int)Keys.XButton1; break; //27.03.2015
+        //        //case 20: key_code = (int)Keys.XButton2; break; //27.03.2015
+        //        //case 21: key_code = (int)Keys.Shift; break; //27.03.2015
+        //    }
+        //    return key_code;
+        //}
 
         /// <summary>
         /// Основной метод после запуска процесса - срабатывание главного таймера.
@@ -1093,42 +1125,42 @@ namespace D3Hot
 
             if (tmr == tmr1 && key_press(trig1))
             {
-                key = virt_code(key1);
+                key = key1_v;// virt_code(key1);
                 rand_interval(1);
                 tmr1_watch.Reset();
                 tmr1_watch.Start();
             }
             else if (tmr == tmr2 && key_press(trig2))
             {
-                key = virt_code(key2);
+                key = key2_v; //virt_code(key2);
                 rand_interval(2);
                 tmr2_watch.Reset();
                 tmr2_watch.Start();
             }
             else if (tmr == tmr3 && key_press(trig3))
             {
-                key = virt_code(key3);
+                key = key3_v; //virt_code(key3);
                 rand_interval(3);
                 tmr3_watch.Reset();
                 tmr3_watch.Start();
             }
             else if (tmr == tmr4 && key_press(trig4))
             {
-                key = virt_code(key4);
+                key = key4_v; //virt_code(key4);
                 rand_interval(4);
                 tmr4_watch.Reset();
                 tmr4_watch.Start();
             }
             else if (tmr == tmr5 && key_press(trig5))
             {
-                key = virt_code(key5);
+                key = key5_v; //virt_code(key5);
                 rand_interval(5);
                 tmr5_watch.Reset();
                 tmr5_watch.Start();
             }
             else if (tmr == tmr6 && key_press(trig6))
             {
-                key = virt_code(key6);
+                key = key6_v; //virt_code(key6);
                 rand_interval(6);
                 tmr6_watch.Reset();
                 tmr6_watch.Start();
@@ -1249,6 +1281,160 @@ namespace D3Hot
         }
 
         /// <summary>
+        /// Метод нахождения кодов клавиш из списка
+        /// </summary>
+        /// <param name="i"></param>
+        private void key_codes(int i)
+        {
+            Keys key_from_string = Keys.F12;
+            VirtualKeyCode vkc = 0;
+            int key_hold = 0;
+            //char item = new char();
+            string st = "";
+            switch (i)
+            {
+                case 1:
+                    st = (string)cb_key1.Items[cb_key1.SelectedIndex];
+                    break;
+                case 2:
+                    st = (string)cb_key2.Items[cb_key2.SelectedIndex];
+                    break;
+                case 3:
+                    st = (string)cb_key3.Items[cb_key3.SelectedIndex];
+                    break;
+                case 4:
+                    st = (string)cb_key4.Items[cb_key4.SelectedIndex];
+                    break;
+                case 5:
+                    st = (string)cb_key5.Items[cb_key5.SelectedIndex];
+                    break;
+                case 6:
+                    st = (string)cb_key6.Items[cb_key6.SelectedIndex];
+                    break;
+            }
+
+            bool done = false, error = false;
+
+            switch (st)
+            {
+                case "Space":
+                    done = true;
+                    vkc = VirtualKeyCode.SPACE;
+                    key_hold = (int)Keys.Space;
+                    break;
+                case "LMouse":
+                    vkc = VirtualKeyCode.LBUTTON;
+                    key_hold = (int)Keys.LButton;
+                    done = true;
+                    break;
+                case "RMouse":
+                    vkc = VirtualKeyCode.RBUTTON;
+                    key_hold = (int)Keys.RButton;
+                    done = true;
+                    break;
+                case "Shift+LM":
+                    vkc = VirtualKeyCode.XBUTTON1;
+                    key_hold = (int)Keys.XButton1; //не используется
+                    done = true;
+                    break;
+                case "Shift+RM":
+                    vkc = VirtualKeyCode.XBUTTON2;
+                    key_hold = (int)Keys.XButton2; //не используется
+                    done = true;
+                    break;
+                default:
+                    try
+                    {
+                        if (st.Length > 0 && st.Substring(0, 1) == "*") st = st.Remove(0, 1);
+                        key_from_string = (Keys)(new KeysConverter()).ConvertFromString(st);
+                    }
+                    catch
+                    {
+                        error = true;
+                    }
+                    break;
+            }
+
+            if (error)
+            {
+                switch (i)
+                {
+                    case 1: cb_key1.SelectedIndex = 0; break;
+                    case 2: cb_key2.SelectedIndex = 0; break;
+                    case 3: cb_key3.SelectedIndex = 0; break;
+                    case 4: cb_key4.SelectedIndex = 0; break;
+                    case 5: cb_key5.SelectedIndex = 0; break;
+                    case 6: cb_key6.SelectedIndex = 0; break;
+                }
+                cb_start.Checked = false;
+                if (this.WindowState == FormWindowState.Minimized) ShowMe();
+            }
+            else
+            {
+                //bool res = false;
+                //if (st.Length > 0) res = Char.TryParse(st, out item);
+                //if (res)
+                //{
+                if (!done)
+                {
+                    vkc = (VirtualKeyCode)key_from_string;
+                    key_hold = (int)key_from_string;
+                }
+
+                switch (i)
+                {
+                    case 1:
+                        key1_v = vkc;
+                        key1_h = key_hold;
+                        break;
+                    case 2:
+                        key2_v = vkc;
+                        key2_h = key_hold;
+                        break;
+                    case 3:
+                        key3_v = vkc;
+                        key3_h = key_hold;
+                        break;
+                    case 4:
+                        key4_v = vkc;
+                        key4_h = key_hold;
+                        break;
+                    case 5:
+                        key5_v = vkc;
+                        key5_h = key_hold;
+                        break;
+                    case 6:
+                        key6_v = vkc;
+                        key6_h = key_hold;
+                        break;
+                }
+            }
+
+            //}
+
+            //            char item = new char();
+            //string st = "1";
+            //bool res = false ;
+            //if (st.Length > 0) res = Char.TryParse(st, out item);
+            //if (res)
+            //{
+            //    Key wikey = KeyInterop.KeyFromVirtualKey((int)item);
+            //    VirtualKeyCode vkc = (VirtualKeyCode)KeyInterop.VirtualKeyFromKey(wikey);
+            //    VirtualKeyCode vkc1 = (VirtualKeyCode)item
+
+            //    MessageBox.Show(item.ToString() + " " + ((int)item).ToString());
+            //    MessageBox.Show("Keys D1: " + key_hold_code(1).ToString() + " Virt: " + (VirtualKeyCode.VK_1).ToString() + " Vks: " + vkc1.ToString());
+                 
+            //    //Key.
+            //    //KeyInterop.VirtualKeyFromKey
+            //    //KeysConverter kc = new KeysConverter();
+            //    //kc.ConvertTo(Keys.D1, Type.);
+
+            //}
+
+        }
+
+        /// <summary>
         /// Метод при запуске программы или её остановке (Start/Stop/F11)
         /// </summary>
         /// <param name="sender"></param>
@@ -1270,10 +1456,18 @@ namespace D3Hot
             {
                 if (pan_opt.Visible || opt_click == 1) b_opt_Click(null, null);
 
-                bool proc_exist = true;
+                bool proc_exist = false;
+
+                if (lb_debug.Visible) //For Debugging //27.04.2015
+                {
+                    proc_exist = true; 
+                    diablo_name = "opera";
+                    handle = FindWindow(null, "akelpad");
+                    handle = FindWindowEx(handle, IntPtr.Zero, "AkelEditW", null);
+                }
+
                 if (chb_hold.Checked && !proc_selected && handle != IntPtr.Zero)
                 {
-                    proc_exist = false;
                     Process[] processlist = Process.GetProcesses();
                     try
                                 {
@@ -1286,7 +1480,6 @@ namespace D3Hot
                                     }
                                 }
                     catch { }
-                    //proc_exist = true; //For Debugging
                     if (!proc_exist)
                     {
                         cb_proc.SelectedIndex = -1;
@@ -1310,6 +1503,11 @@ namespace D3Hot
 
             if (cb_start.Checked)
             {
+
+                key1_h = 0; key2_h = 0; key3_h = 0; key4_h = 0; key5_h = 0; key6_h = 0; //24.04.2015
+                key1_v = 0; key2_v = 0; key3_v = 0; key4_v = 0; key5_v = 0; key6_v = 0; //24.04.2015
+                d3hot_Activated(null, null); //27.04.2015
+
                 //if (d3proc) proc_watch = new Stopwatch(); //06.04.2015
 
                 mouseKeyEventProvider1.Enabled = true;
@@ -1340,54 +1538,60 @@ namespace D3Hot
                 
                 b_opt.Enabled = false;
 
-                if (nud_tmr1.Value > 0 && cb_trig_tmr1.SelectedIndex > 0)
+                if (nud_tmr1.Value > 0 && cb_trig_tmr1.SelectedIndex > 0 && cb_key1.SelectedIndex > 0)
                 {
                     lb_tmr1_sec.Text = Math.Round((nud_tmr1.Value / 1000), 2).ToString() + " " + lng.lang_sec;
                     tmr1_i = Convert.ToDouble(nud_tmr1.Value);
                     trig1 = cb_trig_tmr1.SelectedIndex;
-                    key1 = cb_key1.SelectedIndex;
+                    //key1 = cb_key1.SelectedIndex;
+                    key_codes(1);
                     tmr1_f = 1;
                 }
-                if (nud_tmr2.Value > 0 && cb_trig_tmr2.SelectedIndex > 0)
+                if (nud_tmr2.Value > 0 && cb_trig_tmr2.SelectedIndex > 0 && cb_key2.SelectedIndex > 0)
                 {
                     lb_tmr2_sec.Text = Math.Round((nud_tmr2.Value / 1000), 2).ToString() + " " + lng.lang_sec;
                     tmr2_i = Convert.ToDouble(nud_tmr2.Value);
                     trig2 = cb_trig_tmr2.SelectedIndex;
-                    key2 = cb_key2.SelectedIndex;
+                    //key2 = cb_key2.SelectedIndex;
+                    key_codes(2);
                     tmr2_f = 1;
                 }
 
-                if (nud_tmr3.Value > 0 && cb_trig_tmr3.SelectedIndex > 0)
+                if (nud_tmr3.Value > 0 && cb_trig_tmr3.SelectedIndex > 0 && cb_key3.SelectedIndex > 0)
                 {
                     lb_tmr3_sec.Text = Math.Round((nud_tmr3.Value / 1000), 2).ToString() + " " + lng.lang_sec;
                     tmr3_i = Convert.ToDouble(nud_tmr3.Value);
                     trig3 = cb_trig_tmr3.SelectedIndex;
-                    key3 = cb_key3.SelectedIndex;
+                    //key3 = cb_key3.SelectedIndex;
+                    key_codes(3);
                     tmr3_f = 1;
                 }
 
-                if (nud_tmr4.Value > 0 && cb_trig_tmr4.SelectedIndex > 0)
+                if (nud_tmr4.Value > 0 && cb_trig_tmr4.SelectedIndex > 0 && cb_key4.SelectedIndex > 0)
                 {
                     lb_tmr4_sec.Text = Math.Round((nud_tmr4.Value / 1000), 2).ToString() + " " + lng.lang_sec;
                     tmr4_i = Convert.ToDouble(nud_tmr4.Value);
                     trig4 = cb_trig_tmr4.SelectedIndex;
-                    key4 = cb_key4.SelectedIndex;
+                    //key4 = cb_key4.SelectedIndex;
+                    key_codes(4);
                     tmr4_f = 1;
                 }
-                if (nud_tmr5.Value > 0 && cb_trig_tmr5.SelectedIndex > 0)
+                if (nud_tmr5.Value > 0 && cb_trig_tmr5.SelectedIndex > 0 && cb_key5.SelectedIndex > 0)
                 {
                     lb_tmr5_sec.Text = Math.Round((nud_tmr5.Value / 1000), 2).ToString() + " " + lng.lang_sec;
                     tmr5_i = Convert.ToDouble(nud_tmr5.Value);
                     trig5 = cb_trig_tmr5.SelectedIndex;
-                    key5 = cb_key5.SelectedIndex;
+                    //key5 = cb_key5.SelectedIndex;
+                    key_codes(5);
                     tmr5_f = 1;
                 }
-                if (nud_tmr6.Value > 0 && cb_trig_tmr6.SelectedIndex > 0)
+                if (nud_tmr6.Value > 0 && cb_trig_tmr6.SelectedIndex > 0 && cb_key6.SelectedIndex > 0)
                 {
                     lb_tmr6_sec.Text = Math.Round((nud_tmr6.Value / 1000), 2).ToString() + " " + lng.lang_sec;
                     tmr6_i = Convert.ToDouble(nud_tmr6.Value);
                     trig6 = cb_trig_tmr6.SelectedIndex;
-                    key6 = cb_key6.SelectedIndex;
+                    //key6 = cb_key6.SelectedIndex;
+                    key_codes(6);
                     tmr6_f = 1;
                 }
 
@@ -1454,6 +1658,69 @@ namespace D3Hot
 
         }
 
+        private void key_assign(int i, ComboBox curr)
+        {
+            char item = Char.Parse(((string)curr.Items[curr.SelectedIndex]).Substring(0,1));
+            VirtualKeyCode vk = VirtualKeyCode.F12;
+            string test="";
+            int key_hold = 0;
+
+            
+
+            switch (test)
+            {
+                case "1":
+                    vk = VirtualKeyCode.VK_1;
+                    key_hold = (int)Keys.D1;
+                    break;
+                case "2":
+                    vk = VirtualKeyCode.VK_2;
+                    key_hold = (int)Keys.D2;
+                    break;
+                case "3":
+                    vk = VirtualKeyCode.VK_3;
+                    key_hold = (int)Keys.D3;
+                    break;
+                case "4":
+                    vk = VirtualKeyCode.VK_4;
+                    key_hold = (int)Keys.D4;
+                    break;
+
+                case "Q":
+                    vk = VirtualKeyCode.VK_1;
+                    key_hold = (int)Keys.D1;
+                    break;
+                case "W":
+                    vk = VirtualKeyCode.VK_2;
+                    key_hold = (int)Keys.D2;
+                    break;
+                case "E":
+                    vk = VirtualKeyCode.VK_3;
+                    key_hold = (int)Keys.D3;
+                    break;
+                case "R":
+                    vk = VirtualKeyCode.VK_4;
+                    key_hold = (int)Keys.D4;
+                    break;
+            }
+
+            switch (i)
+            {
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    break;
+            }
+        }
+
         /// <summary>
         /// Закрытие формы, удаление горячей клавиши, сохранение текущих настроек в профиль.
         /// </summary>
@@ -1508,6 +1775,8 @@ namespace D3Hot
                 lng.Lang_rus();
             }
             Lang();
+            key_menu();
+            //chb_hold_CheckedChanged(null, null);
         }
 
         /// <summary>
@@ -1581,7 +1850,8 @@ namespace D3Hot
 
             if (tb_prof_name.Text == "" || tb_prof_name.Text == "Наименование профиля" || tb_prof_name.Text == "Profile name") 
                 tb_prof_name.Text = lng.tb_prof_name;
-                
+
+            if (lb_key_desc != null) lb_key_desc.Text = lng.lb_key_desc;
         }
 
         /// <summary>
@@ -1605,7 +1875,7 @@ namespace D3Hot
             if (path != "" && File.Exists(path)) ReadXML(path);
             else if (path != "") Save_settings(1); //08.04.2015
 
-            cb_hot_prof.SelectedIndex = k;
+            //cb_hot_prof.SelectedIndex = k;
 
             cb_proc.SelectedIndex = -1; 
             
@@ -1699,7 +1969,8 @@ namespace D3Hot
         /// <param name="e"></param>
         private void cb_tp_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cb_tp.SelectedIndex > -1 && (string)cb_tp.Items[cb_tp.SelectedIndex] != "") tp_key = (string)cb_tp.Items[cb_tp.SelectedIndex].ToString();
+            if (cb_tp.SelectedIndex > 0 && (string)cb_tp.Items[cb_tp.SelectedIndex] != "") //24.04.2015
+                tp_key = (string)cb_tp.Items[cb_tp.SelectedIndex].ToString();
         }
 
         /// <summary>
@@ -1807,13 +2078,16 @@ namespace D3Hot
                 //cb_prog.Enabled = false; //17.04.2015
                 if (proc_curr != "") handle = proc_handle[proc_curr];
 
-                //handle = FindWindow(null, "akelpad");
-                //handle = FindWindowEx(handle, IntPtr.Zero, "AkelEditW", null);  //For debugging
+                //if (lb_debug.Visible)
+                //{
+                //    //handle = FindWindow(null, "akelpad");
+                //    //handle = FindWindowEx(handle, IntPtr.Zero, "AkelEditW", null);  //For debugging
+                //}
 
-                for (int i = 1; i < 7; i++)
-                {
-                    cb_key_del(i);
-                }
+                //for (int i = 1; i < 7; i++)
+                //{
+                //    cb_key_del(i);
+                //}
 
                 //pan_hold.Visible = false;
             }
@@ -1822,10 +2096,10 @@ namespace D3Hot
                 d3proc = false;
                 handle = IntPtr.Zero;
 
-                for (int j = 1; j < 7; j++)
-                {
-                    cb_key_add(j);
-                }
+                //for (int j = 1; j < 7; j++)
+                //{
+                //    cb_key_add(j);
+                //}
 
                 //int i = 0;
                 //if (cb_proc.SelectedIndex < 1) cb_prog.Enabled = true; //17.04.2015
@@ -1948,6 +2222,7 @@ namespace D3Hot
         private void error_select()
         {
             int[] nulls = new int[] { 0, 0, 0, 0, 0, 0 };
+            int[] key_nulls = new int[] { 0, 0, 0, 0, 0, 0 };
             bool notrig = true;
 
             foreach (NumericUpDown numud in this.pan_main.Controls.OfType<NumericUpDown>())
@@ -1960,14 +2235,21 @@ namespace D3Hot
                 if (cb.Name.Contains("trig") && cb.SelectedIndex > 0) notrig = false;
             }
 
-            if (cb_trig_tmr1.SelectedIndex != 0 && (nud_tmr1.Value != 0 || chb_key1.Checked)) nulls[0] = 1;
-            if (cb_trig_tmr2.SelectedIndex != 0 && (nud_tmr2.Value != 0 || chb_key2.Checked)) nulls[1] = 1;
-            if (cb_trig_tmr3.SelectedIndex != 0 && (nud_tmr3.Value != 0 || chb_key3.Checked)) nulls[2] = 1;
-            if (cb_trig_tmr4.SelectedIndex != 0 && (nud_tmr4.Value != 0 || chb_key4.Checked)) nulls[3] = 1;
-            if (cb_trig_tmr5.SelectedIndex != 0 && (nud_tmr5.Value != 0 || chb_key5.Checked)) nulls[4] = 1;
-            if (cb_trig_tmr6.SelectedIndex != 0 && (nud_tmr6.Value != 0 || chb_key6.Checked)) nulls[5] = 1;
+            if (cb_trig_tmr1.SelectedIndex > 0 && (nud_tmr1.Value != 0 || chb_key1.Checked)) nulls[0] = 1;
+            if (cb_trig_tmr2.SelectedIndex > 0 && (nud_tmr2.Value != 0 || chb_key2.Checked)) nulls[1] = 1;
+            if (cb_trig_tmr3.SelectedIndex > 0 && (nud_tmr3.Value != 0 || chb_key3.Checked)) nulls[2] = 1;
+            if (cb_trig_tmr4.SelectedIndex > 0 && (nud_tmr4.Value != 0 || chb_key4.Checked)) nulls[3] = 1;
+            if (cb_trig_tmr5.SelectedIndex > 0 && (nud_tmr5.Value != 0 || chb_key5.Checked)) nulls[4] = 1;
+            if (cb_trig_tmr6.SelectedIndex > 0 && (nud_tmr6.Value != 0 || chb_key6.Checked)) nulls[5] = 1;
 
-            if (!notrig && nulls.Contains(1) && start_opt)
+            if (nulls[0] == 1 && cb_key1.SelectedIndex > 0) key_nulls[0] = 1;
+            if (nulls[1] == 1 && cb_key2.SelectedIndex > 0) key_nulls[1] = 1;
+            if (nulls[2] == 1 && cb_key3.SelectedIndex > 0) key_nulls[2] = 1;
+            if (nulls[3] == 1 && cb_key4.SelectedIndex > 0) key_nulls[3] = 1;
+            if (nulls[4] == 1 && cb_key5.SelectedIndex > 0) key_nulls[4] = 1;
+            if (nulls[5] == 1 && cb_key6.SelectedIndex > 0) key_nulls[5] = 1;
+
+            if (!notrig && nulls.Contains(1) && key_nulls.Contains(1) && start_opt)
             {
                 error_show(1);
                 start_main = true;
@@ -1975,8 +2257,9 @@ namespace D3Hot
             else
             {
                 start_main = false;
-                if (notrig) lb_hold.Text = lng.lb_hold_trig;
-                else if (!nulls.Contains(1)) lb_hold.Text = lng.lb_hold_delay;
+                if (notrig) lb_hold.Text = lng.lb_hold_trig; //"Не выбрано ни одного триггера для активации."
+                else if (!nulls.Contains(1)) lb_hold.Text = lng.lb_hold_delay; //"Не выставленаы паузы для триггеров."
+                else if (!key_nulls.Contains(1)) lb_hold.Text = lng.lb_hold_key; //"Не выбраны клавиши для триггеров."              
                 else if (!start_opt)
                 {
                     error_not(2);
@@ -2204,10 +2487,10 @@ namespace D3Hot
                         cheb.Visible = false;
                     }
                 }
-                for (int k = 1; k < 7; k++)
-                {
-                    cb_key_del(k);
-                }
+                //for (int k = 1; k < 7; k++)
+                //{
+                //    cb_key_del(k);
+                //}
             }
             else
             {
@@ -2215,11 +2498,11 @@ namespace D3Hot
                     foreach (CheckBox cheb in this.pan_main.Controls.OfType<CheckBox>())
                         cheb.Visible = true;
                
-                if (cb_proc.SelectedIndex>0)
-                    for (int k = 1; k < 7; k++)
-                    {
-                        cb_key_del(k);
-                    }
+                //if (cb_proc.SelectedIndex>0)
+                //    for (int k = 1; k < 7; k++)
+                //    {
+                //        cb_key_del(k);
+                //    }
             }
             error_not(2);
         }
@@ -2270,88 +2553,108 @@ namespace D3Hot
             //    }
             //}
             check_only();
-             
+
             switch (chb)
             {
-                case "chb_key1":
+                case "chb_key1": 
                     if (cb.Checked && chb_hold.Checked)
-                    {
                         nud_tmr1.Enabled = false;
-                        cb_key_del(1);
-                    }
                     else
-                    {
                         nud_tmr1.Enabled = true;
-                        if (cb_proc.SelectedIndex<1) cb_key_add(1);
-                    }
+                    //{
+                    //    nud_tmr1.Enabled = false;
+                    //    cb_key_del(1);
+                    //}
+                    //else
+                    //{
+                    //    nud_tmr1.Enabled = true;
+                    //    if (cb_proc.SelectedIndex<1) cb_key_add(1);
+                    //}
                     break;
 
-                case "chb_key2":
+                case "chb_key2": 
                     if (cb.Checked && chb_hold.Checked)
-                    {
                         nud_tmr2.Enabled = false;
-                        cb_key_del(2);
-                    }
                     else
-                    {
                         nud_tmr2.Enabled = true;
-                        if (cb_proc.SelectedIndex < 1) cb_key_add(2);
-                    }
+                    //{
+                    //    nud_tmr2.Enabled = false;
+                    //    cb_key_del(2);
+                    //}
+                    //else
+                    //{
+                    //    nud_tmr2.Enabled = true;
+                    //    if (cb_proc.SelectedIndex < 1) cb_key_add(2);
+                    //}
                     break;
 
-                case "chb_key3":
+                case "chb_key3": 
                     if (cb.Checked && chb_hold.Checked)
-                    {
                         nud_tmr3.Enabled = false;
-                        cb_key_del(3);
-                    }
                     else
-                    {
                         nud_tmr3.Enabled = true;
-                        if (cb_proc.SelectedIndex < 1) cb_key_add(3);
-                    }
+                    //{
+                    //    nud_tmr3.Enabled = false;
+                    //    cb_key_del(3);
+                    //}
+                    //else
+                    //{
+                    //    nud_tmr3.Enabled = true;
+                    //    if (cb_proc.SelectedIndex < 1) cb_key_add(3);
+                    //}
                     break;
 
-                case "chb_key4":
+                case "chb_key4": 
                     if (cb.Checked && chb_hold.Checked)
-                    {
                         nud_tmr4.Enabled = false;
-                        cb_key_del(4);
-                    }
                     else
-                    {
                         nud_tmr4.Enabled = true;
-                        if (cb_proc.SelectedIndex < 1) cb_key_add(4);
-                    }
+                    //{
+                    //    nud_tmr4.Enabled = false;
+                    //    cb_key_del(4);
+                    //}
+                    //else
+                    //{
+                    //    nud_tmr4.Enabled = true;
+                    //    if (cb_proc.SelectedIndex < 1) cb_key_add(4);
+                    //}
                     break;
 
-                case "chb_key5":
+                case "chb_key5": 
                     if (cb.Checked && chb_hold.Checked)
-                    {
                         nud_tmr5.Enabled = false;
-                        cb_key_del(5);
-                    }
                     else
-                    {
                         nud_tmr5.Enabled = true;
-                        if (cb_proc.SelectedIndex < 1) cb_key_add(5);
-                    }
+                    //{
+                    //    nud_tmr5.Enabled = false;
+                    //    cb_key_del(5);
+                    //}
+                    //else
+                    //{
+                    //    nud_tmr5.Enabled = true;
+                    //    if (cb_proc.SelectedIndex < 1) cb_key_add(5);
+                    //}
                     break;
 
-                case "chb_key6":
+                case "chb_key6": 
                     if (cb.Checked && chb_hold.Checked)
-                    {
                         nud_tmr6.Enabled = false;
-                        cb_key_del(6);
-                    }
                     else
-                    {
                         nud_tmr6.Enabled = true;
-                        if (cb_proc.SelectedIndex < 1) cb_key_add(6);
-                    }
+                    //{
+                    //    nud_tmr6.Enabled = false;
+                    //    cb_key_del(6);
+                    //}
+                    //else
+                    //{
+                    //    nud_tmr6.Enabled = true;
+                    //    if (cb_proc.SelectedIndex < 1) cb_key_add(6);
+                    //}
                     break;
             }
         }
+
+
 
         /// <summary>
         /// Метод добавления пунктов меню с Shift
@@ -2359,57 +2662,39 @@ namespace D3Hot
         /// <param name="i"></param>
         private void cb_key_add(int i)
         {
-            switch (i)
+            int cb_select, shift_pos, star_pos,
+                cb_select_new;
+
+            foreach (ComboBox cb in this.pan_main.Controls.OfType<ComboBox>())
             {
-                case 1:
-                    if (cb_key1.Items.Count < 20)
-                    {
-                        cb_key1.Items.Add("Shift+LM");
-                        cb_key1.Items.Add("Shift+RM");
+                if (cb.Name.Contains("key"))
+                {
+                    cb_select = cb.SelectedIndex;
+                    shift_pos = cb.FindString("Shift");
+                    star_pos = cb.FindString("*");
 
-                    }
-                    break;
-                case 2:
-                    if (cb_key2.Items.Count < 20)
-                    {
-                        cb_key2.Items.Add("Shift+LM");
-                        cb_key2.Items.Add("Shift+RM");
+                    cb_select_new = cb_select;
 
-                    }
-                    break;
-                case 3:
-                    if (cb_key3.Items.Count < 20)
+                    if (shift_pos < 2)
                     {
-                        cb_key3.Items.Add("Shift+LM");
-                        cb_key3.Items.Add("Shift+RM");
-
+                        cb.Items.Add("Shift+LM");
+                        cb.Items.Add("Shift+RM");
+                        if (cb_select == star_pos) cb_select_new = cb_select_new + 2;
                     }
-                    break;
-                case 4:
-                    if (cb_key4.Items.Count < 20)
+
+                    if (star_pos > 0)
                     {
-                        cb_key4.Items.Add("Shift+LM");
-                        cb_key4.Items.Add("Shift+RM");
-
+                        cb.Items.RemoveAt(cb.FindString("*"));
+                        if (cb_select == star_pos) cb_select_new--;
                     }
-                    break;
-                case 5:
-                    if (cb_key5.Items.Count < 20)
-                    {
-                        cb_key5.Items.Add("Shift+LM");
-                        cb_key5.Items.Add("Shift+RM");
 
-                    }
-                    break;
-                case 6:
-                    if (cb_key6.Items.Count < 20)
-                    {
-                        cb_key6.Items.Add("Shift+LM");
-                        cb_key6.Items.Add("Shift+RM");
+                    if (star_add(cb) && cb_select == star_pos)
+                        cb_select_new++;
 
-                    }
-                    break;
-            }
+                    cb.SelectedIndex = cb_select_new;
+                }
+
+            }            
         }
 
         /// <summary>
@@ -2418,65 +2703,63 @@ namespace D3Hot
         /// <param name="i"></param>
         private void cb_key_del(int i)
         {
-            switch (i)
+            int cb_select, shift_pos, star_pos,
+                cb_select_new, star_pos_new;
+            
+            foreach (ComboBox cb in this.pan_main.Controls.OfType<ComboBox>())
             {
-                case 1:
-                    if (cb_key1.Items.Count > 20)
+                if (cb.Name.Contains("key"))
+                {
+                    cb_select = cb.SelectedIndex;
+                    shift_pos = cb.FindString("Shift");
+                    star_pos = cb.FindString("*");
+
+                    cb_select_new = cb_select;
+                    star_pos_new = star_pos;
+
+                    if (shift_pos > 0)
                     {
-                        if (cb_key1.SelectedIndex == 19) cb_key1.SelectedIndex = 17;
-                        if (cb_key1.SelectedIndex == 20) cb_key1.SelectedIndex = 18;
-                        cb_key1.Items.Remove(cb_key1.Items[20]);
-                        cb_key1.Items.Remove(cb_key1.Items[19]);
+                        cb.Items.RemoveAt(shift_pos);
+                        cb.Items.RemoveAt(shift_pos);
+                        if (cb_select >= shift_pos) cb_select_new = cb_select - 2;
+                        star_pos_new = star_pos - 2;
                     }
-                    break;
-                case 2:
-                    if (cb_key2.Items.Count > 20)
+                    if (star_pos > 0)
                     {
-                        if (cb_key2.SelectedIndex == 19) cb_key2.SelectedIndex = 17;
-                        if (cb_key2.SelectedIndex == 20) cb_key2.SelectedIndex = 18;
-                        cb_key2.Items.Remove(cb_key2.Items[20]);
-                        cb_key2.Items.Remove(cb_key2.Items[19]);
+                        cb.Items.RemoveAt(star_pos_new);
+                        if (cb_select == star_pos) cb_select_new--;
                     }
-                    break;
-                case 3:
-                    if (cb_key3.Items.Count > 20)
-                    {
-                        if (cb_key3.SelectedIndex == 19) cb_key3.SelectedIndex = 17;
-                        if (cb_key3.SelectedIndex == 20) cb_key3.SelectedIndex = 18;
-                        cb_key3.Items.Remove(cb_key3.Items[20]);
-                        cb_key3.Items.Remove(cb_key3.Items[19]);
-                    }
-                    break;
-                case 4:
-                    if (cb_key4.Items.Count > 20)
-                    {
-                        if (cb_key4.SelectedIndex == 19) cb_key4.SelectedIndex = 17;
-                        if (cb_key4.SelectedIndex == 20) cb_key4.SelectedIndex = 18;
-                        cb_key4.Items.Remove(cb_key4.Items[20]);
-                        cb_key4.Items.Remove(cb_key4.Items[19]);
-                    }
-                    break;
-                case 5:
-                    if (cb_key5.Items.Count > 20)
-                    {
-                        if (cb_key5.SelectedIndex == 19) cb_key5.SelectedIndex = 17;
-                        if (cb_key5.SelectedIndex == 20) cb_key5.SelectedIndex = 18;
-                        cb_key5.Items.Remove(cb_key5.Items[20]);
-                        cb_key5.Items.Remove(cb_key5.Items[19]);
-                    }
-                    break;
-                case 6:
-                    if (cb_key6.Items.Count > 20)
-                    {
-                        if (cb_key6.SelectedIndex == 19) cb_key6.SelectedIndex = 17;
-                        if (cb_key6.SelectedIndex == 20) cb_key6.SelectedIndex = 18;
-                        cb_key6.Items.Remove(cb_key6.Items[20]);
-                        cb_key6.Items.Remove(cb_key6.Items[19]);
-                    }
-                    break;
+
+                    if (star_add(cb) && star_pos > 0 && cb_select == star_pos) cb_select_new++;
+
+                    cb.SelectedIndex = cb_select_new;
+                }
             }
         }
 
+        private bool star_add(ComboBox cb)
+        {
+            bool result = false;
+            string[] keys = new string[] { "cb_key1", "cb_key2", "cb_key3", "cb_key4", "cb_key5", "cb_key6" };
+            string[] vals = new string[] { Settings.Default.cb_key1_desc, Settings.Default.cb_key2_desc, Settings.Default.cb_key3_desc, 
+                Settings.Default.cb_key4_desc, Settings.Default.cb_key5_desc, Settings.Default.cb_key6_desc };
+
+            for (int j = 0; j < 5; j++)
+            {
+                if (cb.Name.Contains(keys[j]) && vals[j] != null)
+                {
+                    cb.Items.Add(vals[j]);
+                    result = true;
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Метод обработки галки выбора программы или области
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void chb_hold_CheckedChanged(object sender, EventArgs e)
         {
             if (opt_click == 1) opt_change = 1;
@@ -2496,6 +2779,8 @@ namespace D3Hot
                 }
                 check_only();
 
+                //if (cb_key1.FindString("Shift+LM") > 1) 
+                    cb_key_del(0);
             }
             else 
             {
@@ -2512,6 +2797,9 @@ namespace D3Hot
                         chb_key_CheckedChanged(chb, null);
                     }
                 }
+                //if (cb_key1.FindString("Shift+LM") < 1) 
+                    cb_key_add(0);
+                
                 //if (lb_hold.Text != lng.lb_hold_hot) error_not(4);
                 //pan_hold.Visible = false;
                 //if (!cb_prog.Enabled && cb_proc.SelectedIndex < 1 && !chb_proconly.Checked) //17.04.2015
@@ -2742,7 +3030,8 @@ namespace D3Hot
 
         private void cb_map_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cb_map.SelectedIndex > -1 && (string)cb_map.Items[cb_map.SelectedIndex] != "") map_key = (string)cb_map.Items[cb_map.SelectedIndex].ToString();
+            if (cb_map.SelectedIndex > 0 && (string)cb_map.Items[cb_map.SelectedIndex] != "") //24.04.2015
+                map_key = (string)cb_map.Items[cb_map.SelectedIndex].ToString();
         }
 
         private void cb_users_CheckedChanged(object sender, EventArgs e)
@@ -2801,16 +3090,39 @@ namespace D3Hot
             error_select();
         }
 
-        private void b_key_select_Click(object sender, EventArgs e)
-        {
-            form_open(null);//22.04.2015
-        }
-
-        private void cb_1_SelectedIndexChanged(object sender, EventArgs e)
+        private void key_choose_SelectionChangeCommitted(object sender, EventArgs e)
         {
             var cb = (ComboBox)sender;
-            if (cb.SelectedIndex == 0)
-            form_open(cb);
+            if (cb.SelectedIndex == cb.FindString(lng.cb_keys_choose))
+                form_open(cb);
+            error_select();
+        }
+
+        private void key_choose_MouseClick(object sender, MouseEventArgs e)
+        {
+            var cb = (ComboBox)sender;
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                form_open(cb);
+                error_select();
+            }
+            
+        }
+
+        private void d3hot_Deactivate(object sender, EventArgs e)
+        {
+            if (!cb_start.Checked)
+            {
+                UnregisterHotKey(this.Handle, 1);
+                UnregisterHotKey(this.Handle, 2);
+                UnregisterHotKey(this.Handle, 3);
+            }
+        }
+
+        private void d3hot_Activated(object sender, EventArgs e)
+        {
+            if (cb_hot_prof.SelectedIndex > 0) 
+                cb_hot_prof_SelectedIndexChanged(null, null);
         }
 
 
