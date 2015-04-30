@@ -706,5 +706,17 @@ namespace D3Hot.Properties {
                 this["cb_key_delay_desc"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int chb_ver_check {
+            get {
+                return ((int)(this["chb_ver_check"]));
+            }
+            set {
+                this["chb_ver_check"] = value;
+            }
+        }
     }
 }

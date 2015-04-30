@@ -12,9 +12,10 @@ namespace D3Hot
             lb_startstop, lb_tp, lb_tpdelay, tb_prof_name,
             chb_tray, chb_mult, chb_users, chb_proconly, b_opt, lb_key_delay, lb_key_delay_ms,
             lb_hold, lb_hold_hot, lb_hot_prof, lb_hold_trig, lb_hold_delay, lb_hold_key,
-            chb_hold, chb_mpress,
+            chb_hold, chb_mpress, chb_ver_check,
             lb_map, lb_mapdelay,
-            cb_keys_choose, lb_key_prev_used, lb_key_prev_err, lb_key_desc
+            cb_keys_choose, lb_key_prev_used, lb_key_prev_err, lb_key_desc,
+            download, new_ver, no_new, ver_err_nover, ver_err_open, ver_cap
             ;
 
 
@@ -81,6 +82,14 @@ namespace D3Hot
             lb_key_prev_used = "Клавиша занята!";
             lb_key_prev_err = "Недопустимая клавиша!";
 
+            download = "Скачать?";
+            new_ver = "Новая версия: ";
+            chb_ver_check = "Проверка версии";
+            no_new = "Новой версии нет!";
+            ver_err_nover = "Не удаётся распознать номер версии!";
+            ver_err_open = "Не могу открыть ";
+            ver_cap = "Обновление версии";
+
         }
         public void Lang_eng()
         {
@@ -143,6 +152,14 @@ namespace D3Hot
             lb_key_desc = "Key pressed:";
             lb_key_prev_used = "Key isn't free!";
             lb_key_prev_err = "Wrong key!";
+
+            download = "Download?";
+            new_ver = "New version: ";
+            chb_ver_check = "Version check";
+            no_new = "No new version!";
+            ver_err_nover = "Can't recognize the version number!";
+            ver_err_open = "Can't open ";
+            ver_cap = "Version check";
         }
 
     }

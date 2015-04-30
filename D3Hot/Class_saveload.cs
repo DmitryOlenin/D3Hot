@@ -63,7 +63,7 @@ namespace D3Hot
             Settings.Default.chb_mpress = chb_mpress.Checked ? 1 : 0;
             Settings.Default.chb_saveload = chb_saveload.Checked ? 1 : 0;
             Settings.Default.chb_users = chb_users.Checked ? 1 : 0;
-            Settings.Default.chb_proconly = chb_proconly.Checked ? 1 : 0;
+            Settings.Default.chb_ver_check = chb_ver_check.Checked ? 1 : 0;
 
             Settings.Default.nud_rand = nud_rand.Value;
 
@@ -152,6 +152,24 @@ namespace D3Hot
             //if (Settings.Default.cb_key6 > 5) Settings.Default.cb_key6 = 5;
 
             chb_hold.Checked = Settings.Default.chb_hold == 1 ? true : false; //27.04.2015 (перенёс повыше)
+            chb_hold_CheckedChanged(null, null);
+
+            foreach (ComboBox cb in this.pan_opt.Controls.OfType<ComboBox>())
+                switch (cb.Name)
+                {
+                    case "cb_tp":
+                        if (cb.FindString("*") > 0) cb.Items.RemoveAt(cb.FindString("*"));
+                        if (Settings.Default.cb_tp_desc.Length > 0) star_add(cb);
+                        break;
+                    case "cb_map":
+                        if (cb.FindString("*") > 0) cb.Items.RemoveAt(cb.FindString("*"));
+                        if (Settings.Default.cb_map_desc.Length > 0) star_add(cb);
+                        break;
+                    case "cb_key_delay":
+                        if (cb.FindString("*") > 0) cb.Items.RemoveAt(cb.FindString("*"));
+                        if (Settings.Default.cb_key_delay_desc.Length > 0) star_add(cb);
+                        break;
+                }
 
             //if (Settings.Default.cb_key1_desc != null && cb_key1.FindString(Settings.Default.cb_key1_desc) < 1) 
             //    cb_key1.Items.Add(Settings.Default.cb_key1_desc);
@@ -217,7 +235,7 @@ namespace D3Hot
             cb_hot_prof.SelectedIndex = Settings.Default.cb_hot_prof;
             tb_prof_name.Text = Settings.Default.tb_prof_name;
 
-            chb_proconly.Checked = Settings.Default.chb_proconly == 1 ? true : false;
+            chb_ver_check.Checked = Settings.Default.chb_ver_check == 1 ? true : false;
         }
 
         public class SettingsTable
@@ -262,6 +280,9 @@ namespace D3Hot
                 if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_key4_desc") Settings.Default.cb_key4_desc = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
                 if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_key5_desc") Settings.Default.cb_key5_desc = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
                 if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_key6_desc") Settings.Default.cb_key6_desc = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
+                if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_tp_desc") Settings.Default.cb_tp_desc = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
+                if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_map_desc") Settings.Default.cb_map_desc = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
+                if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_key_delay_desc") Settings.Default.cb_key_delay_desc = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
             }
             for (int j = 0; j < overview.dataset.Tables[1].Rows.Count; j++)
             {
@@ -314,6 +335,7 @@ namespace D3Hot
 
                     case "chb_hold": Settings.Default.chb_hold = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "chb_mpress": Settings.Default.chb_mpress = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    case "chb_ver_check": Settings.Default.chb_ver_check = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "chb_saveload": Settings.Default.chb_saveload = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "chb_users": Settings.Default.chb_users = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "chb_proconly": Settings.Default.chb_proconly = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;

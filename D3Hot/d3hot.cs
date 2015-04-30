@@ -12,7 +12,8 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Drawing;
-using System.Windows.Input; //11.03.2015 
+using System.Windows.Input;
+using System.Net; //11.03.2015 
 //using InputManager; //26.03.2015
 //InputManager - http://www.codeproject.com/Articles/117657/InputManager-library-Track-user-input-and-simulate
 
@@ -20,7 +21,9 @@ namespace D3Hot
 {
     public partial class d3hot : Form
     {
-        public string title = "Diablo 3 Hotkeys ver. 2.0";
+        public double ver = 2.0;
+        public string sep = Convert.ToChar(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator).ToString(),
+            version = "Diablo 3 Hotkeys ver. 2.0";
         public System.Timers.Timer tmr1, tmr2, tmr3, tmr4, tmr5, tmr6, tmr_all, tmr_save;
         public System.Timers.Timer StartTimer1, RepeatTimer1, StartTimer2, RepeatTimer2, StartTimer3, RepeatTimer3,
                                     StartTimer4, RepeatTimer4, StartTimer5, RepeatTimer5, StartTimer6, RepeatTimer6;
@@ -43,10 +46,11 @@ namespace D3Hot
 
         public double tmr1_i = 0, tmr2_i = 0, tmr3_i = 0, tmr4_i = 0, tmr5_i = 0, tmr6_i = 0;
         public static bool holded = false, hotkey_pressed = false, prof_name_changed = false, form_shown = false
-            , start_main=true, start_opt=true, proc_selected=false, lmousehold = false, rmousehold = false;
+            , start_main = true, start_opt = true, proc_selected = false, lmousehold = false, rmousehold = false;
         public static int t_press = 0, map_press = 0, return_press = 0, r_press = 0, return_press_count = 0,
              delay_press = 0, delay_press_interval = 0, shift_press = 0;
-        public static string tp_key = "", map_key = "", proc_curr = "", key_delay = "", diablo_name = "diablo";//diablo
+        public static string tp_key = "", map_key = "", proc_curr = "", key_delay = "", ver_click = "",
+                                                                                            diablo_name = "diablo";//diablo
         public long proc_size = 400000000;
 
         public static SettingsTable overview;
@@ -431,7 +435,6 @@ namespace D3Hot
 
         private void d3hot_Load(object sender, EventArgs e)
         {
-           
             //this.Icon = D3Hot.Properties.Resources.diablo_hot;
             //notify_d3h.Icon = D3Hot.Properties.Resources.diablo_hot;
 
@@ -478,6 +481,8 @@ namespace D3Hot
 
             key_menu();
             chb_hold_CheckedChanged(null, null);
+
+            if (chb_ver_check.Checked) lb_ver_check_Click(null, null); //Проверка новой версии 27.04.2015
         }
 
         private void key_menu()
@@ -487,22 +492,12 @@ namespace D3Hot
                 if (cb.Name.Contains("key"))
                 {
                     cb.Items[0] = lng.cb_keys_choose;
-                    //if (cb.SelectedIndex > 19) MessageBox.Show("123");
                 }
-
             }
-        //            int i = cb.SelectedIndex;
-        //            cb.Items.Clear();
-        //            cb.Items.Add(lng.cb_keys_choose);
-        //            cb.Items.Add("1");
-        //            cb.Items.Add("2");
-        //            cb.Items.Add("3");
-        //            cb.Items.Add("4");
-        //            cb.Items.Add("LMouse");
-        //            cb.Items.Add("RMouse");
-        //            cb.Items.Add("Shift+LM");
-        //            cb.Items.Add("Shift+RM");
-        //            cb.SelectedIndex = i;
+            cb_tp.Items[0] = lng.cb_keys_choose;
+            cb_map.Items[0] = lng.cb_keys_choose;
+            cb_key_delay.Items[0] = lng.cb_keys_choose;
+
         }
 
         /// <summary>
@@ -515,7 +510,9 @@ namespace D3Hot
                 this.Icon = D3Hot.Properties.Resources.diablo_hot;
                 notify_d3h.Icon = D3Hot.Properties.Resources.diablo_hot;
                 this.BackgroundImage = null;
-                this.Text = title;
+
+                version = "Diablo 3 Hotkeys ver. " + string.Format("{0:F1}", ver).ToString().Replace(sep, ".");
+                this.Text = version;
             }
             else
             {
@@ -1852,6 +1849,9 @@ namespace D3Hot
                 tb_prof_name.Text = lng.tb_prof_name;
 
             if (lb_key_desc != null) lb_key_desc.Text = lng.lb_key_desc;
+            
+            //chb_ver_check.Text = lng.chb_ver_check;
+            lb_ver_check.Text = lng.chb_ver_check;
         }
 
         /// <summary>
@@ -1971,6 +1971,7 @@ namespace D3Hot
         {
             if (cb_tp.SelectedIndex > 0 && (string)cb_tp.Items[cb_tp.SelectedIndex] != "") //24.04.2015
                 tp_key = (string)cb_tp.Items[cb_tp.SelectedIndex].ToString();
+            if (tp_key.Length>0 && tp_key.Substring(0, 1) == "*") tp_key = tp_key.Remove(0, 1);
         }
 
         /// <summary>
@@ -2212,7 +2213,13 @@ namespace D3Hot
 
         private void cb_op_SelectionChangeCommitted(object sender, EventArgs e)
         {
+            var cb = sender as ComboBox;
+
             if (opt_click == 1) opt_change = 1;
+
+            if (cb != null && (cb.Name == "cb_key_delay" || cb.Name == "cb_tp" || cb.Name == "cb_map"))
+                key_choose_SelectionChangeCommitted(cb, null);
+
             error_not(1);
         }
 
@@ -2288,7 +2295,7 @@ namespace D3Hot
                 )
                 hot_prof = 1;
 
-            if  (cb_tp.SelectedIndex == cb_map.SelectedIndex) hot_tpmap = 1;
+            if (cb_tp.SelectedIndex == cb_map.SelectedIndex && cb_tp.SelectedIndex > 0 && !((string)cb_tp.SelectedItem).Contains("*")) hot_tpmap = 1;
 
             //if (
             //    (cb_proc.SelectedIndex < 1) &&
@@ -2456,6 +2463,7 @@ namespace D3Hot
                 key_delay = (string)cb_key_delay.Items[cb_key_delay.SelectedIndex].ToString();
                 if (key_delay == "1" || key_delay == "2" || key_delay == "3" || key_delay == "4") key_delay = "D" + key_delay;
                 nud_key_delay_ms.Enabled = true;
+                if (key_delay.Length > 0 && key_delay.Substring(0, 1) == "*") key_delay = key_delay.Remove(0, 1);
             }
             else
             {
@@ -2694,7 +2702,8 @@ namespace D3Hot
                     cb.SelectedIndex = cb_select_new;
                 }
 
-            }            
+            }
+
         }
 
         /// <summary>
@@ -2740,11 +2749,12 @@ namespace D3Hot
         private bool star_add(ComboBox cb)
         {
             bool result = false;
-            string[] keys = new string[] { "cb_key1", "cb_key2", "cb_key3", "cb_key4", "cb_key5", "cb_key6" };
+            string[] keys = new string[] { "cb_key1", "cb_key2", "cb_key3", "cb_key4", "cb_key5", "cb_key6", "cb_tp", "cb_map", "cb_key_delay" };
             string[] vals = new string[] { Settings.Default.cb_key1_desc, Settings.Default.cb_key2_desc, Settings.Default.cb_key3_desc, 
-                Settings.Default.cb_key4_desc, Settings.Default.cb_key5_desc, Settings.Default.cb_key6_desc };
+                Settings.Default.cb_key4_desc, Settings.Default.cb_key5_desc, Settings.Default.cb_key6_desc, 
+                Settings.Default.cb_tp_desc, Settings.Default.cb_map_desc, Settings.Default.cb_key_delay_desc};
 
-            for (int j = 0; j < 5; j++)
+            for (int j = 0; j < 9; j++)
             {
                 if (cb.Name.Contains(keys[j]) && vals[j] != null)
                 {
@@ -3032,6 +3042,7 @@ namespace D3Hot
         {
             if (cb_map.SelectedIndex > 0 && (string)cb_map.Items[cb_map.SelectedIndex] != "") //24.04.2015
                 map_key = (string)cb_map.Items[cb_map.SelectedIndex].ToString();
+            if (map_key.Length > 0 && map_key.Substring(0, 1) == "*") map_key = map_key.Remove(0, 1);
         }
 
         private void cb_users_CheckedChanged(object sender, EventArgs e)
@@ -3123,6 +3134,135 @@ namespace D3Hot
         {
             if (cb_hot_prof.SelectedIndex > 0) 
                 cb_hot_prof_SelectedIndexChanged(null, null);
+        }
+
+        private void lb_ver_check_Click(object sender, EventArgs e)
+        {
+            var send = (Label)sender;
+            ver_click = "";
+            if (send != null) ver_click = send.Name;
+
+            System.Timers.Timer ver_timer = new System.Timers.Timer();
+            ver_timer.AutoReset = false;
+            ver_timer.Interval = 10;
+            ver_timer.Elapsed += ver_timer_Tick;
+            ver_timer.Start();
+        }
+
+        public void ver_timer_Tick(object sender, EventArgs eventArgs)
+        {
+
+
+            //WebRequest request = WebRequest.Create("http://csharpindepth.com/asd");
+            ////HttpWebRequest.DefaultMaximumErrorResponseLength = 100;
+            //try
+            //{
+            //    using (WebResponse response = request.GetResponse())
+            //    {
+            //        MessageBox.Show("Won't get here");
+            //    }
+            //}
+            //catch (WebException e)
+            //{
+            //    using (WebResponse response = e.Response)
+            //    {
+            //        HttpWebResponse httpResponse = (HttpWebResponse)response;
+            //        MessageBox.Show("Error code: " + httpResponse.StatusCode.ToString());
+            //        using (Stream data = response.GetResponseStream())
+            //        using (var reader = new StreamReader(data))
+            //        {
+            //            string text = reader.ReadToEnd();
+            //            MessageBox.Show(text);
+            //        }
+            //    }
+            //}
+
+
+            //return;
+
+
+
+            //HttpWebRequest req_ver = (HttpWebRequest)WebRequest.Create(@"https://github.com/DmitryOlenin/D3Hot");
+            //HttpWebResponse resp1 = null;
+
+            System.Net.WebRequest req_ver = System.Net.WebRequest.Create(@"https://github.com/DmitryOlenin/D3Hot");
+            System.Net.WebResponse resp1 = null;
+
+            //var proxy = System.Net.HttpWebRequest.GetSystemWebProxy();
+            //Uri proxyUri = proxy.GetProxy(new Uri("http://www.google.com"));
+
+
+            //if (proxyUri.Authority.ToString() != "www.google.com")
+            //{
+            //    WebProxy myproxy = new WebProxy(proxyUri.Host, proxyUri.Port);
+            //    //myproxy.Credentials = CredentialCache.DefaultNetworkCredentials;
+            //    myproxy.BypassProxyOnLocal = true;
+            //    myproxy.UseDefaultCredentials = true;
+            //    req_ver.Proxy = myproxy;
+            //}
+
+            //IWebProxy myProxy = WebRequest.DefaultWebProxy;
+            //myProxy.Credentials = CredentialCache.DefaultNetworkCredentials;
+            //req_ver.Proxy = myProxy;
+
+            bool ver_ok = true;
+
+            try
+            {
+                resp1 = (HttpWebResponse)req_ver.GetResponse(); //req_ver.GetResponse();
+            }
+            catch 
+            {
+                ver_ok = false;
+            }
+
+            if (ver_ok)
+            {
+                System.IO.Stream stream1 = resp1.GetResponseStream();
+                System.IO.StreamReader sr1 = new System.IO.StreamReader(stream1);
+                string version = sr1.ReadToEnd();
+                string[] pars_ver = version.Split('\n');  //парсим строку и получаем стринговый массив
+
+                for (int i = 0; i < pars_ver.Length; i++)
+                {
+                    if (pars_ver[i].Contains("Diablo3 Hotkeys"))
+                    {
+                        string vers = pars_ver[i].Substring(pars_ver[i].IndexOf("title=\"Diablo3 Hotkeys") + 23, 3).Trim();
+                        double new_ver = 0;
+                        try { new_ver = Convert.ToDouble(vers.Replace(".", sep)); }
+                        catch 
+                        {
+                            MessageBox.Show(lng.ver_err_nover, lng.ver_cap, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            break;
+                        }
+                        if (vers != string.Format("{0:F1}", ver).ToString().Trim().Replace(sep, ".") && new_ver > ver)
+                        {
+                            if (ver_click == "lb_ver_check")
+                            {
+
+                                if (MessageBox.Show(lng.download, lng.new_ver + vers, MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk, MessageBoxDefaultButton.Button1, (MessageBoxOptions)0x40000 //0x40000 is the "MB_TOPMOST"-Flag.
+                                ) == DialogResult.Yes)
+                                    System.Diagnostics.Process.Start("http://bit.ly/d3hotkeys");
+                            }
+                            else
+                                if (MessageBox.Show(new Form(), //Пустая форма, чтобы не было ничего в панели задач
+                                lng.download, lng.new_ver + vers, MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk
+                                ) == DialogResult.Yes)
+                                    System.Diagnostics.Process.Start("http://bit.ly/d3hotkeys");
+                        }
+                        else
+                            if (ver_click == "lb_ver_check") MessageBox.Show(lng.no_new, lng.ver_cap, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                        //MessageBox.Show(vers);
+                        break;
+                    }
+                }
+                stream1.Dispose();
+                sr1.Dispose();
+            }
+            else
+                MessageBox.Show(lng.ver_err_open + "https://github.com/DmitryOlenin/D3Hot", lng.ver_cap, MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            if (resp1 != null) resp1.Close();
         }
 
 

@@ -91,7 +91,8 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.b_opt = new System.Windows.Forms.Button();
             this.pan_opt = new System.Windows.Forms.Panel();
-            this.chb_proconly = new System.Windows.Forms.CheckBox();
+            this.lb_ver_check = new System.Windows.Forms.Label();
+            this.chb_ver_check = new System.Windows.Forms.CheckBox();
             this.chb_users = new System.Windows.Forms.CheckBox();
             this.cb_map = new System.Windows.Forms.ComboBox();
             this.lb_map = new System.Windows.Forms.Label();
@@ -619,7 +620,7 @@
             this.lb_auth.AutoSize = true;
             this.lb_auth.BackColor = System.Drawing.Color.Transparent;
             this.lb_auth.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lb_auth.Location = new System.Drawing.Point(341, 293);
+            this.lb_auth.Location = new System.Drawing.Point(352, 299);
             this.lb_auth.Name = "lb_auth";
             this.lb_auth.Size = new System.Drawing.Size(105, 13);
             this.lb_auth.TabIndex = 17;
@@ -1028,7 +1029,7 @@
             // 
             // b_opt
             // 
-            this.b_opt.Location = new System.Drawing.Point(338, 215);
+            this.b_opt.Location = new System.Drawing.Point(343, 211);
             this.b_opt.Name = "b_opt";
             this.b_opt.Size = new System.Drawing.Size(104, 64);
             this.b_opt.TabIndex = 73;
@@ -1040,7 +1041,8 @@
             // 
             this.pan_opt.BackColor = System.Drawing.Color.Transparent;
             this.pan_opt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pan_opt.Controls.Add(this.chb_proconly);
+            this.pan_opt.Controls.Add(this.lb_ver_check);
+            this.pan_opt.Controls.Add(this.chb_ver_check);
             this.pan_opt.Controls.Add(this.chb_users);
             this.pan_opt.Controls.Add(this.cb_map);
             this.pan_opt.Controls.Add(this.lb_map);
@@ -1075,16 +1077,28 @@
             this.pan_opt.TabIndex = 74;
             this.pan_opt.Visible = false;
             // 
-            // chb_proconly
+            // lb_ver_check
             // 
-            this.chb_proconly.AutoSize = true;
-            this.chb_proconly.Location = new System.Drawing.Point(330, 130);
-            this.chb_proconly.Name = "chb_proconly";
-            this.chb_proconly.Size = new System.Drawing.Size(108, 17);
-            this.chb_proconly.TabIndex = 90;
-            this.chb_proconly.Text = "Только процесс";
-            this.chb_proconly.UseVisualStyleBackColor = true;
-            this.chb_proconly.Visible = false;
+            this.lb_ver_check.AutoSize = true;
+            this.lb_ver_check.BackColor = System.Drawing.Color.Transparent;
+            this.lb_ver_check.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lb_ver_check.Location = new System.Drawing.Point(345, 130);
+            this.lb_ver_check.Name = "lb_ver_check";
+            this.lb_ver_check.Size = new System.Drawing.Size(96, 13);
+            this.lb_ver_check.TabIndex = 86;
+            this.lb_ver_check.Text = "Проверка версии";
+            this.lb_ver_check.Click += new System.EventHandler(this.lb_ver_check_Click);
+            this.lb_ver_check.MouseLeave += new System.EventHandler(this.lb_auth_MouseLeave);
+            this.lb_ver_check.MouseHover += new System.EventHandler(this.lb_auth_MouseHover);
+            // 
+            // chb_ver_check
+            // 
+            this.chb_ver_check.AutoSize = true;
+            this.chb_ver_check.Location = new System.Drawing.Point(330, 130);
+            this.chb_ver_check.Name = "chb_ver_check";
+            this.chb_ver_check.Size = new System.Drawing.Size(15, 14);
+            this.chb_ver_check.TabIndex = 90;
+            this.chb_ver_check.UseVisualStyleBackColor = true;
             // 
             // chb_users
             // 
@@ -1587,6 +1601,7 @@
             this.lb_debug.Size = new System.Drawing.Size(37, 13);
             this.lb_debug.TabIndex = 84;
             this.lb_debug.Text = "debug";
+            this.lb_debug.Visible = false;
             // 
             // d3hot
             // 
@@ -1607,8 +1622,8 @@
             this.Controls.Add(this.cb_start);
             this.Controls.Add(this.pan_proc);
             this.Controls.Add(this.pan_prog);
-            this.Controls.Add(this.pan_main);
             this.Controls.Add(this.pan_opt);
+            this.Controls.Add(this.pan_main);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "d3hot";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -1743,10 +1758,11 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem startToolStripMenuItem;
-        private System.Windows.Forms.CheckBox chb_proconly;
+        private System.Windows.Forms.CheckBox chb_ver_check;
         private System.Windows.Forms.Panel pan_proc;
         private System.Windows.Forms.Panel pan_prog;
         private System.Windows.Forms.Label lb_debug;
+        private System.Windows.Forms.Label lb_ver_check;
     }
 }
 

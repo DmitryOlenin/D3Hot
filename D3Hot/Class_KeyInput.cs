@@ -200,21 +200,21 @@ namespace D3Hot
                             if (cb_tp.FindString("*") > 0) cb_tp.Items.Remove(cb_tp.Items[cb_tp.FindString("*")]);
                             cb_tp.Items.Add("*" + key);
                             cb_tp.SelectedIndex = cb_tp.FindString("*");
-                            key_choose_SelectionChangeCommitted(cb_tp, null);
+                            cb_op_SelectionChangeCommitted(cb_tp, null);
                             Settings.Default.cb_tp_desc = (string)cb_tp.Items[cb_tp.SelectedIndex];
                             break;
                         case 7:
                             if (cb_map.FindString("*") > 0) cb_map.Items.Remove(cb_map.Items[cb_map.FindString("*")]);
                             cb_map.Items.Add("*" + key);
                             cb_map.SelectedIndex = cb_map.FindString("*");
-                            key_choose_SelectionChangeCommitted(cb_map, null);
+                            cb_op_SelectionChangeCommitted(cb_map, null);
                             Settings.Default.cb_map_desc = (string)cb_map.Items[cb_map.SelectedIndex];
                             break;
                         case 8:
                             if (cb_key_delay.FindString("*") > 0) cb_key_delay.Items.Remove(cb_key_delay.Items[cb_key_delay.FindString("*")]);
                             cb_key_delay.Items.Add("*" + key);
                             cb_key_delay.SelectedIndex = cb_key_delay.FindString("*");
-                            key_choose_SelectionChangeCommitted(cb_key_delay, null);
+                            cb_op_SelectionChangeCommitted(cb_key_delay, null);
                             Settings.Default.cb_key_delay_desc = (string)cb_key_delay.Items[cb_key_delay.SelectedIndex];
                             break;
                     }
