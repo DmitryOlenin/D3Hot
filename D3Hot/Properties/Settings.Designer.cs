@@ -565,7 +565,7 @@ namespace D3Hot.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("12")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int cb_mapdelay {
             get {
                 return ((int)(this["cb_mapdelay"]));
@@ -716,6 +716,42 @@ namespace D3Hot.Properties {
             }
             set {
                 this["chb_ver_check"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int pos_x {
+            get {
+                return ((int)(this["pos_x"]));
+            }
+            set {
+                this["pos_x"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int pos_y {
+            get {
+                return ((int)(this["pos_y"]));
+            }
+            set {
+                this["pos_y"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int cb_returndelay {
+            get {
+                return ((int)(this["cb_returndelay"]));
+            }
+            set {
+                this["cb_returndelay"] = value;
             }
         }
     }

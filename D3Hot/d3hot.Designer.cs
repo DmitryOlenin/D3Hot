@@ -57,8 +57,6 @@
             this.lb_key2 = new System.Windows.Forms.Label();
             this.lb_key1 = new System.Windows.Forms.Label();
             this.tt_start = new System.Windows.Forms.ToolTip(this.components);
-            this.lb_stop = new System.Windows.Forms.Label();
-            this.cb_pause = new System.Windows.Forms.ComboBox();
             this.mouseKeyEventProvider1 = new MouseKeyboardActivityMonitor.Controls.MouseKeyEventProvider();
             this.lb_auth = new System.Windows.Forms.Label();
             this.lb_lang = new System.Windows.Forms.Label();
@@ -91,6 +89,8 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.b_opt = new System.Windows.Forms.Button();
             this.pan_opt = new System.Windows.Forms.Panel();
+            this.cb_returndelay = new System.Windows.Forms.ComboBox();
+            this.lb_returndelay = new System.Windows.Forms.Label();
             this.lb_ver_check = new System.Windows.Forms.Label();
             this.chb_ver_check = new System.Windows.Forms.CheckBox();
             this.chb_users = new System.Windows.Forms.CheckBox();
@@ -130,6 +130,9 @@
             this.pan_proc = new System.Windows.Forms.Panel();
             this.pan_prog = new System.Windows.Forms.Panel();
             this.lb_debug = new System.Windows.Forms.Label();
+            this.lb_num = new System.Windows.Forms.Label();
+            this.lb_caps = new System.Windows.Forms.Label();
+            this.lb_scroll = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr3)).BeginInit();
@@ -583,31 +586,6 @@
             this.lb_key1.TabIndex = 36;
             this.lb_key1.Text = "Клавиша 1";
             // 
-            // lb_stop
-            // 
-            this.lb_stop.AutoSize = true;
-            this.lb_stop.Location = new System.Drawing.Point(1, 34);
-            this.lb_stop.Name = "lb_stop";
-            this.lb_stop.Size = new System.Drawing.Size(60, 13);
-            this.lb_stop.TabIndex = 46;
-            this.lb_stop.Text = "Тип паузы";
-            // 
-            // cb_pause
-            // 
-            this.cb_pause.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cb_pause.FormattingEnabled = true;
-            this.cb_pause.Items.AddRange(new object[] {
-            "",
-            "Tp",
-            "Enter",
-            "All"});
-            this.cb_pause.Location = new System.Drawing.Point(87, 31);
-            this.cb_pause.Name = "cb_pause";
-            this.cb_pause.Size = new System.Drawing.Size(57, 21);
-            this.cb_pause.TabIndex = 14;
-            this.cb_pause.SelectedIndexChanged += new System.EventHandler(this.cb_pause_SelectedIndexChanged);
-            this.cb_pause.SelectionChangeCommitted += new System.EventHandler(this.cb_op_SelectionChangeCommitted);
-            // 
             // mouseKeyEventProvider1
             // 
             this.mouseKeyEventProvider1.Enabled = false;
@@ -634,7 +612,7 @@
             this.lb_lang.AutoSize = true;
             this.lb_lang.BackColor = System.Drawing.Color.Transparent;
             this.lb_lang.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lb_lang.Location = new System.Drawing.Point(408, 187);
+            this.lb_lang.Location = new System.Drawing.Point(408, 177);
             this.lb_lang.Name = "lb_lang";
             this.lb_lang.Size = new System.Drawing.Size(26, 13);
             this.lb_lang.TabIndex = 16;
@@ -950,6 +928,7 @@
             this.cb_tpdelay.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cb_tpdelay.FormattingEnabled = true;
             this.cb_tpdelay.Items.AddRange(new object[] {
+            "",
             "1",
             "2",
             "3",
@@ -992,7 +971,7 @@
             // 
             this.lb_lang_name.AutoSize = true;
             this.lb_lang_name.BackColor = System.Drawing.Color.Transparent;
-            this.lb_lang_name.Location = new System.Drawing.Point(341, 187);
+            this.lb_lang_name.Location = new System.Drawing.Point(341, 177);
             this.lb_lang_name.Name = "lb_lang_name";
             this.lb_lang_name.Size = new System.Drawing.Size(61, 13);
             this.lb_lang_name.TabIndex = 72;
@@ -1029,7 +1008,7 @@
             // 
             // b_opt
             // 
-            this.b_opt.Location = new System.Drawing.Point(343, 211);
+            this.b_opt.Location = new System.Drawing.Point(344, 218);
             this.b_opt.Name = "b_opt";
             this.b_opt.Size = new System.Drawing.Size(104, 64);
             this.b_opt.TabIndex = 73;
@@ -1041,6 +1020,8 @@
             // 
             this.pan_opt.BackColor = System.Drawing.Color.Transparent;
             this.pan_opt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pan_opt.Controls.Add(this.cb_returndelay);
+            this.pan_opt.Controls.Add(this.lb_returndelay);
             this.pan_opt.Controls.Add(this.lb_ver_check);
             this.pan_opt.Controls.Add(this.chb_ver_check);
             this.pan_opt.Controls.Add(this.chb_users);
@@ -1069,13 +1050,40 @@
             this.pan_opt.Controls.Add(this.lb_tp);
             this.pan_opt.Controls.Add(this.cb_tpdelay);
             this.pan_opt.Controls.Add(this.lb_tpdelay);
-            this.pan_opt.Controls.Add(this.lb_stop);
-            this.pan_opt.Controls.Add(this.cb_pause);
             this.pan_opt.Location = new System.Drawing.Point(2, 8);
             this.pan_opt.Name = "pan_opt";
             this.pan_opt.Size = new System.Drawing.Size(455, 165);
             this.pan_opt.TabIndex = 74;
             this.pan_opt.Visible = false;
+            // 
+            // cb_returndelay
+            // 
+            this.cb_returndelay.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_returndelay.FormattingEnabled = true;
+            this.cb_returndelay.Items.AddRange(new object[] {
+            "",
+            "10",
+            "15",
+            "20",
+            "25",
+            "30",
+            "35",
+            "40"});
+            this.cb_returndelay.Location = new System.Drawing.Point(87, 31);
+            this.cb_returndelay.Name = "cb_returndelay";
+            this.cb_returndelay.Size = new System.Drawing.Size(57, 21);
+            this.cb_returndelay.TabIndex = 91;
+            this.cb_returndelay.SelectedIndexChanged += new System.EventHandler(this.cb_returndelay_SelectedIndexChanged);
+            this.cb_returndelay.SelectionChangeCommitted += new System.EventHandler(this.cb_op_SelectionChangeCommitted);
+            // 
+            // lb_returndelay
+            // 
+            this.lb_returndelay.AutoSize = true;
+            this.lb_returndelay.Location = new System.Drawing.Point(1, 34);
+            this.lb_returndelay.Name = "lb_returndelay";
+            this.lb_returndelay.Size = new System.Drawing.Size(66, 13);
+            this.lb_returndelay.TabIndex = 92;
+            this.lb_returndelay.Text = "Пауза Enter";
             // 
             // lb_ver_check
             // 
@@ -1153,6 +1161,7 @@
             this.cb_mapdelay.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cb_mapdelay.FormattingEnabled = true;
             this.cb_mapdelay.Items.AddRange(new object[] {
+            "",
             "5",
             "6",
             "7",
@@ -1603,11 +1612,48 @@
             this.lb_debug.Text = "debug";
             this.lb_debug.Visible = false;
             // 
+            // lb_num
+            // 
+            this.lb_num.BackColor = System.Drawing.Color.Transparent;
+            this.lb_num.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lb_num.Location = new System.Drawing.Point(343, 196);
+            this.lb_num.Name = "lb_num";
+            this.lb_num.Size = new System.Drawing.Size(35, 15);
+            this.lb_num.TabIndex = 91;
+            this.lb_num.Text = "Num";
+            this.lb_num.Click += new System.EventHandler(this.lb_locks_Click);
+            // 
+            // lb_caps
+            // 
+            this.lb_caps.BackColor = System.Drawing.Color.Transparent;
+            this.lb_caps.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lb_caps.Location = new System.Drawing.Point(377, 196);
+            this.lb_caps.Name = "lb_caps";
+            this.lb_caps.Size = new System.Drawing.Size(35, 15);
+            this.lb_caps.TabIndex = 92;
+            this.lb_caps.Text = "Caps";
+            this.lb_caps.Click += new System.EventHandler(this.lb_locks_Click);
+            // 
+            // lb_scroll
+            // 
+            this.lb_scroll.BackColor = System.Drawing.Color.Transparent;
+            this.lb_scroll.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lb_scroll.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lb_scroll.Location = new System.Drawing.Point(411, 196);
+            this.lb_scroll.Name = "lb_scroll";
+            this.lb_scroll.Size = new System.Drawing.Size(35, 15);
+            this.lb_scroll.TabIndex = 93;
+            this.lb_scroll.Text = "Scroll";
+            this.lb_scroll.Click += new System.EventHandler(this.lb_locks_Click);
+            // 
             // d3hot
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(459, 316);
+            this.Controls.Add(this.lb_scroll);
+            this.Controls.Add(this.lb_caps);
+            this.Controls.Add(this.lb_num);
             this.Controls.Add(this.lb_debug);
             this.Controls.Add(this.pan_prof_name);
             this.Controls.Add(this.pan_hold);
@@ -1625,14 +1671,16 @@
             this.Controls.Add(this.pan_opt);
             this.Controls.Add(this.pan_main);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.KeyPreview = true;
             this.Name = "d3hot";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Diablo 3 Hotkeys ver. 2.0";
+            this.Text = "Diablo 3 Hotkeys ver. 2.1";
             this.Activated += new System.EventHandler(this.d3hot_Activated);
             this.Deactivate += new System.EventHandler(this.d3hot_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.d3hot_FormClosing);
             this.Load += new System.EventHandler(this.d3hot_Load);
             this.Shown += new System.EventHandler(this.d3hot_Shown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.d3hot_KeyUp);
             this.Resize += new System.EventHandler(this.d3hot_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr2)).EndInit();
@@ -1690,8 +1738,6 @@
         private System.Windows.Forms.Label lb_key2;
         private System.Windows.Forms.Label lb_key1;
         private System.Windows.Forms.ToolTip tt_start;
-        private System.Windows.Forms.Label lb_stop;
-        private System.Windows.Forms.ComboBox cb_pause;
         private MouseKeyboardActivityMonitor.Controls.MouseKeyEventProvider mouseKeyEventProvider1;
         private System.Windows.Forms.Label lb_auth;
         private System.Windows.Forms.Label lb_lang;
@@ -1763,6 +1809,11 @@
         private System.Windows.Forms.Panel pan_prog;
         private System.Windows.Forms.Label lb_debug;
         private System.Windows.Forms.Label lb_ver_check;
+        private System.Windows.Forms.Label lb_num;
+        private System.Windows.Forms.Label lb_caps;
+        private System.Windows.Forms.Label lb_scroll;
+        private System.Windows.Forms.ComboBox cb_returndelay;
+        private System.Windows.Forms.Label lb_returndelay;
     }
 }
 

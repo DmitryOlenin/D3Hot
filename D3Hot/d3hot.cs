@@ -21,9 +21,9 @@ namespace D3Hot
 {
     public partial class d3hot : Form
     {
-        public double ver = 2.0;
+        public double ver = 2.1;
         public string sep = Convert.ToChar(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator).ToString(),
-            version = "Diablo 3 Hotkeys ver. 2.0";
+            version = "Diablo 3 Hotkeys ver. 2.1";
         public System.Timers.Timer tmr1, tmr2, tmr3, tmr4, tmr5, tmr6, tmr_all, tmr_save;
         public System.Timers.Timer StartTimer1, RepeatTimer1, StartTimer2, RepeatTimer2, StartTimer3, RepeatTimer3,
                                     StartTimer4, RepeatTimer4, StartTimer5, RepeatTimer5, StartTimer6, RepeatTimer6;
@@ -34,7 +34,7 @@ namespace D3Hot
             key1 = 0, key2 = 0, key3 = 0, key4 = 0, key5 = 0, key6 = 0,
             tmr1_f = 0, tmr2_f = 0, tmr3_f = 0, tmr4_f = 0, tmr5_f = 0, tmr6_f = 0,
             tmr1_r = 0, tmr2_r = 0, tmr3_r = 0, tmr4_r = 0, tmr5_r = 0, tmr6_r = 0,
-            pause = 0, prof_prev, tp_delay = 0, tmr_all_counter = 0, map_delay
+            pause = 0, prof_prev, tp_delay = 0, tmr_all_counter = 0, map_delay = 0, return_delay = 0
             ,hold_key0 = 0, hold_key1 = 0, hold_key2 = 0, hold_key3 = 0, hold_key4 = 0, hold_key5 = 0
             ,multikeys = 0, opt_change = 0, opt_click = 0
             ,tmr1_left = 0, tmr2_left = 0,  tmr3_left = 0,  tmr4_left = 0,  tmr5_left = 0,  tmr6_left = 0
@@ -326,6 +326,9 @@ namespace D3Hot
                 //int command = m.WParam.ToInt32() & 0xfff0;
                 if (m.WParam.ToInt32() == SC_MINIMIZE)
                 {
+                    if (this.Location.X > 0) Settings.Default.pos_x = this.Location.X; //14.05.2015
+                    if (this.Location.Y > 0) Settings.Default.pos_y = this.Location.Y;
+
                     if (pan_opt.Visible || opt_click == 1) b_opt_Click(null, null);
                     error_not(2); //17.04.2015
                     error_select();
@@ -516,18 +519,55 @@ namespace D3Hot
             }
             else
             {
-                string[] files = System.IO.Directory.GetFiles(Directory.GetCurrentDirectory(), "*.ico", System.IO.SearchOption.TopDirectoryOnly);
-                if (files.Length > 0 && File.Exists(files[0]))
+                string progname = "", iconame = "", jpgname = "", txtname = "";
+                //progname = Path.GetFullPath(Application.ExecutablePath); //GetFileNameWithoutExtension
+                try { progname = Application.ExecutablePath.Substring(0, Application.ExecutablePath.Length - 3); }
+                catch { }
+
+                if (progname.Length > 0 && File.Exists(progname + "ico"))
                 {
-                    this.Icon = new System.Drawing.Icon(files[0]);
-                    notify_d3h.Icon = new System.Drawing.Icon(files[0]);
+                    iconame = progname + "ico";
                 }
-                files = System.IO.Directory.GetFiles(Directory.GetCurrentDirectory(), "*.jpg", System.IO.SearchOption.TopDirectoryOnly);
-                if (files.Length > 0 && File.Exists(files[0])) this.BackgroundImage = new Bitmap(files[0]);
-                files = System.IO.Directory.GetFiles(Directory.GetCurrentDirectory(), "*.txt", System.IO.SearchOption.TopDirectoryOnly);
-                if (files.Length > 0 && File.Exists(files[0]))
+                else
                 {
-                    string[] readText = System.IO.File.ReadAllLines(files[0], Encoding.Default);
+                    string[] icofiles = System.IO.Directory.GetFiles(Directory.GetCurrentDirectory(), "*.ico", System.IO.SearchOption.TopDirectoryOnly);
+                    if (icofiles.Length > 0 && File.Exists(icofiles[0])) iconame = icofiles[0];
+                }
+
+                if (progname.Length > 0 && File.Exists(progname + "jpg"))
+                {
+                    jpgname = progname + "jpg";
+                }
+                else
+                {
+                    string[] jpgfiles = System.IO.Directory.GetFiles(Directory.GetCurrentDirectory(), "*.jpg", System.IO.SearchOption.TopDirectoryOnly);
+                    if (jpgfiles.Length > 0 && File.Exists(jpgfiles[0])) jpgname = jpgfiles[0];
+                }
+
+                if (progname.Length > 0 && File.Exists(progname + "txt"))
+                {
+                    txtname = progname + "txt";
+                }
+                else
+                {
+                    string[] txtfiles = System.IO.Directory.GetFiles(Directory.GetCurrentDirectory(), "*.txt", System.IO.SearchOption.TopDirectoryOnly);
+                    if (txtfiles.Length > 0 && File.Exists(txtfiles[0])) txtname = txtfiles[0];
+                }
+
+
+                if (iconame.Length > 0)
+                {
+                    this.Icon = new System.Drawing.Icon(iconame);
+                    notify_d3h.Icon = new System.Drawing.Icon(iconame);
+                }
+
+                if (jpgname.Length > 0)
+                    this.BackgroundImage = new Bitmap(jpgname);
+
+
+                if (txtname.Length > 0)
+                {
+                    string[] readText = System.IO.File.ReadAllLines(txtname, Encoding.Default);
                     if (readText.Length > 0 && readText[0].Length > 0) this.Text = readText[0];
                     if (this.Text.Length > 30) this.Text = readText[0].Substring(0, 30);
                 }
@@ -558,7 +598,7 @@ namespace D3Hot
         /// <summary>
         /// Метод для проверки зажатой/переключённой клавиши.
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="i">1: Shift, 2: Scroll, 3: Caps, 4: Num</param>
         /// <returns></returns>
         private bool key_press(int i)
         {
@@ -668,7 +708,7 @@ namespace D3Hot
             //            }));
             //}
 
-            if ((pause == 2 || pause == 3) && return_press == 1)
+            if (return_delay > 0 && return_press == 1) //(pause == 2 || pause == 3)
             {
                 return_press_count++;
                 return_press = 0;
@@ -679,7 +719,7 @@ namespace D3Hot
                 }
             }
 
-            if (return_press_count > 1 || (return_watch != null && (int)return_watch.ElapsedMilliseconds > 30000)) //Обработка количества Enter для работы с Shift
+            if (return_press_count > 1 || (return_delay > 0 && return_watch != null && (int)return_watch.ElapsedMilliseconds > return_delay * 1000)) //Обработка количества Enter для работы с Shift
             {
                 return_press_count = 0;
                 return_press = 0;
@@ -730,7 +770,7 @@ namespace D3Hot
                 }
 
                 //Проверка на нажатие T.
-                if ((pause == 1 || pause == 3) && t_press > 0 && tmr_all.Interval == tp_delay * 1000)
+                if (tp_delay > 0 && t_press > 0 && tmr_all.Interval == tp_delay * 1000) //(pause == 1 || pause == 3)
                 {
                     delay_wait = (int)tmr_all.Interval;
                     t_press = 0;
@@ -738,7 +778,7 @@ namespace D3Hot
                     return_press = 0;
                 }
 
-                if ((pause == 1 || pause == 3) && t_press > 0 && r_press == 0)
+                if (tp_delay > 0 && t_press > 0 && r_press == 0) //(pause == 1 || pause == 3)
                 {
                     timer_unload(88);
                     tmr1_r = 0; tmr2_r = 0; tmr3_r = 0; tmr4_r = 0; tmr5_r = 0; tmr6_r = 0;
@@ -747,10 +787,10 @@ namespace D3Hot
                     tmr_all.Interval = tp_delay * 1000;
                 }
 
-                if ((pause == 1 || pause == 3) && r_press > 0 && t_press > 0) t_press = 0;
+                if (tp_delay > 0 && r_press > 0 && t_press > 0) t_press = 0; //(pause == 1 || pause == 3)
 
                 //Проверка на нажатие M.
-                if (pause == 3 && map_press > 0 && tmr_all.Interval == map_delay * 1000)
+                if (map_delay > 0 && map_press > 0 && tmr_all.Interval == map_delay * 1000)
                 {
                     delay_wait = (int)tmr_all.Interval;
                     map_press = 0;
@@ -758,7 +798,7 @@ namespace D3Hot
                     return_press = 0;
                 }
 
-                if (pause == 3 && map_press > 0 && r_press == 0)
+                if (map_delay > 0 && map_press > 0 && r_press == 0)
                 {
                     timer_unload(88);
                     tmr1_r = 0; tmr2_r = 0; tmr3_r = 0; tmr4_r = 0; tmr5_r = 0; tmr6_r = 0;
@@ -767,7 +807,7 @@ namespace D3Hot
                     tmr_all.Interval = map_delay * 1000;
                 }
 
-                if (pause == 3 && r_press > 0 && map_press > 0) map_press = 0;
+                if (map_delay > 0 && r_press > 0 && map_press > 0) map_press = 0;
 
                 //16.03.2015 Проверка на клавишу задержки
                 if (key_watch != null && key_watch.ElapsedMilliseconds > delay_press_interval) //delay_press > 0 && tmr_all.Interval == delay_press_interval
@@ -796,7 +836,7 @@ namespace D3Hot
                     key_watch.Start();
                 }
 
-                if ((pause == 2 || pause == 3) && r_press > 0 && delay_press > 0 ) delay_press = 0;
+                if (return_delay > 0 && r_press > 0 && delay_press > 0) delay_press = 0; //(pause == 2 || pause == 3)
 
                 //Если T|Enter не нажаты, запускаем таймеры триггеров 1-2-3-4-5-6 при активном состоянии и останавливаем при отключенном.
                 if (map_press == 0 && t_press == 0 && r_press == 0 && (delay_press == 0 && (key_watch == null || (key_watch != null && !key_watch.IsRunning))))
@@ -1483,13 +1523,14 @@ namespace D3Hot
                     }
                 }
 
-                error_not(2); //check_only(); 17.04.2015
-                error_select();
-
-                if (cb_key1.SelectedIndex > 18 || cb_key2.SelectedIndex > 18 || cb_key3.SelectedIndex > 18
-                    || cb_key4.SelectedIndex > 18 || cb_key5.SelectedIndex > 18 || cb_key6.SelectedIndex > 18)
+                if (chb_hold.Checked == false &&
+                    (cb_key1.SelectedItem.ToString().Contains("Shift") || cb_key2.SelectedItem.ToString().Contains("Shift") || cb_key3.SelectedItem.ToString().Contains("Shift") ||
+                    cb_key4.SelectedItem.ToString().Contains("Shift") || cb_key5.SelectedItem.ToString().Contains("Shift") || cb_key6.SelectedItem.ToString().Contains("Shift")))
                     foreach (ComboBox cb in this.pan_main.Controls.OfType<ComboBox>())
                         if (cb.Name.Contains("trig") && cb.SelectedIndex == 1) cb.SelectedIndex = 0;
+                
+                error_not(2); //check_only(); 17.04.2015
+                error_select();
 
                 if (!start_main || !start_opt || !cb_start.Enabled)
                 {
@@ -1520,7 +1561,8 @@ namespace D3Hot
                 if (chb_key5.Checked) hold_key4 = 1;
                 if (chb_key6.Checked) hold_key5 = 1;
 
-                pause = cb_pause.SelectedIndex;
+                //pause = cb_pause.SelectedIndex; //Tp, Enter, All
+
                 cb_start.Text = "Stop";
                 tt_start.SetToolTip(cb_start, lng.tt_stop);
 
@@ -1601,11 +1643,10 @@ namespace D3Hot
             }
             else
             {
-                //if (d3proc && proc_watch != null) //06.04.2015
-                //{
-                //    proc_watch.Reset();
-                //    proc_watch.Stop();
-                //}
+                if (return_watch != null && return_watch.IsRunning)
+                    return_watch.Stop();
+
+                //if (Form.ActiveForm != this) d3hot_Deactivate(null, null);
 
                 mouseKeyEventProvider1.Enabled = false;
                 if (!chb_key1.Checked || !chb_hold.Checked) nud_tmr1.Enabled = true;
@@ -1809,7 +1850,7 @@ namespace D3Hot
             //lb_about.Text = lng.lb_about;
             lb_area.Text = lng.lb_area;
             lb_proc.Text = lng.lb_proc;
-            lb_stop.Text = lng.lb_stop;
+            lb_returndelay.Text = lng.lb_returndelay;
             lb_auth.Text = lng.lb_auth;
             if (!chb_saveload.Checked) lb_prof.Text = lng.lb_prof;
             else lb_prof.Text = lng.lb_prof_save;
@@ -1875,9 +1916,13 @@ namespace D3Hot
             if (path != "" && File.Exists(path)) ReadXML(path);
             else if (path != "") Save_settings(1); //08.04.2015
 
+            //cb_key_delay_SelectedIndexChanged(null, null);
+            //cb_map_SelectedIndexChanged(null, null);
+            //cb_tp_SelectedIndexChanged(null, null);
+
             //cb_hot_prof.SelectedIndex = k;
 
-            cb_proc.SelectedIndex = -1; 
+            //if (pan_proc.Visible == true) cb_proc.SelectedIndex = -1;  //14.05.2015
             
             //if (!chb_proconly.Checked && cb_proc.SelectedIndex < 1) cb_prog.Enabled = true; //17.04.2015
             //cb_prog_SelectionChangeCommitted(null, null); //17.04.2015
@@ -1969,6 +2014,7 @@ namespace D3Hot
         /// <param name="e"></param>
         private void cb_tp_SelectedIndexChanged(object sender, EventArgs e)
         {
+            tp_key = "";
             if (cb_tp.SelectedIndex > 0 && (string)cb_tp.Items[cb_tp.SelectedIndex] != "") //24.04.2015
                 tp_key = (string)cb_tp.Items[cb_tp.SelectedIndex].ToString();
             if (tp_key.Length>0 && tp_key.Substring(0, 1) == "*") tp_key = tp_key.Remove(0, 1);
@@ -1981,37 +2027,8 @@ namespace D3Hot
         /// <param name="e"></param>
         private void cb_tpdelay_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cb_tpdelay.SelectedIndex > -1) tp_delay = Convert.ToInt32(cb_tpdelay.Items[cb_tpdelay.SelectedIndex]);
-        }
-
-        /// <summary>
-        /// Метод установки режима доступа к настройкам задержки, если она возможна
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void cb_pause_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            switch (cb_pause.SelectedIndex)
-            {
-                case 1:
-                    cb_tp.Enabled=true;
-                    cb_tpdelay.Enabled = true;
-                    cb_map.Enabled = false;
-                    cb_mapdelay.Enabled = false;
-                    break;
-                case 3:
-                    cb_tp.Enabled=true;
-                    cb_tpdelay.Enabled = true;
-                    cb_map.Enabled=true;
-                    cb_mapdelay.Enabled = true;
-                    break;
-                default:
-                    cb_tp.Enabled=false;
-                    cb_tpdelay.Enabled = false;
-                    cb_map.Enabled = false;
-                    cb_mapdelay.Enabled = false;
-                    break;
-            }
+            tp_delay = 0;
+            if (cb_tpdelay.SelectedIndex > 0) tp_delay = Convert.ToInt32(cb_tpdelay.Items[cb_tpdelay.SelectedIndex]);
         }
 
         /// <summary>
@@ -2153,22 +2170,22 @@ namespace D3Hot
 
         private void d3hot_Resize(object sender, EventArgs e)
         {
-            if (this.WindowState == FormWindowState.Minimized && chb_tray.Checked)
+            if (frm_key_input != null) frm_key_input.Hide();
+            if (this.WindowState == FormWindowState.Minimized)
             {
-                //if (pan_opt.Visible || opt_click == 1) b_opt_Click(null, null);
-                //check_only();
-                //error_select();
-
-                if (start_main && start_opt)
+                if (form_shown && chb_tray.Checked)
+                {
+                    if (start_main && start_opt)
+                    {
+                        this.Hide();
+                        notify_d3h.Visible = true;
+                    }
+                }
+                else if (!form_shown && Settings.Default.chb_tray == 1)
                 {
                     this.Hide();
                     notify_d3h.Visible = true;
                 }
-                //else
-                //    ShowMe();
-
-                //notify_d3h.ContextMenu = new ContextMenu();
-                //notify_d3h.ContextMenu.MenuItems.Add("Exit", new EventHandler(Exit));
             }
         }
 
@@ -2215,6 +2232,20 @@ namespace D3Hot
         {
             var cb = sender as ComboBox;
 
+            if (cb != null)
+                switch (cb.Name)
+                {
+                    case "cb_map":
+                        cb_map_SelectedIndexChanged(null, null);
+                        break;
+                    case "cb_tp":
+                        cb_tp_SelectedIndexChanged(null, null);
+                        break;
+                    case "cb_key_delay":
+                        cb_key_delay_SelectedIndexChanged(null, null);
+                        break;
+                }
+                
             if (opt_click == 1) opt_change = 1;
 
             if (cb != null && (cb.Name == "cb_key_delay" || cb.Name == "cb_tp" || cb.Name == "cb_map"))
@@ -2295,7 +2326,17 @@ namespace D3Hot
                 )
                 hot_prof = 1;
 
-            if (cb_tp.SelectedIndex == cb_map.SelectedIndex && cb_tp.SelectedIndex > 0 && !((string)cb_tp.SelectedItem).Contains("*")) hot_tpmap = 1;
+            
+            if (i == 1 &&
+                ((tp_key.Length > 0 && tp_key == key_delay || tp_key == map_key)
+                || (map_key.Length > 0 && map_key == key_delay))
+                )
+                hot_tpmap = 1;
+
+            //if (
+            //    (cb_tp.SelectedIndex == cb_map.SelectedIndex && cb_tp.SelectedIndex > 0 && !((string)cb_tp.SelectedItem).Contains("*"))
+            //    || (tp_key.Length > 0 && map_key.Length > 0 && tp_key == map_key)
+            //    ) hot_tpmap = 1;
 
             //if (
             //    (cb_proc.SelectedIndex < 1) &&
@@ -2337,12 +2378,14 @@ namespace D3Hot
                         lb_hold.Text = lng.lb_hold_hot;
                         lb_map.Font = new Font(lb_map.Font, FontStyle.Bold);
                         lb_tp.Font = new Font(lb_tp.Font, FontStyle.Bold);
+                        lb_key_delay.Font = new Font(lb_key_delay.Font, FontStyle.Bold);
                         //pan_hold.Visible = true;
                     }
                     else//Хоткеи карты/телепорта не пересекаются
                     {
                         lb_map.Font = new Font(lb_map.Font, FontStyle.Regular);
-                        lb_tp.Font = new Font(lb_hot_prof.Font, FontStyle.Regular);
+                        lb_tp.Font = new Font(lb_tp.Font, FontStyle.Regular);
+                        lb_key_delay.Font = new Font(lb_key_delay.Font, FontStyle.Regular);
                     }
 
                     break;
@@ -2366,12 +2409,14 @@ namespace D3Hot
                         lb_hold.Text = lng.lb_hold_hot;
                         lb_map.Font = new Font(lb_map.Font, FontStyle.Bold);
                         lb_tp.Font = new Font(lb_tp.Font, FontStyle.Bold);
+                        lb_key_delay.Font = new Font(lb_key_delay.Font, FontStyle.Bold);
                         //pan_hold.Visible = true;
                     }
                     else//Хоткеи карты/телепорта не пересекаются
                     {
                         lb_map.Font = new Font(lb_map.Font, FontStyle.Regular);
-                        lb_tp.Font = new Font(lb_hot_prof.Font, FontStyle.Regular);
+                        lb_tp.Font = new Font(lb_tp.Font, FontStyle.Regular);
+                        lb_key_delay.Font = new Font(lb_key_delay.Font, FontStyle.Regular);
                     }
 
                     if (no_proc == 1) //Не выбран процесс
@@ -2458,6 +2503,7 @@ namespace D3Hot
 
         private void cb_key_delay_SelectedIndexChanged(object sender, EventArgs e)
         {
+            key_delay = "";
             if (cb_key_delay.SelectedIndex > 0 && (string)cb_key_delay.Items[cb_key_delay.SelectedIndex] != "")
             {
                 key_delay = (string)cb_key_delay.Items[cb_key_delay.SelectedIndex].ToString();
@@ -2469,7 +2515,7 @@ namespace D3Hot
             {
                 nud_key_delay_ms.Value = 0;
                 nud_key_delay_ms.Enabled = false;
-                key_delay = "";
+                //key_delay = "";
             }
         }
 
@@ -2756,7 +2802,7 @@ namespace D3Hot
 
             for (int j = 0; j < 9; j++)
             {
-                if (cb.Name.Contains(keys[j]) && vals[j] != null)
+                if (cb.Name.Contains(keys[j]) && vals[j] != null && vals[j].Length > 1) 
                 {
                     cb.Items.Add(vals[j]);
                     result = true;
@@ -3030,7 +3076,8 @@ namespace D3Hot
 
         private void cb_mapdelay_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cb_mapdelay.SelectedIndex > -1) map_delay = Convert.ToInt32(cb_mapdelay.Items[cb_mapdelay.SelectedIndex]);
+            map_delay = 0;
+            if (cb_mapdelay.SelectedIndex > 0) map_delay = Convert.ToInt32(cb_mapdelay.Items[cb_mapdelay.SelectedIndex]);
         }
 
         private void cb_mapdelay_SelectionChangeCommitted(object sender, EventArgs e)
@@ -3038,8 +3085,15 @@ namespace D3Hot
             if (opt_click == 1) opt_change = 1;
         }
 
+        private void cb_returndelay_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            return_delay = 0;
+            if (cb_returndelay.SelectedIndex > 0) return_delay = Convert.ToInt32(cb_returndelay.Items[cb_returndelay.SelectedIndex]);
+        }
+
         private void cb_map_SelectedIndexChanged(object sender, EventArgs e)
         {
+            map_key = "";
             if (cb_map.SelectedIndex > 0 && (string)cb_map.Items[cb_map.SelectedIndex] != "") //24.04.2015
                 map_key = (string)cb_map.Items[cb_map.SelectedIndex].ToString();
             if (map_key.Length > 0 && map_key.Substring(0, 1) == "*") map_key = map_key.Remove(0, 1);
@@ -3106,7 +3160,8 @@ namespace D3Hot
             var cb = (ComboBox)sender;
             if (cb.SelectedIndex == cb.FindString(lng.cb_keys_choose))
                 form_open(cb);
-            error_select();
+            if (cb != null && cb.Name != "cb_key_delay" && cb.Name != "cb_tp" && cb.Name != "cb_map")
+                error_select();
         }
 
         private void key_choose_MouseClick(object sender, MouseEventArgs e)
@@ -3132,6 +3187,7 @@ namespace D3Hot
 
         private void d3hot_Activated(object sender, EventArgs e)
         {
+            d3hot_KeyUp(null, null);
             if (cb_hot_prof.SelectedIndex > 0) 
                 cb_hot_prof_SelectedIndexChanged(null, null);
         }
@@ -3265,6 +3321,48 @@ namespace D3Hot
             if (resp1 != null) resp1.Close();
         }
 
+        private void d3hot_KeyUp(object sender, KeyEventArgs e)
+        {
+             //1: Shift, 2: Scroll, 3: Caps, 4: Num
+            if (e != null)
+            {
+                if (e.KeyData == Keys.Scroll)
+                    if (key_press(2)) lb_scroll.Image = Properties.Resources.ind_lock;
+                    else lb_scroll.Image = null;
+                else if (e.KeyData == Keys.CapsLock)
+                    if (key_press(3)) lb_caps.Image = Properties.Resources.ind_lock;
+                    else lb_caps.Image = null;
+                else if (e.KeyData == Keys.NumLock)
+                    if (key_press(4)) lb_num.Image = Properties.Resources.ind_lock;
+                    else lb_num.Image = null;
+            }
+            else
+            {
+                if (key_press(2)) lb_scroll.Image = Properties.Resources.ind_lock;
+                else lb_scroll.Image = null;
+                if (key_press(3)) lb_caps.Image = Properties.Resources.ind_lock;
+                else lb_caps.Image = null;
+                if (key_press(4)) lb_num.Image = Properties.Resources.ind_lock;
+                else lb_num.Image = null;
+            }
+        }
+
+        private void lb_locks_Click(object sender, EventArgs e)
+        {
+            var lb = (Label)sender;
+            switch (lb.Name)
+            {
+                case "lb_scroll":
+                    inp.Keyboard.KeyPress((VirtualKeyCode)Keys.Scroll);
+                    break;
+                case "lb_caps":
+                    inp.Keyboard.KeyPress((VirtualKeyCode)Keys.CapsLock);
+                    break;
+                case "lb_num":
+                    inp.Keyboard.KeyPress((VirtualKeyCode)Keys.NumLock);
+                    break;
+            }
+        }
 
     }
 }

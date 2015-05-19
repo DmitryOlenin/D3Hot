@@ -5,7 +5,8 @@ using System.Windows.Forms;
 using D3Hot.Properties;
 using System.Xml.Serialization;
 using System.Configuration;
-using System.IO; 
+using System.IO;
+using System.Drawing;
 
 namespace D3Hot
 {
@@ -34,7 +35,6 @@ namespace D3Hot
             Settings.Default.cb_trig_tmr6 = cb_trig_tmr6.SelectedIndex;
             Settings.Default.cb_startstop = cb_startstop.SelectedIndex;
             Settings.Default.cb_prog = cb_prog.SelectedIndex;
-            Settings.Default.cb_pause = cb_pause.SelectedIndex;
             Settings.Default.nud_tmr1 = nud_tmr1.Value;
             Settings.Default.nud_tmr2 = nud_tmr2.Value;
             Settings.Default.nud_tmr3 = nud_tmr3.Value;
@@ -51,6 +51,7 @@ namespace D3Hot
             Settings.Default.chb_mult = chb_mult.Checked ? 1 : 0;
             Settings.Default.nud_key_delay_ms = nud_key_delay_ms.Value;
             Settings.Default.cb_key_delay = cb_key_delay.SelectedIndex;
+            Settings.Default.cb_returndelay = cb_returndelay.SelectedIndex;
 
             Settings.Default.chb_key1 = chb_key1.Checked ? 1 : 0;
             Settings.Default.chb_key2 = chb_key2.Checked ? 1 : 0;
@@ -70,6 +71,9 @@ namespace D3Hot
             Settings.Default.cb_hot_prof = cb_hot_prof.SelectedIndex;
 
             Settings.Default.tb_prof_name = tb_prof_name.Text;
+
+            if (this.Location.X > 0) Settings.Default.pos_x = this.Location.X;
+            if (this.Location.Y > 0) Settings.Default.pos_y = this.Location.Y;
 
             if (!(pan_hold.Visible &&
                 (lb_hold.Text == lng.lb_hold_hot || lb_hold.Text == lng.lb_hold_trig || lb_hold.Text == lng.lb_hold_delay || lb_hold.Text == lng.lb_hold_key)
@@ -187,6 +191,13 @@ namespace D3Hot
             //if (cb_key6.FindString(Settings.Default.cb_key6_desc) < 1) //Settings.Default.cb_key6 > 21 && 
             //    cb_key6.Items.Add(Settings.Default.cb_key6_desc);
 
+            if (Settings.Default.pos_x > 0 && Settings.Default.pos_y > 0)
+            {
+                Point tmpLocation = this.Location;
+                tmpLocation.X = Settings.Default.pos_x;
+                tmpLocation.Y = Settings.Default.pos_y;
+                this.Location = tmpLocation;
+            }
 
             cb_key1.SelectedIndex = Settings.Default.cb_key1;
             cb_key2.SelectedIndex = Settings.Default.cb_key2;
@@ -202,7 +213,6 @@ namespace D3Hot
             cb_trig_tmr6.SelectedIndex = Settings.Default.cb_trig_tmr6;
             cb_startstop.SelectedIndex = Settings.Default.cb_startstop;
             cb_prog.SelectedIndex = Settings.Default.cb_prog;
-            cb_pause.SelectedIndex = Settings.Default.cb_pause;
             nud_tmr1.Value = Settings.Default.nud_tmr1;
             nud_tmr2.Value = Settings.Default.nud_tmr2;
             nud_tmr3.Value = Settings.Default.nud_tmr3;
@@ -219,6 +229,7 @@ namespace D3Hot
             chb_mult.Checked = Settings.Default.chb_mult == 1 ? true : false;
             nud_key_delay_ms.Value = Settings.Default.nud_key_delay_ms;
             cb_key_delay.SelectedIndex = Settings.Default.cb_key_delay;
+            cb_returndelay.SelectedIndex = Settings.Default.cb_returndelay;
             
             chb_key1.Checked = Settings.Default.chb_key1 == 1 ? true : false;
             chb_key2.Checked = Settings.Default.chb_key2 == 1 ? true : false;
@@ -308,7 +319,7 @@ namespace D3Hot
                     case "cb_trig_tmr4": Settings.Default.cb_trig_tmr4 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "cb_trig_tmr5": Settings.Default.cb_trig_tmr5 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "cb_trig_tmr6": Settings.Default.cb_trig_tmr6 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
-                    case "cb_startstop": Settings.Default.cb_startstop = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    //case "cb_startstop": Settings.Default.cb_startstop = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
 
                     case "cb_key1": Settings.Default.cb_key1 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "cb_key2": Settings.Default.cb_key2 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
@@ -325,6 +336,7 @@ namespace D3Hot
                     case "cb_mapdelay": Settings.Default.cb_mapdelay = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "chb_tray": Settings.Default.chb_tray = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "chb_mult": Settings.Default.chb_mult = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    case "cb_returndelay": Settings.Default.cb_returndelay = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
 
                     case "chb_key1": Settings.Default.chb_key1 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "chb_key2": Settings.Default.chb_key2 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
@@ -339,7 +351,10 @@ namespace D3Hot
                     case "chb_saveload": Settings.Default.chb_saveload = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "chb_users": Settings.Default.chb_users = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "chb_proconly": Settings.Default.chb_proconly = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
-                    case "cb_hot_prof": Settings.Default.cb_hot_prof = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;    
+                    //case "cb_hot_prof": Settings.Default.cb_hot_prof = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+
+                    //case "pos_x": Settings.Default.pos_x = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    //case "pos_y": Settings.Default.pos_y = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;   
                         
                 }
             }
