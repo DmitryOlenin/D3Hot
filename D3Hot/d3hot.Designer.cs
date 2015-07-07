@@ -120,6 +120,12 @@
             this.chb_key3 = new System.Windows.Forms.CheckBox();
             this.chb_key2 = new System.Windows.Forms.CheckBox();
             this.chb_key1 = new System.Windows.Forms.CheckBox();
+            this.cb_tmr1 = new System.Windows.Forms.ComboBox();
+            this.cb_tmr2 = new System.Windows.Forms.ComboBox();
+            this.cb_tmr6 = new System.Windows.Forms.ComboBox();
+            this.cb_tmr5 = new System.Windows.Forms.ComboBox();
+            this.cb_tmr4 = new System.Windows.Forms.ComboBox();
+            this.cb_tmr3 = new System.Windows.Forms.ComboBox();
             this.tt_key = new System.Windows.Forms.ToolTip(this.components);
             this.lb_hold = new System.Windows.Forms.Label();
             this.b_save = new System.Windows.Forms.Button();
@@ -133,6 +139,9 @@
             this.lb_num = new System.Windows.Forms.Label();
             this.lb_caps = new System.Windows.Forms.Label();
             this.lb_scroll = new System.Windows.Forms.Label();
+            this.mouseKeyEventProvider2 = new MouseKeyboardActivityMonitor.Controls.MouseKeyEventProvider();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr3)).BeginInit();
@@ -152,76 +161,80 @@
             // 
             // nud_tmr1
             // 
+            this.nud_tmr1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.nud_tmr1.Increment = new decimal(new int[] {
             1000,
             0,
             0,
             0});
-            this.nud_tmr1.Location = new System.Drawing.Point(12, 111);
+            this.nud_tmr1.Location = new System.Drawing.Point(9, 111);
             this.nud_tmr1.Maximum = new decimal(new int[] {
             600000,
             0,
             0,
             0});
             this.nud_tmr1.Name = "nud_tmr1";
-            this.nud_tmr1.Size = new System.Drawing.Size(59, 20);
+            this.nud_tmr1.Size = new System.Drawing.Size(56, 20);
             this.nud_tmr1.TabIndex = 8;
             this.nud_tmr1.ValueChanged += new System.EventHandler(this.nud_Leave);
             this.nud_tmr1.Leave += new System.EventHandler(this.nud_Leave);
             // 
             // nud_tmr2
             // 
+            this.nud_tmr2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.nud_tmr2.Increment = new decimal(new int[] {
             1000,
             0,
             0,
             0});
-            this.nud_tmr2.Location = new System.Drawing.Point(87, 111);
+            this.nud_tmr2.Location = new System.Drawing.Point(84, 111);
             this.nud_tmr2.Maximum = new decimal(new int[] {
             600000,
             0,
             0,
             0});
             this.nud_tmr2.Name = "nud_tmr2";
-            this.nud_tmr2.Size = new System.Drawing.Size(59, 20);
+            this.nud_tmr2.Size = new System.Drawing.Size(56, 20);
             this.nud_tmr2.TabIndex = 9;
             this.nud_tmr2.ValueChanged += new System.EventHandler(this.nud_Leave);
             this.nud_tmr2.Leave += new System.EventHandler(this.nud_Leave);
             // 
             // nud_tmr3
             // 
+            this.nud_tmr3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.nud_tmr3.Increment = new decimal(new int[] {
             1000,
             0,
             0,
             0});
-            this.nud_tmr3.Location = new System.Drawing.Point(163, 111);
+            this.nud_tmr3.Location = new System.Drawing.Point(160, 111);
             this.nud_tmr3.Maximum = new decimal(new int[] {
             600000,
             0,
             0,
             0});
             this.nud_tmr3.Name = "nud_tmr3";
-            this.nud_tmr3.Size = new System.Drawing.Size(59, 20);
+            this.nud_tmr3.Size = new System.Drawing.Size(56, 20);
             this.nud_tmr3.TabIndex = 10;
             this.nud_tmr3.ValueChanged += new System.EventHandler(this.nud_Leave);
             this.nud_tmr3.Leave += new System.EventHandler(this.nud_Leave);
             // 
             // nud_tmr4
             // 
+            this.nud_tmr4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.nud_tmr4.Increment = new decimal(new int[] {
             1000,
             0,
             0,
             0});
-            this.nud_tmr4.Location = new System.Drawing.Point(237, 111);
+            this.nud_tmr4.Location = new System.Drawing.Point(234, 111);
             this.nud_tmr4.Maximum = new decimal(new int[] {
             600000,
             0,
             0,
             0});
             this.nud_tmr4.Name = "nud_tmr4";
-            this.nud_tmr4.Size = new System.Drawing.Size(59, 20);
+            this.nud_tmr4.Size = new System.Drawing.Size(56, 20);
             this.nud_tmr4.TabIndex = 11;
             this.nud_tmr4.ValueChanged += new System.EventHandler(this.nud_Leave);
             this.nud_tmr4.Leave += new System.EventHandler(this.nud_Leave);
@@ -266,7 +279,7 @@
             // 
             this.lb_trig1.AutoSize = true;
             this.lb_trig1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lb_trig1.Location = new System.Drawing.Point(9, 27);
+            this.lb_trig1.Location = new System.Drawing.Point(6, 27);
             this.lb_trig1.Name = "lb_trig1";
             this.lb_trig1.Size = new System.Drawing.Size(57, 13);
             this.lb_trig1.TabIndex = 20;
@@ -276,7 +289,7 @@
             // 
             this.lb_trig2.AutoSize = true;
             this.lb_trig2.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lb_trig2.Location = new System.Drawing.Point(84, 27);
+            this.lb_trig2.Location = new System.Drawing.Point(81, 27);
             this.lb_trig2.Name = "lb_trig2";
             this.lb_trig2.Size = new System.Drawing.Size(57, 13);
             this.lb_trig2.TabIndex = 21;
@@ -286,7 +299,7 @@
             // 
             this.lb_trig3.AutoSize = true;
             this.lb_trig3.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lb_trig3.Location = new System.Drawing.Point(159, 27);
+            this.lb_trig3.Location = new System.Drawing.Point(156, 27);
             this.lb_trig3.Name = "lb_trig3";
             this.lb_trig3.Size = new System.Drawing.Size(57, 13);
             this.lb_trig3.TabIndex = 22;
@@ -296,7 +309,7 @@
             // 
             this.lb_trig4.AutoSize = true;
             this.lb_trig4.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lb_trig4.Location = new System.Drawing.Point(234, 27);
+            this.lb_trig4.Location = new System.Drawing.Point(231, 27);
             this.lb_trig4.Name = "lb_trig4";
             this.lb_trig4.Size = new System.Drawing.Size(57, 13);
             this.lb_trig4.TabIndex = 23;
@@ -306,7 +319,7 @@
             // 
             this.lb_tmr1_sec.AutoSize = true;
             this.lb_tmr1_sec.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lb_tmr1_sec.Location = new System.Drawing.Point(9, 134);
+            this.lb_tmr1_sec.Location = new System.Drawing.Point(6, 134);
             this.lb_tmr1_sec.Name = "lb_tmr1_sec";
             this.lb_tmr1_sec.Size = new System.Drawing.Size(58, 13);
             this.lb_tmr1_sec.TabIndex = 26;
@@ -317,7 +330,7 @@
             // 
             this.lb_tmr2_sec.AutoSize = true;
             this.lb_tmr2_sec.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lb_tmr2_sec.Location = new System.Drawing.Point(84, 134);
+            this.lb_tmr2_sec.Location = new System.Drawing.Point(81, 134);
             this.lb_tmr2_sec.Name = "lb_tmr2_sec";
             this.lb_tmr2_sec.Size = new System.Drawing.Size(58, 13);
             this.lb_tmr2_sec.TabIndex = 27;
@@ -328,7 +341,7 @@
             // 
             this.lb_tmr3_sec.AutoSize = true;
             this.lb_tmr3_sec.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lb_tmr3_sec.Location = new System.Drawing.Point(160, 134);
+            this.lb_tmr3_sec.Location = new System.Drawing.Point(157, 134);
             this.lb_tmr3_sec.Name = "lb_tmr3_sec";
             this.lb_tmr3_sec.Size = new System.Drawing.Size(58, 13);
             this.lb_tmr3_sec.TabIndex = 28;
@@ -339,7 +352,7 @@
             // 
             this.lb_tmr4_sec.AutoSize = true;
             this.lb_tmr4_sec.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lb_tmr4_sec.Location = new System.Drawing.Point(234, 134);
+            this.lb_tmr4_sec.Location = new System.Drawing.Point(231, 134);
             this.lb_tmr4_sec.Name = "lb_tmr4_sec";
             this.lb_tmr4_sec.Size = new System.Drawing.Size(58, 13);
             this.lb_tmr4_sec.TabIndex = 29;
@@ -356,7 +369,7 @@
             "Scroll L",
             "Caps L",
             "Num L"});
-            this.cb_trig_tmr1.Location = new System.Drawing.Point(12, 3);
+            this.cb_trig_tmr1.Location = new System.Drawing.Point(9, 3);
             this.cb_trig_tmr1.Name = "cb_trig_tmr1";
             this.cb_trig_tmr1.Size = new System.Drawing.Size(58, 21);
             this.cb_trig_tmr1.TabIndex = 0;
@@ -372,7 +385,7 @@
             "Scroll L",
             "Caps L",
             "Num L"});
-            this.cb_trig_tmr2.Location = new System.Drawing.Point(87, 3);
+            this.cb_trig_tmr2.Location = new System.Drawing.Point(84, 3);
             this.cb_trig_tmr2.Name = "cb_trig_tmr2";
             this.cb_trig_tmr2.Size = new System.Drawing.Size(58, 21);
             this.cb_trig_tmr2.TabIndex = 1;
@@ -388,7 +401,7 @@
             "Scroll L",
             "Caps L",
             "Num L"});
-            this.cb_trig_tmr3.Location = new System.Drawing.Point(162, 3);
+            this.cb_trig_tmr3.Location = new System.Drawing.Point(159, 3);
             this.cb_trig_tmr3.Name = "cb_trig_tmr3";
             this.cb_trig_tmr3.Size = new System.Drawing.Size(58, 21);
             this.cb_trig_tmr3.TabIndex = 2;
@@ -404,7 +417,7 @@
             "Scroll L",
             "Caps L",
             "Num L"});
-            this.cb_trig_tmr4.Location = new System.Drawing.Point(237, 3);
+            this.cb_trig_tmr4.Location = new System.Drawing.Point(234, 3);
             this.cb_trig_tmr4.Name = "cb_trig_tmr4";
             this.cb_trig_tmr4.Size = new System.Drawing.Size(58, 21);
             this.cb_trig_tmr4.TabIndex = 3;
@@ -437,7 +450,7 @@
             "RMouse",
             "Shift+LM",
             "Shift+RM"});
-            this.cb_key4.Location = new System.Drawing.Point(237, 56);
+            this.cb_key4.Location = new System.Drawing.Point(234, 56);
             this.cb_key4.Name = "cb_key4";
             this.cb_key4.Size = new System.Drawing.Size(58, 21);
             this.cb_key4.TabIndex = 7;
@@ -471,7 +484,7 @@
             "RMouse",
             "Shift+LM",
             "Shift+RM"});
-            this.cb_key3.Location = new System.Drawing.Point(162, 56);
+            this.cb_key3.Location = new System.Drawing.Point(159, 56);
             this.cb_key3.Name = "cb_key3";
             this.cb_key3.Size = new System.Drawing.Size(58, 21);
             this.cb_key3.TabIndex = 6;
@@ -505,7 +518,7 @@
             "RMouse",
             "Shift+LM",
             "Shift+RM"});
-            this.cb_key2.Location = new System.Drawing.Point(87, 56);
+            this.cb_key2.Location = new System.Drawing.Point(84, 56);
             this.cb_key2.Name = "cb_key2";
             this.cb_key2.Size = new System.Drawing.Size(58, 21);
             this.cb_key2.TabIndex = 5;
@@ -539,7 +552,7 @@
             "RMouse",
             "Shift+LM",
             "Shift+RM"});
-            this.cb_key1.Location = new System.Drawing.Point(12, 56);
+            this.cb_key1.Location = new System.Drawing.Point(9, 56);
             this.cb_key1.Name = "cb_key1";
             this.cb_key1.Size = new System.Drawing.Size(58, 21);
             this.cb_key1.TabIndex = 4;
@@ -550,7 +563,7 @@
             // 
             this.lb_key4.AutoSize = true;
             this.lb_key4.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lb_key4.Location = new System.Drawing.Point(234, 80);
+            this.lb_key4.Location = new System.Drawing.Point(231, 80);
             this.lb_key4.Name = "lb_key4";
             this.lb_key4.Size = new System.Drawing.Size(61, 13);
             this.lb_key4.TabIndex = 39;
@@ -560,7 +573,7 @@
             // 
             this.lb_key3.AutoSize = true;
             this.lb_key3.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lb_key3.Location = new System.Drawing.Point(159, 80);
+            this.lb_key3.Location = new System.Drawing.Point(156, 80);
             this.lb_key3.Name = "lb_key3";
             this.lb_key3.Size = new System.Drawing.Size(61, 13);
             this.lb_key3.TabIndex = 38;
@@ -570,7 +583,7 @@
             // 
             this.lb_key2.AutoSize = true;
             this.lb_key2.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lb_key2.Location = new System.Drawing.Point(84, 80);
+            this.lb_key2.Location = new System.Drawing.Point(81, 80);
             this.lb_key2.Name = "lb_key2";
             this.lb_key2.Size = new System.Drawing.Size(61, 13);
             this.lb_key2.TabIndex = 37;
@@ -580,7 +593,7 @@
             // 
             this.lb_key1.AutoSize = true;
             this.lb_key1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lb_key1.Location = new System.Drawing.Point(9, 80);
+            this.lb_key1.Location = new System.Drawing.Point(6, 80);
             this.lb_key1.Name = "lb_key1";
             this.lb_key1.Size = new System.Drawing.Size(61, 13);
             this.lb_key1.TabIndex = 36;
@@ -671,7 +684,7 @@
             "RMouse",
             "Shift+LM",
             "Shift+RM"});
-            this.cb_key5.Location = new System.Drawing.Point(312, 56);
+            this.cb_key5.Location = new System.Drawing.Point(309, 56);
             this.cb_key5.Name = "cb_key5";
             this.cb_key5.Size = new System.Drawing.Size(58, 21);
             this.cb_key5.TabIndex = 52;
@@ -682,7 +695,7 @@
             // 
             this.lb_key5.AutoSize = true;
             this.lb_key5.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lb_key5.Location = new System.Drawing.Point(309, 80);
+            this.lb_key5.Location = new System.Drawing.Point(306, 80);
             this.lb_key5.Name = "lb_key5";
             this.lb_key5.Size = new System.Drawing.Size(61, 13);
             this.lb_key5.TabIndex = 56;
@@ -698,7 +711,7 @@
             "Scroll L",
             "Caps L",
             "Num L"});
-            this.cb_trig_tmr5.Location = new System.Drawing.Point(312, 3);
+            this.cb_trig_tmr5.Location = new System.Drawing.Point(309, 3);
             this.cb_trig_tmr5.Name = "cb_trig_tmr5";
             this.cb_trig_tmr5.Size = new System.Drawing.Size(58, 21);
             this.cb_trig_tmr5.TabIndex = 51;
@@ -708,7 +721,7 @@
             // 
             this.lb_tmr5_sec.AutoSize = true;
             this.lb_tmr5_sec.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lb_tmr5_sec.Location = new System.Drawing.Point(309, 134);
+            this.lb_tmr5_sec.Location = new System.Drawing.Point(306, 134);
             this.lb_tmr5_sec.Name = "lb_tmr5_sec";
             this.lb_tmr5_sec.Size = new System.Drawing.Size(58, 13);
             this.lb_tmr5_sec.TabIndex = 55;
@@ -719,7 +732,7 @@
             // 
             this.lb_trig5.AutoSize = true;
             this.lb_trig5.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lb_trig5.Location = new System.Drawing.Point(309, 27);
+            this.lb_trig5.Location = new System.Drawing.Point(306, 27);
             this.lb_trig5.Name = "lb_trig5";
             this.lb_trig5.Size = new System.Drawing.Size(57, 13);
             this.lb_trig5.TabIndex = 54;
@@ -727,19 +740,20 @@
             // 
             // nud_tmr5
             // 
+            this.nud_tmr5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.nud_tmr5.Increment = new decimal(new int[] {
             1000,
             0,
             0,
             0});
-            this.nud_tmr5.Location = new System.Drawing.Point(312, 111);
+            this.nud_tmr5.Location = new System.Drawing.Point(309, 111);
             this.nud_tmr5.Maximum = new decimal(new int[] {
             600000,
             0,
             0,
             0});
             this.nud_tmr5.Name = "nud_tmr5";
-            this.nud_tmr5.Size = new System.Drawing.Size(59, 20);
+            this.nud_tmr5.Size = new System.Drawing.Size(56, 20);
             this.nud_tmr5.TabIndex = 53;
             this.nud_tmr5.ValueChanged += new System.EventHandler(this.nud_Leave);
             this.nud_tmr5.Leave += new System.EventHandler(this.nud_Leave);
@@ -771,7 +785,7 @@
             "RMouse",
             "Shift+LM",
             "Shift+RM"});
-            this.cb_key6.Location = new System.Drawing.Point(387, 56);
+            this.cb_key6.Location = new System.Drawing.Point(384, 56);
             this.cb_key6.Name = "cb_key6";
             this.cb_key6.Size = new System.Drawing.Size(58, 21);
             this.cb_key6.TabIndex = 58;
@@ -782,7 +796,7 @@
             // 
             this.lb_key6.AutoSize = true;
             this.lb_key6.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lb_key6.Location = new System.Drawing.Point(384, 80);
+            this.lb_key6.Location = new System.Drawing.Point(381, 80);
             this.lb_key6.Name = "lb_key6";
             this.lb_key6.Size = new System.Drawing.Size(61, 13);
             this.lb_key6.TabIndex = 62;
@@ -798,7 +812,7 @@
             "Scroll L",
             "Caps L",
             "Num L"});
-            this.cb_trig_tmr6.Location = new System.Drawing.Point(387, 3);
+            this.cb_trig_tmr6.Location = new System.Drawing.Point(384, 3);
             this.cb_trig_tmr6.Name = "cb_trig_tmr6";
             this.cb_trig_tmr6.Size = new System.Drawing.Size(58, 21);
             this.cb_trig_tmr6.TabIndex = 57;
@@ -808,7 +822,7 @@
             // 
             this.lb_tmr6_sec.AutoSize = true;
             this.lb_tmr6_sec.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lb_tmr6_sec.Location = new System.Drawing.Point(384, 134);
+            this.lb_tmr6_sec.Location = new System.Drawing.Point(381, 134);
             this.lb_tmr6_sec.Name = "lb_tmr6_sec";
             this.lb_tmr6_sec.Size = new System.Drawing.Size(58, 13);
             this.lb_tmr6_sec.TabIndex = 61;
@@ -819,7 +833,7 @@
             // 
             this.lb_trig6.AutoSize = true;
             this.lb_trig6.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lb_trig6.Location = new System.Drawing.Point(384, 27);
+            this.lb_trig6.Location = new System.Drawing.Point(381, 27);
             this.lb_trig6.Name = "lb_trig6";
             this.lb_trig6.Size = new System.Drawing.Size(57, 13);
             this.lb_trig6.TabIndex = 60;
@@ -827,19 +841,20 @@
             // 
             // nud_tmr6
             // 
+            this.nud_tmr6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.nud_tmr6.Increment = new decimal(new int[] {
             1000,
             0,
             0,
             0});
-            this.nud_tmr6.Location = new System.Drawing.Point(387, 111);
+            this.nud_tmr6.Location = new System.Drawing.Point(384, 111);
             this.nud_tmr6.Maximum = new decimal(new int[] {
             600000,
             0,
             0,
             0});
             this.nud_tmr6.Name = "nud_tmr6";
-            this.nud_tmr6.Size = new System.Drawing.Size(59, 20);
+            this.nud_tmr6.Size = new System.Drawing.Size(56, 20);
             this.nud_tmr6.TabIndex = 59;
             this.nud_tmr6.ValueChanged += new System.EventHandler(this.nud_Leave);
             this.nud_tmr6.Leave += new System.EventHandler(this.nud_Leave);
@@ -1444,15 +1459,22 @@
             this.pan_main.Controls.Add(this.cb_key2);
             this.pan_main.Controls.Add(this.cb_key4);
             this.pan_main.Controls.Add(this.cb_key3);
+            this.pan_main.Controls.Add(this.cb_tmr1);
+            this.pan_main.Controls.Add(this.cb_tmr2);
+            this.pan_main.Controls.Add(this.cb_tmr6);
+            this.pan_main.Controls.Add(this.cb_tmr5);
+            this.pan_main.Controls.Add(this.cb_tmr4);
+            this.pan_main.Controls.Add(this.cb_tmr3);
             this.pan_main.Location = new System.Drawing.Point(2, 8);
             this.pan_main.Name = "pan_main";
             this.pan_main.Size = new System.Drawing.Size(455, 165);
             this.pan_main.TabIndex = 75;
+            this.pan_main.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.d3hot_MouseDoubleClick);
             // 
             // chb_key6
             // 
             this.chb_key6.AutoSize = true;
-            this.chb_key6.Location = new System.Drawing.Point(429, 60);
+            this.chb_key6.Location = new System.Drawing.Point(426, 60);
             this.chb_key6.Name = "chb_key6";
             this.chb_key6.Size = new System.Drawing.Size(15, 14);
             this.chb_key6.TabIndex = 68;
@@ -1463,7 +1485,7 @@
             // chb_key5
             // 
             this.chb_key5.AutoSize = true;
-            this.chb_key5.Location = new System.Drawing.Point(354, 60);
+            this.chb_key5.Location = new System.Drawing.Point(351, 60);
             this.chb_key5.Name = "chb_key5";
             this.chb_key5.Size = new System.Drawing.Size(15, 14);
             this.chb_key5.TabIndex = 67;
@@ -1474,7 +1496,7 @@
             // chb_key4
             // 
             this.chb_key4.AutoSize = true;
-            this.chb_key4.Location = new System.Drawing.Point(279, 60);
+            this.chb_key4.Location = new System.Drawing.Point(276, 60);
             this.chb_key4.Name = "chb_key4";
             this.chb_key4.Size = new System.Drawing.Size(15, 14);
             this.chb_key4.TabIndex = 66;
@@ -1485,7 +1507,7 @@
             // chb_key3
             // 
             this.chb_key3.AutoSize = true;
-            this.chb_key3.Location = new System.Drawing.Point(204, 60);
+            this.chb_key3.Location = new System.Drawing.Point(201, 60);
             this.chb_key3.Name = "chb_key3";
             this.chb_key3.Size = new System.Drawing.Size(15, 14);
             this.chb_key3.TabIndex = 65;
@@ -1496,7 +1518,7 @@
             // chb_key2
             // 
             this.chb_key2.AutoSize = true;
-            this.chb_key2.Location = new System.Drawing.Point(129, 60);
+            this.chb_key2.Location = new System.Drawing.Point(126, 60);
             this.chb_key2.Name = "chb_key2";
             this.chb_key2.Size = new System.Drawing.Size(15, 14);
             this.chb_key2.TabIndex = 64;
@@ -1507,13 +1529,109 @@
             // chb_key1
             // 
             this.chb_key1.AutoSize = true;
-            this.chb_key1.Location = new System.Drawing.Point(54, 60);
+            this.chb_key1.Location = new System.Drawing.Point(51, 60);
             this.chb_key1.Name = "chb_key1";
             this.chb_key1.Size = new System.Drawing.Size(15, 14);
             this.chb_key1.TabIndex = 63;
             this.chb_key1.UseVisualStyleBackColor = true;
             this.chb_key1.Visible = false;
             this.chb_key1.CheckedChanged += new System.EventHandler(this.chb_key_CheckedChanged);
+            // 
+            // cb_tmr1
+            // 
+            this.cb_tmr1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+            this.cb_tmr1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.cb_tmr1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.cb_tmr1.ItemHeight = 14;
+            this.cb_tmr1.Items.AddRange(new object[] {
+            "Default",
+            "Cooldown"});
+            this.cb_tmr1.Location = new System.Drawing.Point(9, 111);
+            this.cb_tmr1.Name = "cb_tmr1";
+            this.cb_tmr1.Size = new System.Drawing.Size(68, 20);
+            this.cb_tmr1.TabIndex = 69;
+            this.cb_tmr1.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.cb_tmr_DrawItem);
+            this.cb_tmr1.SelectedIndexChanged += new System.EventHandler(this.cb_tmr_SelectedIndexChanged);
+            // 
+            // cb_tmr2
+            // 
+            this.cb_tmr2.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+            this.cb_tmr2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.cb_tmr2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.cb_tmr2.ItemHeight = 14;
+            this.cb_tmr2.Items.AddRange(new object[] {
+            "Default",
+            "Cooldown"});
+            this.cb_tmr2.Location = new System.Drawing.Point(84, 111);
+            this.cb_tmr2.Name = "cb_tmr2";
+            this.cb_tmr2.Size = new System.Drawing.Size(68, 20);
+            this.cb_tmr2.TabIndex = 70;
+            this.cb_tmr2.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.cb_tmr_DrawItem);
+            this.cb_tmr2.SelectedIndexChanged += new System.EventHandler(this.cb_tmr_SelectedIndexChanged);
+            // 
+            // cb_tmr6
+            // 
+            this.cb_tmr6.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+            this.cb_tmr6.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.cb_tmr6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.cb_tmr6.ItemHeight = 14;
+            this.cb_tmr6.Items.AddRange(new object[] {
+            "Default",
+            "Cooldown"});
+            this.cb_tmr6.Location = new System.Drawing.Point(384, 111);
+            this.cb_tmr6.Name = "cb_tmr6";
+            this.cb_tmr6.Size = new System.Drawing.Size(68, 20);
+            this.cb_tmr6.TabIndex = 74;
+            this.cb_tmr6.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.cb_tmr_DrawItem);
+            this.cb_tmr6.SelectedIndexChanged += new System.EventHandler(this.cb_tmr_SelectedIndexChanged);
+            // 
+            // cb_tmr5
+            // 
+            this.cb_tmr5.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+            this.cb_tmr5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.cb_tmr5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.cb_tmr5.ItemHeight = 14;
+            this.cb_tmr5.Items.AddRange(new object[] {
+            "Default",
+            "Cooldown"});
+            this.cb_tmr5.Location = new System.Drawing.Point(309, 111);
+            this.cb_tmr5.Name = "cb_tmr5";
+            this.cb_tmr5.Size = new System.Drawing.Size(68, 20);
+            this.cb_tmr5.TabIndex = 73;
+            this.cb_tmr5.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.cb_tmr_DrawItem);
+            this.cb_tmr5.SelectedIndexChanged += new System.EventHandler(this.cb_tmr_SelectedIndexChanged);
+            // 
+            // cb_tmr4
+            // 
+            this.cb_tmr4.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+            this.cb_tmr4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.cb_tmr4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.cb_tmr4.ItemHeight = 14;
+            this.cb_tmr4.Items.AddRange(new object[] {
+            "Default",
+            "Cooldown"});
+            this.cb_tmr4.Location = new System.Drawing.Point(234, 111);
+            this.cb_tmr4.Name = "cb_tmr4";
+            this.cb_tmr4.Size = new System.Drawing.Size(68, 20);
+            this.cb_tmr4.TabIndex = 72;
+            this.cb_tmr4.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.cb_tmr_DrawItem);
+            this.cb_tmr4.SelectedIndexChanged += new System.EventHandler(this.cb_tmr_SelectedIndexChanged);
+            // 
+            // cb_tmr3
+            // 
+            this.cb_tmr3.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+            this.cb_tmr3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.cb_tmr3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.cb_tmr3.ItemHeight = 14;
+            this.cb_tmr3.Items.AddRange(new object[] {
+            "Default",
+            "Cooldown"});
+            this.cb_tmr3.Location = new System.Drawing.Point(160, 111);
+            this.cb_tmr3.Name = "cb_tmr3";
+            this.cb_tmr3.Size = new System.Drawing.Size(68, 20);
+            this.cb_tmr3.TabIndex = 71;
+            this.cb_tmr3.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.cb_tmr_DrawItem);
+            this.cb_tmr3.SelectedIndexChanged += new System.EventHandler(this.cb_tmr_SelectedIndexChanged);
             // 
             // lb_hold
             // 
@@ -1646,11 +1764,41 @@
             this.lb_scroll.Text = "Scroll";
             this.lb_scroll.Click += new System.EventHandler(this.lb_locks_Click);
             // 
+            // mouseKeyEventProvider2
+            // 
+            this.mouseKeyEventProvider2.Enabled = true;
+            this.mouseKeyEventProvider2.HookType = MouseKeyboardActivityMonitor.Controls.HookType.Global;
+            this.mouseKeyEventProvider2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.mouseKeyEventProvider2_KeyDown);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(206, 268);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 94;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Visible = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(206, 288);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 95;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Visible = false;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // d3hot
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(459, 316);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.lb_scroll);
             this.Controls.Add(this.lb_caps);
             this.Controls.Add(this.lb_num);
@@ -1668,19 +1816,19 @@
             this.Controls.Add(this.cb_start);
             this.Controls.Add(this.pan_proc);
             this.Controls.Add(this.pan_prog);
-            this.Controls.Add(this.pan_opt);
             this.Controls.Add(this.pan_main);
+            this.Controls.Add(this.pan_opt);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
             this.Name = "d3hot";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Diablo 3 Hotkeys ver. 2.1";
+            this.Text = "Diablo 3 Hotkeys ver. 2.2";
             this.Activated += new System.EventHandler(this.d3hot_Activated);
             this.Deactivate += new System.EventHandler(this.d3hot_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.d3hot_FormClosing);
             this.Load += new System.EventHandler(this.d3hot_Load);
             this.Shown += new System.EventHandler(this.d3hot_Shown);
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.d3hot_KeyUp);
+            this.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.d3hot_MouseDoubleClick);
             this.Resize += new System.EventHandler(this.d3hot_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr2)).EndInit();
@@ -1814,6 +1962,15 @@
         private System.Windows.Forms.Label lb_scroll;
         private System.Windows.Forms.ComboBox cb_returndelay;
         private System.Windows.Forms.Label lb_returndelay;
+        private MouseKeyboardActivityMonitor.Controls.MouseKeyEventProvider mouseKeyEventProvider2;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.ComboBox cb_tmr1;
+        private System.Windows.Forms.ComboBox cb_tmr2;
+        private System.Windows.Forms.ComboBox cb_tmr6;
+        private System.Windows.Forms.ComboBox cb_tmr5;
+        private System.Windows.Forms.ComboBox cb_tmr4;
+        private System.Windows.Forms.ComboBox cb_tmr3;
     }
 }
 

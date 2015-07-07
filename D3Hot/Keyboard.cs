@@ -101,12 +101,12 @@ namespace D3Hot
         {
             int key_for_hold = 0;
 
-                if (timer == RepeatTimer1 || timer == StartTimer1 || timer == tmr1) key_for_hold = key1_h; else //key_hold_code(key1)
-                if (timer == RepeatTimer2 || timer == StartTimer2 || timer == tmr2) key_for_hold = key2_h; else //key_hold_code(key2)
-                if (timer == RepeatTimer3 || timer == StartTimer3 || timer == tmr3) key_for_hold = key3_h; else //key_hold_code(key3)
-                if (timer == RepeatTimer4 || timer == StartTimer4 || timer == tmr4) key_for_hold = key4_h; else //key_hold_code(key4)
-                if (timer == RepeatTimer5 || timer == StartTimer5 || timer == tmr5) key_for_hold = key5_h; else //key_hold_code(key5)
-                if (timer == RepeatTimer6 || timer == StartTimer6 || timer == tmr6) key_for_hold = key6_h; //key_hold_code(key6)
+                if (timer == RepeatTimer1 || timer == StartTimer1 || timer == tmr1 || tmr_cdr_curr == 1) key_for_hold = key1_h; else
+                if (timer == RepeatTimer2 || timer == StartTimer2 || timer == tmr2 || tmr_cdr_curr == 2) key_for_hold = key2_h; else
+                if (timer == RepeatTimer3 || timer == StartTimer3 || timer == tmr3 || tmr_cdr_curr == 3) key_for_hold = key3_h; else
+                if (timer == RepeatTimer4 || timer == StartTimer4 || timer == tmr4 || tmr_cdr_curr == 4) key_for_hold = key4_h; else
+                if (timer == RepeatTimer5 || timer == StartTimer5 || timer == tmr5 || tmr_cdr_curr == 5) key_for_hold = key5_h; else
+                if (timer == RepeatTimer6 || timer == StartTimer6 || timer == tmr6 || tmr_cdr_curr == 6) key_for_hold = key6_h; 
                  
             return key_for_hold;
         }

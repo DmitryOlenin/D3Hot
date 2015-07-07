@@ -754,5 +754,77 @@ namespace D3Hot.Properties {
                 this["cb_returndelay"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int cb_tmr1 {
+            get {
+                return ((int)(this["cb_tmr1"]));
+            }
+            set {
+                this["cb_tmr1"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int cb_tmr2 {
+            get {
+                return ((int)(this["cb_tmr2"]));
+            }
+            set {
+                this["cb_tmr2"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int cb_tmr3 {
+            get {
+                return ((int)(this["cb_tmr3"]));
+            }
+            set {
+                this["cb_tmr3"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int cb_tmr4 {
+            get {
+                return ((int)(this["cb_tmr4"]));
+            }
+            set {
+                this["cb_tmr4"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int cb_tmr5 {
+            get {
+                return ((int)(this["cb_tmr5"]));
+            }
+            set {
+                this["cb_tmr5"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int cb_tmr6 {
+            get {
+                return ((int)(this["cb_tmr6"]));
+            }
+            set {
+                this["cb_tmr6"] = value;
+            }
+        }
     }
 }

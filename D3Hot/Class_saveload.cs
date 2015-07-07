@@ -33,6 +33,14 @@ namespace D3Hot
             Settings.Default.cb_trig_tmr4 = cb_trig_tmr4.SelectedIndex;
             Settings.Default.cb_trig_tmr5 = cb_trig_tmr5.SelectedIndex;
             Settings.Default.cb_trig_tmr6 = cb_trig_tmr6.SelectedIndex;
+
+            Settings.Default.cb_tmr1 = cb_tmr1.SelectedIndex;
+            Settings.Default.cb_tmr2 = cb_tmr2.SelectedIndex;
+            Settings.Default.cb_tmr3 = cb_tmr3.SelectedIndex;
+            Settings.Default.cb_tmr4 = cb_tmr4.SelectedIndex;
+            Settings.Default.cb_tmr5 = cb_tmr5.SelectedIndex;
+            Settings.Default.cb_tmr6 = cb_tmr6.SelectedIndex;
+
             Settings.Default.cb_startstop = cb_startstop.SelectedIndex;
             Settings.Default.cb_prog = cb_prog.SelectedIndex;
             Settings.Default.nud_tmr1 = nud_tmr1.Value;
@@ -211,6 +219,12 @@ namespace D3Hot
             cb_trig_tmr4.SelectedIndex = Settings.Default.cb_trig_tmr4;
             cb_trig_tmr5.SelectedIndex = Settings.Default.cb_trig_tmr5;
             cb_trig_tmr6.SelectedIndex = Settings.Default.cb_trig_tmr6;
+            cb_tmr1.SelectedIndex = Settings.Default.cb_tmr1;
+            cb_tmr2.SelectedIndex = Settings.Default.cb_tmr2;
+            cb_tmr3.SelectedIndex = Settings.Default.cb_tmr3;
+            cb_tmr4.SelectedIndex = Settings.Default.cb_tmr4;
+            cb_tmr5.SelectedIndex = Settings.Default.cb_tmr5;
+            cb_tmr6.SelectedIndex = Settings.Default.cb_tmr6;
             cb_startstop.SelectedIndex = Settings.Default.cb_startstop;
             cb_prog.SelectedIndex = Settings.Default.cb_prog;
             nud_tmr1.Value = Settings.Default.nud_tmr1;
@@ -320,6 +334,13 @@ namespace D3Hot
                     case "cb_trig_tmr5": Settings.Default.cb_trig_tmr5 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "cb_trig_tmr6": Settings.Default.cb_trig_tmr6 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     //case "cb_startstop": Settings.Default.cb_startstop = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+
+                    case "cb_tmr1": Settings.Default.cb_tmr1 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    case "cb_tmr2": Settings.Default.cb_tmr2 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    case "cb_tmr3": Settings.Default.cb_tmr3 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    case "cb_tmr4": Settings.Default.cb_tmr4 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    case "cb_tmr5": Settings.Default.cb_tmr5 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    case "cb_tmr6": Settings.Default.cb_tmr6 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
 
                     case "cb_key1": Settings.Default.cb_key1 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "cb_key2": Settings.Default.cb_key2 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
