@@ -38,28 +38,33 @@ namespace D3Hot
 
         //public System.Windows.Forms.Timer startTimer;
         //public System.Windows.Forms.Timer repeatTimer;
-        public System.Timers.Timer startTimer, repeatTimer;
+        public System.Timers.Timer[] StartTimer = new System.Timers.Timer[6];//09.07.2015
+        public System.Timers.Timer[] RepeatTimer = new System.Timers.Timer[6];//09.07.2015
+        
         //public int key_for_hold = 0, key_for_keyup = 0;
         public uint key_down = 0, key_up=0;
-        public int st_timer1_r = 0, st_timer2_r = 0, st_timer3_r = 0, st_timer4_r = 0, st_timer5_r = 0, st_timer6_r = 0,
-            r_timer1_r = 0, r_timer2_r = 0, r_timer3_r = 0, r_timer4_r = 0, r_timer5_r = 0, r_timer6_r = 0;
+        //public int st_timer1_r = 0, st_timer2_r = 0, st_timer3_r = 0, st_timer4_r = 0, st_timer5_r = 0, st_timer6_r = 0,
+        //    r_timer1_r = 0, r_timer2_r = 0, r_timer3_r = 0, r_timer4_r = 0, r_timer5_r = 0, r_timer6_r = 0;
         public int keyboardDelay, keyboardSpeed;
+
+        public int[] st_timer_r = new int[] { 0, 0, 0, 0, 0, 0 }; //09.07.2015
+        public int[] r_timer_r = new int[] { 0, 0, 0, 0, 0, 0 }; //09.07.2015
 
 
         public void keyup(int i)
         {
-            int key_for_keyup = 0;
+            int key_for_keyup = key_h[i];//0;
             int ret = 0;
 
-            switch (i)
-            {
-                case 1: key_for_keyup = key1_h; break; //key_hold_code(key1)
-                case 2: key_for_keyup = key2_h; break; //key_hold_code(key2)
-                case 3: key_for_keyup = key3_h; break; //key_hold_code(key3)
-                case 4: key_for_keyup = key4_h; break; //key_hold_code(key4)
-                case 5: key_for_keyup = key5_h; break; //key_hold_code(key5)
-                case 6: key_for_keyup = key6_h; break; //key_hold_code(key6)
-            }
+            //switch (i)
+            //{
+            //    case 1: key_for_keyup = key_h[0]; break; //key_hold_code(key1)
+            //    case 2: key_for_keyup = key_h[1]; break; //key_hold_code(key2)
+            //    case 3: key_for_keyup = key_h[2]; break; //key_hold_code(key3)
+            //    case 4: key_for_keyup = key_h[3]; break; //key_hold_code(key4)
+            //    case 5: key_for_keyup = key_h[4]; break; //key_hold_code(key5)
+            //    case 6: key_for_keyup = key_h[5]; break; //key_hold_code(key6)
+            //}
 
             ret = _MapVirtualKey(key_for_keyup, 0);
 
@@ -101,12 +106,18 @@ namespace D3Hot
         {
             int key_for_hold = 0;
 
-                if (timer == RepeatTimer1 || timer == StartTimer1 || timer == tmr1 || tmr_cdr_curr == 1) key_for_hold = key1_h; else
-                if (timer == RepeatTimer2 || timer == StartTimer2 || timer == tmr2 || tmr_cdr_curr == 2) key_for_hold = key2_h; else
-                if (timer == RepeatTimer3 || timer == StartTimer3 || timer == tmr3 || tmr_cdr_curr == 3) key_for_hold = key3_h; else
-                if (timer == RepeatTimer4 || timer == StartTimer4 || timer == tmr4 || tmr_cdr_curr == 4) key_for_hold = key4_h; else
-                if (timer == RepeatTimer5 || timer == StartTimer5 || timer == tmr5 || tmr_cdr_curr == 5) key_for_hold = key5_h; else
-                if (timer == RepeatTimer6 || timer == StartTimer6 || timer == tmr6 || tmr_cdr_curr == 6) key_for_hold = key6_h; 
+            //for (int i = 0; i < 6; i++)
+            //{
+            //    if (timer == RepeatTimer[i] || timer == StartTimer[i] || timer == tmr[i])
+            //        key_for_hold = key_h[i];
+            //}
+
+                if (timer == RepeatTimer[0] || timer == StartTimer[0] || timer == tmr[0] || tmr_cdr_curr == 1) key_for_hold = key_h[0]; else
+                if (timer == RepeatTimer[1] || timer == StartTimer[1] || timer == tmr[1] || tmr_cdr_curr == 2) key_for_hold = key_h[1]; else
+                if (timer == RepeatTimer[2] || timer == StartTimer[2] || timer == tmr[2] || tmr_cdr_curr == 3) key_for_hold = key_h[2]; else
+                if (timer == RepeatTimer[3] || timer == StartTimer[3] || timer == tmr[3] || tmr_cdr_curr == 4) key_for_hold = key_h[3]; else
+                if (timer == RepeatTimer[4] || timer == StartTimer[4] || timer == tmr[4] || tmr_cdr_curr == 5) key_for_hold = key_h[4]; else
+                if (timer == RepeatTimer[5] || timer == StartTimer[5] || timer == tmr[5] || tmr_cdr_curr == 6) key_for_hold = key_h[5]; 
                  
             return key_for_hold;
         }
@@ -184,44 +195,55 @@ namespace D3Hot
             if (timer != null) timer.Stop();
             int key_for_hold = timer_key(timer);
 
-            int i = 0;
-            if (timer == StartTimer1 && st_timer1_r > 0)
+            int i = -1;
+
+            for (int j = 0; j < 6; j++)
             {
-                i = 1;
-                st_timer1_r = 0;
-            } 
-            else if (timer == StartTimer2 && st_timer2_r > 0)
-            {
-                i = 2;
-                st_timer2_r = 0;
-            } 
-            else if (timer == StartTimer3 && st_timer3_r > 0)
-            {
-                i = 3;
-                st_timer3_r = 0;
+                if (timer == StartTimer[j] && st_timer_r[j] > 0)
+                {
+                    i = j;
+                    st_timer_r[j] = 0;
+                    break;
+                }
             }
-            else if (timer == StartTimer4 && st_timer4_r > 0)
-            {
-                i = 4;
-                st_timer4_r = 0;
-            }
-            else if (timer == StartTimer5 && st_timer5_r > 0)
-            {
-                i = 5;
-                st_timer5_r = 0;
-            }
-            else if (timer == StartTimer6 && st_timer6_r > 0)
-            {
-                i = 6;
-                st_timer6_r = 0;
-            }
+
+            //if (timer == StartTimer[0] && st_timer_r[0] > 0)
+            //{
+            //    i = 1;
+            //    st_timer_r[0] = 0;
+            //} 
+            //else if (timer == StartTimer[1] && st_timer_r[1] > 0)
+            //{
+            //    i = 2;
+            //    st_timer_r[1] = 0;
+            //} 
+            //else if (timer == StartTimer[2] && st_timer_r[2] > 0)
+            //{
+            //    i = 3;
+            //    st_timer_r[2] = 0;
+            //}
+            //else if (timer == StartTimer[3] && st_timer_r[3] > 0)
+            //{
+            //    i = 4;
+            //    st_timer_r[3] = 0;
+            //}
+            //else if (timer == StartTimer[4] && st_timer_r[4] > 0)
+            //{
+            //    i = 5;
+            //    st_timer_r[4] = 0;
+            //}
+            //else if (timer == StartTimer[5] && st_timer_r[5] > 0)
+            //{
+            //    i = 6;
+            //    st_timer_r[5] = 0;
+            //}
 
             int ret = 0;
             ret = _MapVirtualKey(key_for_hold, 0);
 
             if ((key_for_hold == (int)Keys.LButton) || (key_for_hold == (int)Keys.RButton))
             {
-                if (i != 0)
+                if (i != -1)
                 {
                     //IntPtr handle1;
                     //handle1 = FindWindow(null, "akelpad");
@@ -260,47 +282,53 @@ namespace D3Hot
                     //           updown_keys(key_for_hold),//(int)WM_KEYDOWN,
                     //           key_for_hold, 0);
 
-            if (i > 0)
+            if (i >-1)
                 System.Threading.Thread.Sleep(50);
-                switch (i)
-                {
-                    case (1):
-                        RepeatTimer1 = new System.Timers.Timer { Interval = keyboardSpeed };
-                        RepeatTimer1.Elapsed += repeatTimer_Tick;
-                        r_timer1_r = 1;
-                        RepeatTimer1.Start();
-                        break;
-                    case (2):
-                        RepeatTimer2 = new System.Timers.Timer { Interval = keyboardSpeed };
-                        RepeatTimer2.Elapsed += repeatTimer_Tick;
-                        r_timer2_r = 1;
-                        RepeatTimer2.Start();
-                        break;
-                    case (3):
-                        RepeatTimer3 = new System.Timers.Timer { Interval = keyboardSpeed };
-                        RepeatTimer3.Elapsed += repeatTimer_Tick;
-                        r_timer3_r = 1;
-                        RepeatTimer3.Start();
-                        break;
-                    case (4):
-                        RepeatTimer4 = new System.Timers.Timer { Interval = keyboardSpeed };
-                        RepeatTimer4.Elapsed += repeatTimer_Tick;
-                        r_timer4_r = 1;
-                        RepeatTimer4.Start();
-                        break;
-                    case (5):
-                        RepeatTimer5 = new System.Timers.Timer { Interval = keyboardSpeed };
-                        RepeatTimer5.Elapsed += repeatTimer_Tick;
-                        r_timer5_r = 1;
-                        RepeatTimer5.Start();
-                        break;
-                    case (6):
-                        RepeatTimer6 = new System.Timers.Timer { Interval = keyboardSpeed };
-                        RepeatTimer6.Elapsed += repeatTimer_Tick;
-                        r_timer6_r = 1;
-                        RepeatTimer6.Start();
-                        break;
-                }
+
+                RepeatTimer[i] = new System.Timers.Timer { Interval = keyboardSpeed };
+                RepeatTimer[i].Elapsed += repeatTimer_Tick;
+                r_timer_r[i] = 1;
+                RepeatTimer[i].Start();
+
+                //switch (i)
+                //{
+                //    case (1):
+                //        RepeatTimer[0] = new System.Timers.Timer { Interval = keyboardSpeed };
+                //        RepeatTimer[0].Elapsed += repeatTimer_Tick;
+                //        r_timer_r[0] = 1;
+                //        RepeatTimer[0].Start();
+                //        break;
+                //    case (2):
+                //        RepeatTimer[1] = new System.Timers.Timer { Interval = keyboardSpeed };
+                //        RepeatTimer[1].Elapsed += repeatTimer_Tick;
+                //        r_timer_r[1] = 1;
+                //        RepeatTimer[1].Start();
+                //        break;
+                //    case (3):
+                //        RepeatTimer[2] = new System.Timers.Timer { Interval = keyboardSpeed };
+                //        RepeatTimer[2].Elapsed += repeatTimer_Tick;
+                //        r_timer_r[2] = 1;
+                //        RepeatTimer[2].Start();
+                //        break;
+                //    case (4):
+                //        RepeatTimer[3] = new System.Timers.Timer { Interval = keyboardSpeed };
+                //        RepeatTimer[3].Elapsed += repeatTimer_Tick;
+                //        r_timer_r[3] = 1;
+                //        RepeatTimer[3].Start();
+                //        break;
+                //    case (5):
+                //        RepeatTimer[4] = new System.Timers.Timer { Interval = keyboardSpeed };
+                //        RepeatTimer[4].Elapsed += repeatTimer_Tick;
+                //        r_timer_r[4] = 1;
+                //        RepeatTimer[4].Start();
+                //        break;
+                //    case (6):
+                //        RepeatTimer[5] = new System.Timers.Timer { Interval = keyboardSpeed };
+                //        RepeatTimer[5].Elapsed += repeatTimer_Tick;
+                //        r_timer_r[5] = 1;
+                //        RepeatTimer[5].Start();
+                //        break;
+                //}
         }
 
 
@@ -318,88 +346,93 @@ namespace D3Hot
                 int.TryParse((String)key.GetValue("KeyboardSpeed", "31"), out keyboardSpeed);
             }
 
-            switch (i)
-            {
-                case 1:
-                    StartTimer1 = new System.Timers.Timer { Interval = keyboardDelay };
-                    StartTimer1.Elapsed += startTimer_Tick;
-                    st_timer1_r = 1; 
-                    StartTimer1.Start();
-                    //if (!mouse(1))
-                    //{
-                        //RepeatTimer1 = new System.Timers.Timer { Interval = keyboardSpeed };
-                        //RepeatTimer1.Elapsed += repeatTimer_Tick;
-                        //r_timer1_r = 1;
-                        //RepeatTimer1.Start();
-                    //}
-                    break;
-                case 2:
-                    StartTimer2 = new System.Timers.Timer { Interval = keyboardDelay };
-                    StartTimer2.Elapsed += startTimer_Tick;
-                    st_timer2_r = 1; 
-                    StartTimer2.Start();
-                    //if (!mouse(2))
-                    //{
-                        //RepeatTimer2 = new System.Timers.Timer { Interval = keyboardSpeed };
-                        //RepeatTimer2.Elapsed += repeatTimer_Tick;
-                        //r_timer2_r = 1;
-                        //RepeatTimer2.Start();
-                    //}
-                    break;
-                case 3:
-                    StartTimer3 = new System.Timers.Timer { Interval = keyboardDelay };
-                    StartTimer3.Elapsed += startTimer_Tick;
-                    st_timer3_r = 1; 
-                    StartTimer3.Start();
-                    //if (!mouse(3))
-                    //{
-                        //RepeatTimer3 = new System.Timers.Timer { Interval = keyboardSpeed };
-                        //RepeatTimer3.Elapsed += repeatTimer_Tick;
-                        //r_timer3_r = 1;
-                        //RepeatTimer3.Start();
-                    //}
-                    break;
-                case 4:
-                    StartTimer4 = new System.Timers.Timer { Interval = keyboardDelay };
-                    StartTimer4.Elapsed += startTimer_Tick;
-                    StartTimer4.AutoReset = false;
-                    st_timer4_r = 1; 
-                    StartTimer4.Start();
-                    //if (!mouse(4))
-                    //{
-                        //RepeatTimer4 = new System.Timers.Timer { Interval = keyboardSpeed };
-                        //RepeatTimer4.Elapsed += repeatTimer_Tick;
-                        //r_timer4_r = 1;
-                        //RepeatTimer4.Start();
-                    //}
-                    break;
-                case 5:
-                    StartTimer5 = new System.Timers.Timer { Interval = keyboardDelay };
-                    StartTimer5.Elapsed += startTimer_Tick;
-                    st_timer5_r = 1; 
-                    StartTimer5.Start();
-                    //if (!mouse(5))
-                    //{
-                        //RepeatTimer5 = new System.Timers.Timer { Interval = keyboardSpeed };
-                        //RepeatTimer5.Elapsed += repeatTimer_Tick;
-                        //r_timer5_r = 1;
-                        //RepeatTimer5.Start();
-                    //}
-                    break;
-                case 6:
-                    StartTimer6 = new System.Timers.Timer { Interval = keyboardDelay };
-                    StartTimer6.Elapsed += startTimer_Tick;
-                    st_timer6_r = 1; 
-                    StartTimer6.Start();
-                    //if (!mouse(6))
-                    //{
-                        //RepeatTimer6 = new System.Timers.Timer { Interval = keyboardSpeed };
-                        //RepeatTimer6.Elapsed += repeatTimer_Tick;
-                        //r_timer6_r = 1;
-                        //RepeatTimer6.Start();
-                    //}
-                    break;
-            }
+            StartTimer[i] = new System.Timers.Timer { Interval = keyboardDelay };
+            StartTimer[i].Elapsed += startTimer_Tick;
+            st_timer_r[i] = 1;
+            StartTimer[i].Start();
+
+            //switch (i)
+            //{
+            //    case 1:
+            //        StartTimer[0] = new System.Timers.Timer { Interval = keyboardDelay };
+            //        StartTimer[0].Elapsed += startTimer_Tick;
+            //        st_timer_r[0] = 1; 
+            //        StartTimer[0].Start();
+            //        //if (!mouse(1))
+            //        //{
+            //            //RepeatTimer[0] = new System.Timers.Timer { Interval = keyboardSpeed };
+            //            //RepeatTimer[0].Elapsed += repeatTimer_Tick;
+            //            //r_timer_r[0] = 1;
+            //            //RepeatTimer[0].Start();
+            //        //}
+            //        break;
+            //    case 2:
+            //        StartTimer[1] = new System.Timers.Timer { Interval = keyboardDelay };
+            //        StartTimer[1].Elapsed += startTimer_Tick;
+            //        st_timer_r[1] = 1; 
+            //        StartTimer[1].Start();
+            //        //if (!mouse(2))
+            //        //{
+            //            //RepeatTimer[1] = new System.Timers.Timer { Interval = keyboardSpeed };
+            //            //RepeatTimer[1].Elapsed += repeatTimer_Tick;
+            //            //r_timer_r[1] = 1;
+            //            //RepeatTimer[1].Start();
+            //        //}
+            //        break;
+            //    case 3:
+            //        StartTimer[2] = new System.Timers.Timer { Interval = keyboardDelay };
+            //        StartTimer[2].Elapsed += startTimer_Tick;
+            //        st_timer_r[2] = 1; 
+            //        StartTimer[2].Start();
+            //        //if (!mouse(3))
+            //        //{
+            //            //RepeatTimer[2] = new System.Timers.Timer { Interval = keyboardSpeed };
+            //            //RepeatTimer[2].Elapsed += repeatTimer_Tick;
+            //            //r_timer_r[2] = 1;
+            //            //RepeatTimer[2].Start();
+            //        //}
+            //        break;
+            //    case 4:
+            //        StartTimer[3] = new System.Timers.Timer { Interval = keyboardDelay };
+            //        StartTimer[3].Elapsed += startTimer_Tick;
+            //        StartTimer[3].AutoReset = false;
+            //        st_timer_r[3] = 1; 
+            //        StartTimer[3].Start();
+            //        //if (!mouse(4))
+            //        //{
+            //            //RepeatTimer[3] = new System.Timers.Timer { Interval = keyboardSpeed };
+            //            //RepeatTimer[3].Elapsed += repeatTimer_Tick;
+            //            //r_timer_r[3] = 1;
+            //            //RepeatTimer[3].Start();
+            //        //}
+            //        break;
+            //    case 5:
+            //        StartTimer[4] = new System.Timers.Timer { Interval = keyboardDelay };
+            //        StartTimer[4].Elapsed += startTimer_Tick;
+            //        st_timer_r[4] = 1; 
+            //        StartTimer[4].Start();
+            //        //if (!mouse(5))
+            //        //{
+            //            //RepeatTimer[4] = new System.Timers.Timer { Interval = keyboardSpeed };
+            //            //RepeatTimer[4].Elapsed += repeatTimer_Tick;
+            //            //r_timer_r[4] = 1;
+            //            //RepeatTimer[4].Start();
+            //        //}
+            //        break;
+            //    case 6:
+            //        StartTimer[5] = new System.Timers.Timer { Interval = keyboardDelay };
+            //        StartTimer[5].Elapsed += startTimer_Tick;
+            //        st_timer_r[5] = 1; 
+            //        StartTimer[5].Start();
+            //        //if (!mouse(6))
+            //        //{
+            //            //RepeatTimer[5] = new System.Timers.Timer { Interval = keyboardSpeed };
+            //            //RepeatTimer[5].Elapsed += repeatTimer_Tick;
+            //            //r_timer_r[5] = 1;
+            //            //RepeatTimer[5].Start();
+            //        //}
+            //        break;
+            //}
         }
 
         /// <summary>
@@ -424,33 +457,36 @@ namespace D3Hot
 
         public void hold_unload(int i)
         {
-            switch (i)
-            {
-                case 1:
-                    if (StartTimer1 != null && StartTimer1.Enabled) StartTimer1.Dispose();//.Stop()
-                    if (RepeatTimer1 != null && RepeatTimer1.Enabled) RepeatTimer1.Dispose();//.Stop()
-                    break;
-                case 2:
-                    if (StartTimer2 != null && StartTimer2.Enabled) StartTimer2.Dispose();//.Stop()
-                    if (RepeatTimer2 != null && RepeatTimer2.Enabled) RepeatTimer2.Dispose();//.Stop()
-                    break;
-                case 3:
-                    if (StartTimer3 != null && StartTimer3.Enabled) StartTimer3.Dispose();//.Stop()
-                    if (RepeatTimer3 != null && RepeatTimer3.Enabled) RepeatTimer3.Dispose();//.Stop()
-                    break;
-                case 4:
-                    if (StartTimer4 != null && StartTimer4.Enabled) StartTimer4.Dispose();//.Stop()
-                    if (RepeatTimer4 != null && RepeatTimer4.Enabled) RepeatTimer4.Dispose();//.Stop()
-                    break;
-                case 5:
-                    if (StartTimer5 != null && StartTimer5.Enabled) StartTimer5.Dispose();//.Stop()
-                    if (RepeatTimer5 != null && RepeatTimer5.Enabled) RepeatTimer5.Dispose();//.Stop()
-                    break;
-                case 6:
-                    if (StartTimer6 != null && StartTimer6.Enabled) StartTimer6.Dispose();//.Stop()
-                    if (RepeatTimer6 != null && RepeatTimer6.Enabled) RepeatTimer6.Dispose();//.Stop()
-                    break;
-            }
+            if (StartTimer[i] != null && StartTimer[i].Enabled) StartTimer[i].Dispose();//.Stop()
+            if (RepeatTimer[i] != null && RepeatTimer[i].Enabled) RepeatTimer[i].Dispose();//.Stop()
+            
+            //switch (i)
+            //{
+            //    case 1:
+            //        if (StartTimer[0] != null && StartTimer[0].Enabled) StartTimer[0].Dispose();//.Stop()
+            //        if (RepeatTimer[0] != null && RepeatTimer[0].Enabled) RepeatTimer[0].Dispose();//.Stop()
+            //        break;
+            //    case 2:
+            //        if (StartTimer[1] != null && StartTimer[1].Enabled) StartTimer[1].Dispose();//.Stop()
+            //        if (RepeatTimer[1] != null && RepeatTimer[1].Enabled) RepeatTimer[1].Dispose();//.Stop()
+            //        break;
+            //    case 3:
+            //        if (StartTimer[2] != null && StartTimer[2].Enabled) StartTimer[2].Dispose();//.Stop()
+            //        if (RepeatTimer[2] != null && RepeatTimer[2].Enabled) RepeatTimer[2].Dispose();//.Stop()
+            //        break;
+            //    case 4:
+            //        if (StartTimer[3] != null && StartTimer[3].Enabled) StartTimer[3].Dispose();//.Stop()
+            //        if (RepeatTimer[3] != null && RepeatTimer[3].Enabled) RepeatTimer[3].Dispose();//.Stop()
+            //        break;
+            //    case 5:
+            //        if (StartTimer[4] != null && StartTimer[4].Enabled) StartTimer[4].Dispose();//.Stop()
+            //        if (RepeatTimer[4] != null && RepeatTimer[4].Enabled) RepeatTimer[4].Dispose();//.Stop()
+            //        break;
+            //    case 6:
+            //        if (StartTimer[5] != null && StartTimer[5].Enabled) StartTimer[5].Dispose();//.Stop()
+            //        if (RepeatTimer[5] != null && RepeatTimer[5].Enabled) RepeatTimer[5].Dispose();//.Stop()
+            //        break;
+            //}
                 //hold[i - 1] = 0;
                 //keyup(i);
         }

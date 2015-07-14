@@ -1728,7 +1728,6 @@
             this.lb_debug.Size = new System.Drawing.Size(37, 13);
             this.lb_debug.TabIndex = 84;
             this.lb_debug.Text = "debug";
-            this.lb_debug.Visible = false;
             // 
             // lb_num
             // 
@@ -1778,7 +1777,6 @@
             this.button1.TabIndex = 94;
             this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Visible = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // button2
@@ -1789,7 +1787,6 @@
             this.button2.TabIndex = 95;
             this.button2.Text = "button2";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Visible = false;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // d3hot
