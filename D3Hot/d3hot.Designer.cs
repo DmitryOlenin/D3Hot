@@ -640,7 +640,10 @@
             "",
             "Profile 1",
             "Profile 2",
-            "Profile 3"});
+            "Profile 3",
+            "Profile 4",
+            "Profile 5",
+            "Profile 6"});
             this.cb_prof.Location = new System.Drawing.Point(225, 211);
             this.cb_prof.Name = "cb_prof";
             this.cb_prof.Size = new System.Drawing.Size(100, 21);
@@ -1539,13 +1542,14 @@
             // 
             // cb_tmr1
             // 
-            this.cb_tmr1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+            this.cb_tmr1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cb_tmr1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.cb_tmr1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.cb_tmr1.ItemHeight = 14;
             this.cb_tmr1.Items.AddRange(new object[] {
-            "Default",
-            "Cooldown"});
+            "",
+            "",
+            ""});
             this.cb_tmr1.Location = new System.Drawing.Point(9, 111);
             this.cb_tmr1.Name = "cb_tmr1";
             this.cb_tmr1.Size = new System.Drawing.Size(68, 20);
@@ -1560,8 +1564,9 @@
             this.cb_tmr2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.cb_tmr2.ItemHeight = 14;
             this.cb_tmr2.Items.AddRange(new object[] {
-            "Default",
-            "Cooldown"});
+            "",
+            "",
+            ""});
             this.cb_tmr2.Location = new System.Drawing.Point(84, 111);
             this.cb_tmr2.Name = "cb_tmr2";
             this.cb_tmr2.Size = new System.Drawing.Size(68, 20);
@@ -1576,8 +1581,9 @@
             this.cb_tmr6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.cb_tmr6.ItemHeight = 14;
             this.cb_tmr6.Items.AddRange(new object[] {
-            "Default",
-            "Cooldown"});
+            "",
+            "",
+            ""});
             this.cb_tmr6.Location = new System.Drawing.Point(384, 111);
             this.cb_tmr6.Name = "cb_tmr6";
             this.cb_tmr6.Size = new System.Drawing.Size(68, 20);
@@ -1592,8 +1598,9 @@
             this.cb_tmr5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.cb_tmr5.ItemHeight = 14;
             this.cb_tmr5.Items.AddRange(new object[] {
-            "Default",
-            "Cooldown"});
+            "",
+            "",
+            ""});
             this.cb_tmr5.Location = new System.Drawing.Point(309, 111);
             this.cb_tmr5.Name = "cb_tmr5";
             this.cb_tmr5.Size = new System.Drawing.Size(68, 20);
@@ -1608,8 +1615,9 @@
             this.cb_tmr4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.cb_tmr4.ItemHeight = 14;
             this.cb_tmr4.Items.AddRange(new object[] {
-            "Default",
-            "Cooldown"});
+            "",
+            "",
+            ""});
             this.cb_tmr4.Location = new System.Drawing.Point(234, 111);
             this.cb_tmr4.Name = "cb_tmr4";
             this.cb_tmr4.Size = new System.Drawing.Size(68, 20);
@@ -1624,8 +1632,9 @@
             this.cb_tmr3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.cb_tmr3.ItemHeight = 14;
             this.cb_tmr3.Items.AddRange(new object[] {
-            "Default",
-            "Cooldown"});
+            "",
+            "",
+            ""});
             this.cb_tmr3.Location = new System.Drawing.Point(160, 111);
             this.cb_tmr3.Name = "cb_tmr3";
             this.cb_tmr3.Size = new System.Drawing.Size(68, 20);
@@ -1728,6 +1737,7 @@
             this.lb_debug.Size = new System.Drawing.Size(37, 13);
             this.lb_debug.TabIndex = 84;
             this.lb_debug.Text = "debug";
+            this.lb_debug.Visible = false;
             // 
             // lb_num
             // 
@@ -1777,6 +1787,7 @@
             this.button1.TabIndex = 94;
             this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Visible = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // button2
@@ -1787,6 +1798,7 @@
             this.button2.TabIndex = 95;
             this.button2.Text = "button2";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Visible = false;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // d3hot
@@ -1813,8 +1825,8 @@
             this.Controls.Add(this.cb_start);
             this.Controls.Add(this.pan_proc);
             this.Controls.Add(this.pan_prog);
-            this.Controls.Add(this.pan_main);
             this.Controls.Add(this.pan_opt);
+            this.Controls.Add(this.pan_main);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
             this.Name = "d3hot";

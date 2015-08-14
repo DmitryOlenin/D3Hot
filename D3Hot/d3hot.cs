@@ -10,12 +10,9 @@ using System.Globalization;
 using System.IO;
 using System.Diagnostics;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Drawing;
-using System.Windows.Input;
 using System.Net;
-using System.Drawing.Imaging;
-//11.03.2015
+using System.Threading;
 //using InputManager; //26.03.2015
 //InputManager - http://www.codeproject.com/Articles/117657/InputManager-library-Track-user-input-and-simulate
 
@@ -26,42 +23,27 @@ namespace D3Hot
         public double ver = 2.2;
         public string sep = Convert.ToChar(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator).ToString(),
             version = "Diablo 3 Hotkeys ver. 2.2";
-        public System.Timers.Timer tmr_all, tmr_save, tmr_cdr, tmr_pic, tmr_pic_press; //tmr1, tmr2, tmr3, tmr4, tmr5, tmr6, 
-        //public System.Timers.Timer StartTimer1, RepeatTimer1, StartTimer2, RepeatTimer2, StartTimer3, RepeatTimer3,
-        //                            StartTimer4, RepeatTimer4, StartTimer5, RepeatTimer5, StartTimer6, RepeatTimer6;
-        public Stopwatch //tmr1_watch, tmr2_watch, tmr3_watch, tmr4_watch, tmr5_watch, tmr6_watch, 
-            delay_watch, return_watch, key_watch, proc_watch, map_watch, tele_watch, cdr_watch;
-        public Boolean shift = false, d3prog = false, d3proc = false, pic_get = false;
+        public System.Timers.Timer tmr_all, tmr_save, tmr_cdr, tmr_pic, tmr_pic_press; 
+        public Stopwatch delay_watch, return_watch, key_watch, proc_watch, map_watch, tele_watch, cdr_watch;
+        public Boolean shift = false, d3prog = false, d3proc = false, pic_get = false, resolution = true, lang_load = false;
         public InputSimulator inp = new InputSimulator();
         public int 
-            //trig1 = 0, trig2 = 0, trig3 = 0, trig4 = 0, trig5 = 0, trig6 = 0,
-            //key1 = 0, key2 = 0, key3 = 0, key4 = 0, key5 = 0, key6 = 0,
-            //tmr1_f = 0, tmr2_f = 0, tmr3_f = 0, tmr4_f = 0, tmr5_f = 0, tmr6_f = 0,
-            //tmr1_r = 0, tmr2_r = 0, tmr3_r = 0, tmr4_r = 0, tmr5_r = 0, tmr6_r = 0,
             pause = 0, prof_prev, tp_delay = 0, tmr_all_counter = 0, tmr_all_count = 0, cdr_count = 0, map_delay = 0, return_delay = 0
-            //,hold_key0 = 0, hold_key1 = 0, hold_key2 = 0, hold_key3 = 0, hold_key4 = 0, hold_key5 = 0
-            ,multikeys = 0, opt_change = 0, opt_click = 0
-            ,WidthScreen, HeightScreen
-            //,cdr_key0 = 0, cdr_key1 = 0, cdr_key2 = 0, cdr_key3 = 0, cdr_key4 = 0, cdr_key5 = 0
+            ,multikeys = 0, opt_change = 0, opt_click = 0,WidthScreen, HeightScreen
             ;
 
-        //public static int key1_h = 0, key2_h = 0, key3_h = 0, key4_h = 0, key5_h = 0, key6_h = 0;
-        //public static VirtualKeyCode key_v[0] = 0, key_v[1] = 0, key_v[2] = 0, key_v[3] = 0, key_v[4] = 0, key_v[5] = 0;
-
-        //public double tmr_i[0] = 0, tmr_i[1] = 0, tmr_i[2] = 0, tmr_i[3] = 0, tmr_i[4] = 0, tmr_i[5] = 0;
         public static bool holded = false, hotkey_pressed = false, prof_name_changed = false, form_shown = false
             , start_main = true, start_opt = true, proc_selected = false, lmousehold = false, rmousehold = false
             , hold_use = false
-            , debug = false
+            , debug = false, tmr_holding = false
             ;
         public static int t_press = 0, map_press = 0, return_press = 0, r_press = 0, return_press_count = 0,
              delay_press = 0, delay_press_interval = 0, shift_press = 0, delay_wait = 0
-            //,tmr1_left = 0, tmr2_left = 0, tmr3_left = 0, tmr4_left = 0, tmr5_left = 0, tmr6_left = 0
              ,tmr_cdr_curr = 0
              ;
         
         public static string tp_key = "", map_key = "", proc_curr = "", key_delay = "", ver_click = "",
-                                                                                            diablo_name = "diablo";//diablo
+                                                                                            diablo_name = "diablo";
         public long proc_size = 400000000;
 
         public static SettingsTable overview;
@@ -79,6 +61,9 @@ namespace D3Hot
         public static int[] key_h = new int[] { 0, 0, 0, 0, 0, 0 }; //09.07.2015
         public double[] tmr_i = new double[] { 0, 0, 0, 0, 0, 0 }; //09.07.2015
         public static VirtualKeyCode[] key_v = new VirtualKeyCode[] { 0, 0, 0, 0, 0, 0 }; //09.07.2015
+
+        public static object valueLocker = new object(), valueLocker1 = new object(); //16.07.2015
+        //private readonly object valueLocker = new object();
 
         public Random rand = null; //23.03.2015
 
@@ -141,59 +126,10 @@ namespace D3Hot
             if (nud_rand.Value > 0)
             {
                 rand = new Random();
-                //switch (i)
-                //{
-                //    case 1:
-                //        rnd = rand.Next(-(int)nud_rand.Value, (int)nud_rand.Value);
-                //        if (rnd + tmr_i[0] < 1) rnd = 31 - (int)tmr_i[0];
-                //        break;
-                //    case 2:
-                //        rnd = rand.Next(-(int)nud_rand.Value, (int)nud_rand.Value);
-                //        if (rnd + tmr_i[1] < 1) rnd = 31 - (int)tmr_i[1];
-                //        break;
-                //    case 3:
-                //        rnd = rand.Next(-(int)nud_rand.Value, (int)nud_rand.Value);
-                //        if (rnd + tmr_i[2] < 1) rnd = 31 - (int)tmr_i[2];
-                //        break;
-                //    case 4:
-                //        rnd = rand.Next(-(int)nud_rand.Value, (int)nud_rand.Value);
-                //        if (rnd + tmr_i[3] < 1) rnd = 31 - (int)tmr_i[3];
-                //        break;
-                //    case 5:
-                //        rnd = rand.Next(-(int)nud_rand.Value, (int)nud_rand.Value);
-                //        if (rnd + tmr_i[4] < 1) rnd = 31 - (int)tmr_i[4];
-                //        break;
-                //    case 6:
-                //        rnd = rand.Next(-(int)nud_rand.Value, (int)nud_rand.Value);
-                //        if (rnd + tmr_i[5] < 1) rnd = 31 - (int)tmr_i[5];
-                //        break;
-                //}
                 rnd = rand.Next(-(int)nud_rand.Value, (int)nud_rand.Value);
                 if (rnd + tmr_i[i] < 1) rnd = 31 - (int)tmr_i[i];
             }
             tmr[i].Interval = tmr_i[i] + rnd;
-            //switch (i)
-            //{
-            //    case 1:
-            //        tmr[0].Interval = tmr_i[0] + rnd;
-            //        break;
-            //    case 2:
-            //        tmr[1].Interval = tmr_i[1] + rnd;
-            //        break;
-            //    case 3:
-            //        tmr[2].Interval = tmr_i[2] + rnd;
-            //        break;
-            //    case 4:
-            //        tmr[3].Interval = tmr_i[3] + rnd;
-            //        break;
-            //    case 5:
-            //        tmr[4].Interval = tmr_i[4] + rnd;
-            //        break;
-            //    case 6:
-            //        tmr[5].Interval = tmr_i[5] + rnd;
-            //        break;
-            //}
-
         }
 
         /// <summary>
@@ -216,63 +152,6 @@ namespace D3Hot
                 if (cdr_key[i] < 1) rand_interval(i);
                 tmr_watch[i] = new Stopwatch();
             }
-
-            //switch (i)
-            //{
-            //    case 0: 
-            //        tmr_all = new System.Timers.Timer();
-            //        tmr_all.Elapsed += tmr_all_Elapsed;
-            //        tmr_all.Interval = 1; //01.07.2015
-            //        break;
-            //    case 1:
-            //        tmr[0] = new System.Timers.Timer();
-            //        tmr[0].Elapsed += tmr_Elapsed;
-            //        if (cdr_key[0] < 1) rand_interval(1);
-            //        //MessageBox.Show("Задержка с рандомом 1: " + tmr_i[0].ToString());
-            //        //tmr1.Interval = tmr_i[0];
-            //        tmr_watch[0] = new Stopwatch();
-            //        break;
-            //    case 2:
-            //        tmr[1] = new System.Timers.Timer();
-            //        tmr[1].Elapsed += tmr_Elapsed;
-            //        if (cdr_key[1] < 1) rand_interval(2);
-            //        //MessageBox.Show("Задержка с рандомом 2: " + tmr_i[1].ToString());
-            //        //tmr2.Interval = tmr_i[1];
-            //        tmr_watch[1] = new Stopwatch();
-            //        break;
-            //    case 3:
-            //        tmr[2] = new System.Timers.Timer();
-            //        tmr[2].Elapsed += tmr_Elapsed;
-            //        if (cdr_key[2] < 1) rand_interval(3);
-            //        //MessageBox.Show("Задержка с рандомом 3: " + tmr_i[2].ToString());
-            //        //tmr3.Interval = tmr_i[2];
-            //        tmr_watch[2] = new Stopwatch();
-            //        break;
-            //    case 4:
-            //        tmr[3] = new System.Timers.Timer();
-            //        tmr[3].Elapsed += tmr_Elapsed;
-            //        if (cdr_key[3] < 1) rand_interval(4);
-            //        //MessageBox.Show("Задержка с рандомом 4: " + tmr_i[3].ToString());
-            //        //tmr4.Interval = tmr_i[3];
-            //        tmr_watch[3] = new Stopwatch();
-            //        break;
-            //    case 5:
-            //        tmr[4] = new System.Timers.Timer();
-            //        tmr[4].Elapsed += tmr_Elapsed;
-            //        if (cdr_key[4] < 1) rand_interval(5);
-            //        //MessageBox.Show("Задержка с рандомом 5: " + tmr_i[4].ToString());
-            //        //tmr5.Interval = tmr_i[4];
-            //        tmr_watch[4] = new Stopwatch();
-            //        break;
-            //    case 6:
-            //        tmr[5] = new System.Timers.Timer();
-            //        tmr[5].Elapsed += tmr_Elapsed;
-            //        if (cdr_key[5] < 1) rand_interval(6);
-            //        //MessageBox.Show("Задержка с рандомом 6: " + tmr_i[5].ToString());
-            //        //tmr6.Interval = tmr_i[5];
-            //        tmr_watch[5] = new Stopwatch();
-            //        break;
-            //}
         }
 
 
@@ -290,7 +169,6 @@ namespace D3Hot
             {
                 bool result = Int32.TryParse(tmr_watch[i].ElapsedMilliseconds.ToString(), out timer_elapsed);
                 tmr_left[i] = (int)tmr[i].Interval > 0 && result ? (int)tmr[i].Interval - timer_elapsed : 0;
-                //MessageBox.Show(tmr_left[i].ToString());
                 tmr[i].Dispose();
                 //tmr_watch[i].Stop();
                 StopWatch(tmr_watch[i]);
@@ -304,7 +182,6 @@ namespace D3Hot
                     {
                         bool result = Int32.TryParse(tmr_watch[j].ElapsedMilliseconds.ToString(), out timer_elapsed);
                         tmr_left[j] = (int)tmr[j].Interval > 0 && result ? (int)tmr[j].Interval - timer_elapsed : 0;
-                        //MessageBox.Show(tmr_left[j].ToString());
                         //tmr1.Enabled = false;
                         tmr[j].Dispose();
                         //tmr_watch[j].Stop();
@@ -313,43 +190,6 @@ namespace D3Hot
                 }
             }
             
-            //if (tmr[0] != null && (i == 1 || i == 99 || i == 88))
-            //{
-            //    tmr_left[0] = (int)tmr[0].Interval > 0 ? (int)tmr[0].Interval - (int)tmr_watch[0].ElapsedMilliseconds : 0;
-            //    //tmr1.Enabled = false;
-            //    tmr[0].Dispose();
-            //    tmr_watch[0].Stop();
-            //}
-            //if (tmr[1] != null && (i == 2 || i == 99 || i == 88))
-            //{
-            //    tmr_left[1] = (int)tmr[1].Interval > 0 ? (int)tmr[1].Interval - (int)tmr_watch[1].ElapsedMilliseconds : 0;
-            //    tmr[1].Dispose();
-            //    tmr_watch[1].Stop();
-            //}
-            //if (tmr[2] != null && (i == 3 || i == 99 || i == 88)) 
-            //{
-            //    tmr_left[2] = (int)tmr[2].Interval > 0 ? (int)tmr[2].Interval - (int)tmr_watch[2].ElapsedMilliseconds : 0;
-            //    tmr[2].Dispose();
-            //    tmr_watch[2].Stop();
-            //}
-            //if (tmr[3] != null && (i == 4 || i == 99 || i == 88)) 
-            //{
-            //    tmr_left[3] = (int)tmr[3].Interval > 0 ? (int)tmr[3].Interval - (int)tmr_watch[3].ElapsedMilliseconds : 0;
-            //    tmr[3].Dispose();
-            //    tmr_watch[3].Stop();
-            //}
-            //if (tmr[4] != null && (i == 5 || i == 99 || i == 88)) 
-            //{
-            //    tmr_left[4] = (int)tmr[4].Interval > 0 ? (int)tmr[4].Interval - (int)tmr_watch[4].ElapsedMilliseconds : 0;
-            //    tmr[4].Dispose();
-            //    tmr_watch[4].Stop();
-            //}
-            //if (tmr[5] != null && (i == 6 || i == 99 || i == 88)) 
-            //{
-            //    tmr_left[5] = (int)tmr[5].Interval > 0 ? (int)tmr[5].Interval - (int)tmr_watch[5].ElapsedMilliseconds : 0;
-            //    tmr[5].Dispose();
-            //    tmr_watch[5].Stop();
-            //}
         }
 
         /// <summary>
@@ -515,10 +355,15 @@ namespace D3Hot
 
         private void d3hot_Load(object sender, EventArgs e)
         {
-
             debug = lb_debug.Visible;
             //this.Icon = D3Hot.Properties.Resources.diablo_hot;
             //notify_d3h.Icon = D3Hot.Properties.Resources.diablo_hot;
+
+            //MessageBox.Show((rect.Width / 16 * 10).ToString() + " / " + (rect.Width / 16 * 9).ToString() + " /  " + rect.Height.ToString());
+            
+            //resolution = false;
+            if (rect.Width / 16 * 10 != rect.Height && rect.Width / 16 * 9 != rect.Height) //15.07.2015
+                resolution = false;
 
             Load_settings();
             //if (cb_key2.SelectedIndex > 19) MessageBox.Show("456");
@@ -543,12 +388,12 @@ namespace D3Hot
             Lang();
 
             //Установка подписи в секундах, если при загрузке настроечные поля заполнены.
-            if (nud_tmr1.Value > 0) lb_tmr1_sec.Text = Math.Round((nud_tmr1.Value / 1000), 2).ToString() + " " + lng.lang_sec;
-            if (nud_tmr2.Value > 0) lb_tmr2_sec.Text = Math.Round((nud_tmr2.Value / 1000), 2).ToString() + " " + lng.lang_sec;
-            if (nud_tmr3.Value > 0) lb_tmr3_sec.Text = Math.Round((nud_tmr3.Value / 1000), 2).ToString() + " " + lng.lang_sec;
-            if (nud_tmr4.Value > 0) lb_tmr4_sec.Text = Math.Round((nud_tmr4.Value / 1000), 2).ToString() + " " + lng.lang_sec;
-            if (nud_tmr5.Value > 0) lb_tmr5_sec.Text = Math.Round((nud_tmr5.Value / 1000), 2).ToString() + " " + lng.lang_sec;
-            if (nud_tmr6.Value > 0) lb_tmr6_sec.Text = Math.Round((nud_tmr6.Value / 1000), 2).ToString() + " " + lng.lang_sec;
+            if (nud_tmr1.Value > 0 && cb_tmr1.SelectedIndex < 1) lb_tmr1_sec.Text = Math.Round((nud_tmr1.Value / 1000), 2).ToString() + " " + lng.lang_sec;
+            if (nud_tmr2.Value > 0 && cb_tmr2.SelectedIndex < 1) lb_tmr2_sec.Text = Math.Round((nud_tmr2.Value / 1000), 2).ToString() + " " + lng.lang_sec;
+            if (nud_tmr3.Value > 0 && cb_tmr3.SelectedIndex < 1) lb_tmr3_sec.Text = Math.Round((nud_tmr3.Value / 1000), 2).ToString() + " " + lng.lang_sec;
+            if (nud_tmr4.Value > 0 && cb_tmr4.SelectedIndex < 1) lb_tmr4_sec.Text = Math.Round((nud_tmr4.Value / 1000), 2).ToString() + " " + lng.lang_sec;
+            if (nud_tmr5.Value > 0 && cb_tmr5.SelectedIndex < 1) lb_tmr5_sec.Text = Math.Round((nud_tmr5.Value / 1000), 2).ToString() + " " + lng.lang_sec;
+            if (nud_tmr6.Value > 0 && cb_tmr6.SelectedIndex < 1) lb_tmr6_sec.Text = Math.Round((nud_tmr6.Value / 1000), 2).ToString() + " " + lng.lang_sec;
             if (nud_key_delay_ms.Value > 0) lb_key_delay_desc.Text = Math.Round((nud_key_delay_ms.Value / 1000), 2).ToString() + " " + lng.lang_sec;
             if (nud_rand.Value > 0) lb_nud_rand.Text = Math.Round((nud_rand.Value / 1000), 2).ToString() + " " + lng.lang_sec;
 
@@ -565,6 +410,7 @@ namespace D3Hot
             chb_hold_CheckedChanged(null, null);
 
             if (chb_ver_check.Checked) lb_ver_check_Click(null, null); //Проверка новой версии 27.04.2015
+
         }
 
         private void key_menu()
@@ -692,78 +538,6 @@ namespace D3Hot
             return result;
         }
 
-        /// <summary>
-        /// Метод для установки клавиш для нажимания.
-        /// </summary>
-        /// <param name="i"></param>
-        /// <returns></returns>
-        //private VirtualKeyCode virt_code(int i)
-        //{
-        //    VirtualKeyCode vkc = VirtualKeyCode.VK_0;
-        //    switch (i)
-        //    {
-        //        case 1: vkc = VirtualKeyCode.VK_1; break;
-        //        case 2: vkc = VirtualKeyCode.VK_2; break;
-        //        case 3: vkc = VirtualKeyCode.VK_3; break;
-        //        case 4: vkc = VirtualKeyCode.VK_4; break;
-        //        case 5: vkc = VirtualKeyCode.VK_Q; break;
-        //        case 6: vkc = VirtualKeyCode.VK_W; break;
-        //        case 7: vkc = VirtualKeyCode.VK_E; break;
-        //        case 8: vkc = VirtualKeyCode.VK_R; break;
-        //        case 9: vkc = VirtualKeyCode.VK_A; break;
-        //        case 10: vkc = VirtualKeyCode.VK_S; break;
-        //        case 11: vkc = VirtualKeyCode.VK_D; break;
-        //        case 12: vkc = VirtualKeyCode.VK_F; break;
-        //        case 13: vkc = VirtualKeyCode.VK_Z; break;
-        //        case 14: vkc = VirtualKeyCode.VK_X; break;
-        //        case 15: vkc = VirtualKeyCode.VK_C; break;
-        //        case 16: vkc = VirtualKeyCode.VK_V; break;
-        //        case 17: vkc = VirtualKeyCode.SPACE; break;
-        //        case 18: vkc = VirtualKeyCode.LBUTTON; break;
-        //        case 19: vkc = VirtualKeyCode.RBUTTON; break;
-        //        case 20: vkc = VirtualKeyCode.XBUTTON1; break;
-        //        case 21: vkc = VirtualKeyCode.XBUTTON2; break;
-        //    }
-        //    return vkc;
-        //}
-
-        /// <summary>
-        /// Метод для установки клавиш для залипания.
-        /// </summary>
-        /// <param name="i"></param>
-        /// <returns></returns>
-        //private int key_hold_code(int i)
-        //{
-        //    int key_code = 0;
-        //    switch (i)
-        //    {
-        //        case 1: key_code = (int)Keys.D1; break;
-        //        case 2: key_code = (int)Keys.D2; break;
-        //        case 3: key_code = (int)Keys.D3; break;
-        //        case 4: key_code = (int)Keys.D4; break;
-        //        case 5: key_code = (int)Keys.Q; break;
-        //        case 6: key_code = (int)Keys.W; break;
-        //        case 7: key_code = (int)Keys.E; break;
-        //        case 8: key_code = (int)Keys.R; break;
-        //        case 9: key_code = (int)Keys.A; break;
-        //        case 10: key_code = (int)Keys.S; break;
-        //        case 11: key_code = (int)Keys.D; break;
-        //        case 12: key_code = (int)Keys.F; break;
-        //        case 13: key_code = (int)Keys.Z; break;
-        //        case 14: key_code = (int)Keys.X; break;
-        //        case 15: key_code = (int)Keys.C; break;
-        //        case 16: key_code = (int)Keys.V; break;
-        //        case 17: key_code = (int)Keys.Space; break;
-        //        case 18: key_code = (int)Keys.LButton; break;
-        //        case 19: key_code = (int)Keys.RButton; break;
-        //        //case 19: key_code = (int)Keys.XButton1; break; //27.03.2015
-        //        //case 20: key_code = (int)Keys.XButton2; break; //27.03.2015
-        //        //case 21: key_code = (int)Keys.Shift; break; //27.03.2015
-        //    }
-        //    return key_code;
-        //}
-
-
         private void timer_cdr_create(int i)
         {
             //if (tmr_cdr_n[i] == 0) //- 1
@@ -772,6 +546,7 @@ namespace D3Hot
             //tmr_cdr = new System.Timers.Timer();
             tmr_cdr_curr = i + 1;
             tmr_Elapsed(tmr_cdr, null);
+            
             //tmr_cdr.Dispose();
             //}
             //tmr_cdr_n[i]++;// 07.07.2015
@@ -785,22 +560,6 @@ namespace D3Hot
         /// <param name="e"></param>
         public void tmr_all_Elapsed(object sender, EventArgs e)
         {
-            //Проверка существования окна //06.04.2015
-            //if ((int)handle > 0 && proc_watch != null && !proc_watch.IsRunning)
-            //{
-            //    proc_watch.Start();
-            //}
-
-            //if (proc_watch != null && (int)proc_watch.ElapsedMilliseconds > 10000 && (int)handle > 0)
-            //{
-            //    proc_watch.Reset();
-            //    proc_watch.Stop();
-            //    if (GetActiveWindowTitle(handle) == null)
-            //        cb_start.Invoke(new Action(() =>
-            //            {
-            //                cb_start.Checked = false;
-            //            }));
-            //}
 
             if (return_delay > 0 && return_press == 1) //(pause == 2 || pause == 3)
             {
@@ -827,22 +586,7 @@ namespace D3Hot
             //Работаем только если хоть что-то из триггеров зажато/переключено.
             if (key_press(trig[0]) || key_press(trig[1]) || key_press(trig[2]) || key_press(trig[3]) || key_press(trig[4]) || key_press(trig[5]))
             {
-                //Проверка на одинарное/двойное нажатие Enter.
-                //if (
-                //        (pause == 2 || pause == 3) && 
-                //        (
-                //            (return_press == 1 && r_press == 0 && t_press == 0 && map_press == 0) ||
-                //                (
-                //                    return_press_count==1 && 
-                //                    ((trig1==1 && key_press(trig1)) ||
-                //                    (trig2==1 && key_press(trig2)) ||
-                //                    (trig3==1 && key_press(trig3)) ||
-                //                    (trig4==1 && key_press(trig4)) ||
-                //                    (trig5==1 && key_press(trig5)) ||
-                //                    (trig6==1 && key_press(trig6)))
-                //                )
-                //        )
-                //    )
+
                 if (return_watch != null && return_watch.IsRunning && r_press == 0)
                 {
                     timer_unload(88);
@@ -876,7 +620,8 @@ namespace D3Hot
 
                 if (!(tele_watch != null && tele_watch.IsRunning) && tp_delay > 0 && t_press > 0 && r_press == 0) //(pause == 1 || pause == 3)
                 {
-                    timer_unload(88);
+                    tmr_cdr_destroy(); //21.07.2015
+                    timer_unload(88); 
                     Array.Clear(tmr_r, 0, 6); //tmr1_r = 0; tmr2_r = 0; tmr3_r = 0; tmr4_r = 0; tmr5_r = 0; tmr6_r = 0;
                     hold_clear(88);
                     Array.Clear(hold, 0, 6);// hold[0] = 0; hold[1] = 0; hold[2] = 0; hold[3] = 0; hold[4] = 0; hold[5] = 0;
@@ -898,6 +643,7 @@ namespace D3Hot
 
                 if (!(map_watch != null && map_watch.IsRunning) && map_delay > 0 && map_press > 0 && r_press == 0)
                 {
+                    tmr_cdr_destroy(); //21.07.2015
                     timer_unload(88);
                     Array.Clear(tmr_r, 0, 6); //tmr1_r = 0; tmr2_r = 0; tmr3_r = 0; tmr4_r = 0; tmr5_r = 0; tmr6_r = 0;
                     hold_clear(88);
@@ -922,6 +668,7 @@ namespace D3Hot
                     if (key_watch == null || (key_watch != null && !key_watch.IsRunning)) delay_wait = 0;
                     if (key_watch != null && key_watch.IsRunning) delay_wait += (int)key_watch.ElapsedMilliseconds;
 
+                    tmr_cdr_destroy(); //21.07.2015
                     timer_unload(88);
                     Array.Clear(tmr_r, 0, 6); //tmr1_r = 0; tmr2_r = 0; tmr3_r = 0; tmr4_r = 0; tmr5_r = 0; tmr6_r = 0;
                     hold_clear(88);
@@ -938,179 +685,232 @@ namespace D3Hot
                 {
                     tmr_all_counter = 3;
 
-                    //Stopwatch st = null;
-                    //if (tmr_all_count == 1)
-                    //{st = new Stopwatch(); st.Reset(); st.Start(); }
+                    ////Stopwatch st = null;
+                    ////if (tmr_all_count == 1)
+                    ////{st = new Stopwatch(); st.Reset(); st.Start(); }
 
-                    //if (tmr_pic != null && !tmr_pic.Enabled) tmr_all_count += 20;
-                    //if ((tmr_pic == null || !tmr_pic.Enabled)) 
+                    ////if (tmr_pic != null && !tmr_pic.Enabled) tmr_all_count += 20;
+                    ////if ((tmr_pic == null || !tmr_pic.Enabled)) 
 
-                    //if (tmr_all_count > 15) tmr_all_count = 0; //|| (tmr_pic != null && !tmr_pic.Enabled) //07.07.2015
-                    //tmr_all_count++;
+                    ////if (tmr_all_count > 15) tmr_all_count = 0; //|| (tmr_pic != null && !tmr_pic.Enabled) //07.07.2015
+                    ////tmr_all_count++;
 
-                    //if (tmr_watch[2] != null) MessageBox.Show(tmr_watch[2].IsRunning.ToString() + " " + tmr_watch[2].ElapsedMilliseconds.ToString() + " "
-                    //    + tmr_f[2].ToString() + " " + key_press(trig[2]).ToString() + " " + cdr_key[2].ToString());
+                    ////if (tmr_watch[2] != null) MessageBox.Show(tmr_watch[2].IsRunning.ToString() + " " + tmr_watch[2].ElapsedMilliseconds.ToString() + " "
+                    ////    + tmr_f[2].ToString() + " " + key_press(trig[2]).ToString() + " " + cdr_key[2].ToString());
 
-                    //MessageBox.Show("Долгое " + cdr_isrun.ToString() + cdr_isready.ToString() + cdr_press.Any(item => item == 1).ToString());
-                    //MessageBox.Show("cdr_isrun: " + cdr_isrun.ToString() +
-                    //" Прожимаем?" + cdr_press.Any(item => item == 1).ToString() +
-                    //" Захват картинки? " + (tmr_pic == null || !tmr_pic.Enabled).ToString());
+                    ////MessageBox.Show("Долгое " + cdr_isrun.ToString() + cdr_isready.ToString() + cdr_press.Any(item => item == 1).ToString());
+                    ////MessageBox.Show("cdr_isrun: " + cdr_isrun.ToString() +
+                    ////" Прожимаем?" + cdr_press.Any(item => item == 1).ToString() +
+                    ////" Захват картинки? " + (tmr_pic == null || !tmr_pic.Enabled).ToString());
 
-                    if (!cdr_isready && //!cdr_isrun && 
-                        //tmr_all_count == 1 &&
-                        (tmr_pic == null || !tmr_pic.Enabled)
-                        //(tmr_cdr == null || !tmr_cdr.Enabled)&&
-                        && !cdr_press.Any(item => item == 1)
-                        //&& (cdr_watch == null || !cdr_watch.IsRunning || cdr_watch.ElapsedMilliseconds > 100)
-                        )// 
-                    {
-
-                        //StopWatch(cdr_watch);
-                        cdr_isready = true;
-                        bool coold = false;//13.07.2015 
-
-                        //if (cdr_run == null)
-                        cdr_run = new int[] { 0, 0, 0, 0, 0, 0 };
-
-                        //MessageBox.Show(tmr_f[2].ToString() + cdr_key[2].ToString() + key_press(trig[2]).ToString());
-
-                        for (int i = 0; i < 6; i++)
-                        {
-                            if (tmr_f[i] == 1 && key_press(trig[i]) && cdr_key[i] == 1 && pic_analyze[i] == 0) //&& cdr_press[i] == 0
-                            {
-                                //cdr_run[i] = 1;
-                                //if (tmr_watch[i] != null) MessageBox.Show(tmr_watch[i].IsRunning.ToString() + " " + tmr_watch[i].ElapsedMilliseconds.ToString());
-
-                                //if (tmr_watch[i] != null) MessageBox.Show(tmr_watch[i].ElapsedMilliseconds.ToString());
-                                //else MessageBox.Show("Наш триггер: "+i.ToString());
-
-
-                                //if (tmr_watch[i] != null && tmr_watch[i].IsRunning && tmr_watch[i].ElapsedMilliseconds < 500)
-                                //    cdr_run[i] = 0;
-                                //else
-                                //{
-                                //    //coold = true;//13.07.2015 
-                                //    //timer_unload(i);
-                                //    if (tmr_watch[i] != null) tmr_watch[i].Reset();
-                                //    cdr_run[i] = 1;
-                                //}
-
-                                cdr_run[i] = 1;
-                                pic_analyze[i]++;
-                                coold = true;
-
-                            }
-
-                            //if (tmr_all_count > 1 && cdr_press[i] > 0)
-                            //{
-                            //    cdr_run[i] = 0;
-                            //    cdr_press[i] = 2;
-                            //}
-                            //else
-                            //{
-                            //    //MessageBox.Show("Что обнулили? "+i.ToString());
-                            //    cdr_press[i] = 0;
-                            //}
-
-                            //if (cdr_run[i] == 1)
-                            //{
-                            //    coold = true;
-                            //    //if (tmr_all_count > 100) MessageBox.Show("!@#");
-                            //}
-                            if (pic_analyze[i] > 0) pic_analyze[i]++;
-                            if (pic_analyze[i] > 30) pic_analyze[i] = 0;
-                        }
-
-                        if (coold) //13.07.2015 
-                        {
-                            //MessageBox.Show("123");
-                            //screen_capt_prereq(cdr_run);
-                            //screen_capt_pre();
-
-                            if (tmr_pic == null)
-                            {
-                                tmr_pic = new System.Timers.Timer();
-                                tmr_pic.Elapsed += tmr_pic_Elapsed;
-                                tmr_pic.AutoReset = false;
-                            }
-                            tmr_pic.Start();
-
-                        }
-                        else cdr_isready = false;
-
-                    }
-
-                    if (!cdr_isrun && //!cdr_isready &&
-                        //(tmr_cdr == null || !tmr_cdr.Enabled)&&
-                        (cdr_press.Any(item => item == 1))
-                        //&&(cdr_watch != null && cdr_watch.ElapsedMilliseconds > 5)
-                        )
-                    {
-                        cdr_isrun = true;
-                        if (tmr_cdr == null)
-                        {
-                            tmr_cdr = new System.Timers.Timer();
-                            tmr_cdr.Elapsed += tmr_cdr_Elapsed;
-                            tmr_cdr.AutoReset = false;
-                        }
-                        tmr_cdr.Start();
-
-                        //for (int i = 0; i < 6; i++)
-                        //{
-                        //    if (cdr_press[i] == 1)
-                        //    {
-                        //        tmr_r[i] = 1;
-                        //        timer_load(i);
-                        //        tmr[i].AutoReset = false;
-                        //        tmr[i].Enabled = true;
-                        //    }
-                        //}
-
-                        //for (int i = 0; i < 6; i++)
-                        //{
-                        //    if (cdr_press[i] == 1)
-                        //    {
-                        //        tmr[i].AutoReset = false;
-                        //        //tmr_watch[i].Start();
-                        //        tmr[i].Enabled = true;
-                        //        //MessageBox.Show("1: " + tmr_watch[2].IsRunning.ToString());
-
-
-                        //        //if (tmr[i] != null)
-                        //        //    try
-                        //        //    {
-                        //        //        tmr[i].Enabled = true;
-                        //        //        tmr_watch[i].Start();
-                        //        //    }
-                        //        //    catch { }
-
-                        //    }
-                        //}
-
-                        //for (int i = 0; i < 6; i++)
-                        //{
-                        //    if (cdr_press[i] == 1)
-                        //    {
-                        //        MessageBox.Show(i.ToString() + " Включён:" + cdr_press[i].ToString());
-                        //    }
-                        //}
-
-                        //Array.Clear(cdr_press, 0, 6); //14.07.2015
-                        //cdr_isrun = false; //14.07.2015
-
-                        //RestartWatch(ref cdr_watch);
-                        //do { }
-                        //while (cdr_watch.ElapsedMilliseconds < 1000); //Сразу пытается нажать второй раз, как секунда проходит
-                        //StopWatch(cdr_watch);
-
-
-
-                    }
-                    //if (tmr_all_count == 2)
+                    //if (!cdr_isready && //!cdr_isrun && 
+                    //    //tmr_all_count == 1 &&
+                    //    (tmr_pic == null || !tmr_pic.Enabled)
+                    //    //(tmr_cdr == null || !tmr_cdr.Enabled)&&
+                    //    && !cdr_press.Any(item => item == 1)
+                    //    //&& (cdr_watch == null || !cdr_watch.IsRunning || cdr_watch.ElapsedMilliseconds > 100)
+                    //    )// 
                     //{
-                    //    st.Stop();
-                    //    MessageBox.Show(st.ElapsedMilliseconds.ToString());
+
+                    //    //RestartWatch(ref cdr_watch); //15.07.2015
+                    //    //StopWatch(cdr_watch);
+                    //    cdr_isready = true;
+                    //    bool coold = false;//13.07.2015 
+
+                    //    //if (cdr_run == null)
+                    //    cdr_run = new int[] { 0, 0, 0, 0, 0, 0 };
+
+
+                    //    //if (Monitor.TryEnter(valueLocker, 10))
+                    //    //{
+                    //    //    try { coold = true; }
+                    //    //    finally { Monitor.Exit(valueLocker); }
+                    //    //}
+
+                    //    //MessageBox.Show(tmr_f[2].ToString() + cdr_key[2].ToString() + key_press(trig[2]).ToString());
+
+                    //    for (int i = 0; i < 6; i++)
+                    //    {
+                    //        if (tmr_f[i] == 1 && key_press(trig[i]) && cdr_key[i] == 1 && pic_analyze[i] == 0) //&& cdr_press[i] == 0
+                    //        {
+                    //            //cdr_run[i] = 1;
+                    //            //if (tmr_watch[i] != null) MessageBox.Show(tmr_watch[i].IsRunning.ToString() + " " + tmr_watch[i].ElapsedMilliseconds.ToString());
+
+                    //            //if (tmr_watch[i] != null) MessageBox.Show(tmr_watch[i].ElapsedMilliseconds.ToString());
+                    //            //else MessageBox.Show("Наш триггер: "+i.ToString());
+
+
+                    //            //if (tmr_watch[i] != null && tmr_watch[i].IsRunning && tmr_watch[i].ElapsedMilliseconds < 500)
+                    //            //    cdr_run[i] = 0;
+                    //            //else
+                    //            //{
+                    //            //    //coold = true;//13.07.2015 
+                    //            //    //timer_unload(i);
+                    //            //    if (tmr_watch[i] != null) tmr_watch[i].Reset();
+                    //            //    cdr_run[i] = 1;
+                    //            //}
+
+                    //            cdr_run[i] = 1;
+                    //            pic_analyze[i]++;
+                    //            coold = true;
+
+                    //        }
+
+                    //        //if (tmr_all_count > 1 && cdr_press[i] > 0)
+                    //        //{
+                    //        //    cdr_run[i] = 0;
+                    //        //    cdr_press[i] = 2;
+                    //        //}
+                    //        //else
+                    //        //{
+                    //        //    //MessageBox.Show("Что обнулили? "+i.ToString());
+                    //        //    cdr_press[i] = 0;
+                    //        //}
+
+                    //        //if (cdr_run[i] == 1)
+                    //        //{
+                    //        //    coold = true;
+                    //        //    //if (tmr_all_count > 100) MessageBox.Show("!@#");
+                    //        //}
+                    //        if (pic_analyze[i] > 0) pic_analyze[i]++;
+                    //        if (pic_analyze[i] > 20) pic_analyze[i] = 0; //40
+                    //    }
+
+                    //    if (coold) //13.07.2015 
+                    //    {
+                    //        //MessageBox.Show("123");
+                    //        //screen_capt_prereq(cdr_run);
+                    //        //screen_capt_pre();
+
+                    //        //if (tmr_pic == null)
+                    //        //{
+                    //        //    tmr_pic = new System.Timers.Timer();
+                    //        //    tmr_pic.Elapsed += tmr_pic_Elapsed;
+                    //        //    tmr_pic.AutoReset = false;
+                    //        //}
+                    //        //tmr_pic.Start();
+
+                    //        screen_capt_pre();
+                    //        cdr_press = ScreenCapture(cdr_run);
+                    //        cdr_isready = false;
+                    //    }
+                    //    else cdr_isready = false;
+
                     //}
+
+                    ////if (Monitor.TryEnter(valueLocker, 0))
+                    ////{
+                    //    //try
+                    //    //{
+
+                    //        if (!cdr_isrun && //!cdr_isready &&
+                    //            //(tmr_cdr == null || !tmr_cdr.Enabled)&&
+                    //            (cdr_press.Any(item => item == 1))
+                    //            //&&(cdr_watch != null && cdr_watch.ElapsedMilliseconds > 5)
+                    //            )
+                    //        {
+                    //            //Interlocked.Increment(ref tmr_all_count);
+                    //            //tmr_all_count++;
+                    //            cdr_isrun = true;
+
+                    //            if (tmr_cdr == null)
+                    //            {
+                    //                tmr_cdr = new System.Timers.Timer();
+                    //                tmr_cdr.Elapsed += tmr_cdr_Elapsed;
+                    //                tmr_cdr.AutoReset = false;
+                    //            }
+                    //            tmr_cdr.Start();
+
+                    //            //MessageBox.Show(cdr_watch.ElapsedMilliseconds.ToString()); //15.07.2015
+                    //            //StopWatch(cdr_watch); //15.07.2015
+
+                    //            //for (int i = 0; i < 6; i++) //прожимаем после предыдущего таймера
+                    //            //{
+                    //            //    if (cdr_press[i] == 1 && key_press(trig[i])) timer_cdr_create(i);
+                    //            //    cdr_press[i] = 0;
+                    //            //}
+                    //            //cdr_isrun = false;
+
+                    //            //for (int i = 0; i < 6; i++)
+                    //            //{
+                    //            //    if (cdr_press[i] == 1)
+                    //            //    {
+                    //            //        tmr_r[i] = 1;
+                    //            //        timer_load(i);
+                    //            //        tmr[i].AutoReset = false;
+                    //            //        tmr[i].Enabled = true;
+                    //            //    }
+                    //            //}
+
+                    //            //for (int i = 0; i < 6; i++)
+                    //            //{
+                    //            //    if (cdr_press[i] == 1)
+                    //            //    {
+                    //            //        tmr[i].AutoReset = false;
+                    //            //        //tmr_watch[i].Start();
+                    //            //        tmr[i].Enabled = true;
+                    //            //        //MessageBox.Show("1: " + tmr_watch[2].IsRunning.ToString());
+
+
+                    //            //        //if (tmr[i] != null)
+                    //            //        //    try
+                    //            //        //    {
+                    //            //        //        tmr[i].Enabled = true;
+                    //            //        //        tmr_watch[i].Start();
+                    //            //        //    }
+                    //            //        //    catch { }
+
+                    //            //    }
+                    //            //}
+
+                    //            //for (int i = 0; i < 6; i++)
+                    //            //{
+                    //            //    if (cdr_press[i] == 1)
+                    //            //    {
+                    //            //        MessageBox.Show(i.ToString() + " Включён:" + cdr_press[i].ToString());
+                    //            //    }
+                    //            //}
+
+                    //            //Array.Clear(cdr_press, 0, 6); //14.07.2015
+                    //            //cdr_isrun = false; //14.07.2015
+
+                    //            //RestartWatch(ref cdr_watch);
+                    //            //do { }
+                    //            //while (cdr_watch.ElapsedMilliseconds < 1000); //Сразу пытается нажать второй раз, как секунда проходит
+                    //            //StopWatch(cdr_watch);
+                    //        }
+                    //    //}
+                    //    //finally { Monitor.Exit(valueLocker); }
+                    ////}
+
+
+                            if (!cdr_run.Any(item => item == 1))
+                            {
+                                for (int i = 0; i < 6; i++)
+                                {
+                                    if (tmr_f[i] == 1 && key_press(trig[i]) && cdr_key[i] == 1)
+                                    {
+                                        cdr_run[i] = 1;
+                                    }
+                                }
+                                if (cdr_run.Any(item => item == 1))
+                                {
+                                    if (tmr_cdr == null)
+                                    {
+                                        tmr_cdr = new System.Timers.Timer();
+                                        tmr_cdr.Interval = 20;
+                                        tmr_cdr.Elapsed += Cooldown_Tick;
+                                    }
+                                    if (!tmr_cdr.Enabled)
+                                    {
+                                        screen_capt_pre();
+                                        tmr_cdr.Start();
+                                    }
+                                }
+                            }
+                    
+
+
 
                     if (tmr_f[0] == 1 && cdr_key[0] != 1) //09.07.2015
                     {
@@ -1338,7 +1138,7 @@ namespace D3Hot
                     delay_wait = 0;
                 }
             }
-            else
+            else //Ни один триггер не нажат
             {
                 if (tmr_r[0] != 0) timer_unload(0);
                 if (tmr_r[1] != 0) timer_unload(1);
@@ -1346,6 +1146,7 @@ namespace D3Hot
                 if (tmr_r[3] != 0) timer_unload(3);
                 if (tmr_r[4] != 0) timer_unload(4);
                 if (tmr_r[5] != 0) timer_unload(5);
+                tmr_cdr_destroy();
                 tmr_all_count = 0;
                 Array.Clear(tmr_cdr_n, 0, 6);//tmr_cdr_n = new int[] { 0, 0, 0, 0, 0, 0 };
                 delay_wait = 0;
@@ -1471,49 +1272,6 @@ namespace D3Hot
                 }
             }
 
-            //if (tmr_local == tmr[0] && key_press(trig[0]))// && cdr_press[0] != 1
-            //{
-            //    key = key_v[0];// virt_code(key1);
-            //    if (cdr_key[0] < 1) rand_interval(1);
-            //    tmr_watch[0].Reset();
-            //    tmr_watch[0].Start();
-            //}
-            //else if (tmr_local == tmr[1] && key_press(trig[1]))
-            //{
-            //    key = key_v[1]; //virt_code(key2);
-            //    if (cdr_key[1] < 1) rand_interval(2);
-            //    tmr_watch[1].Reset();
-            //    tmr_watch[1].Start();
-            //}
-            //else if (tmr_local == tmr[2] && key_press(trig[2]))
-            //{
-            //    key = key_v[2]; //virt_code(key3);
-            //    if (cdr_key[2] < 1) rand_interval(3);
-            //    tmr_watch[2].Reset();
-            //    tmr_watch[2].Start();
-            //}
-            //else if (tmr_local == tmr[3] && key_press(trig[3]))
-            //{
-            //    key = key_v[3]; //virt_code(key4);
-            //    if (cdr_key[3] < 1) rand_interval(4);
-            //    tmr_watch[3].Reset();
-            //    tmr_watch[3].Start();
-            //}
-            //else if (tmr_local == tmr[4] && key_press(trig[4]))
-            //{
-            //    key = key_v[4]; //virt_code(key5);
-            //    if (cdr_key[4] < 1) rand_interval(5);
-            //    tmr_watch[4].Reset();
-            //    tmr_watch[4].Start();
-            //}
-            //else if (tmr_local == tmr[5] && key_press(trig[5]))
-            //{
-            //    key = key_v[5]; //virt_code(key6);
-            //    if (cdr_key[5] < 1) rand_interval(6);
-            //    tmr_watch[5].Reset();
-            //    tmr_watch[5].Start();
-            //}
-
             for (int i = 0; i < mult; i++)
             {
                 //MessageBox.Show("Время задержки: "+tmr_i[0].ToString());
@@ -1521,15 +1279,6 @@ namespace D3Hot
                 {
                     if ((key_for_hold == (int)Keys.LButton) || (key_for_hold == (int)Keys.RButton))
                     {
-
-                        //if (usage_area())
-                        //{
-                        //    if (key_for_hold == (int)Keys.LButton)
-                        //        inp.Mouse.LeftButtonDown(); //Mouse.PressButton(Mouse.MouseKeys.Left);
-
-                        //    if (key_for_hold == (int)Keys.RButton)
-                        //        Mouse.PressButton(Mouse.MouseKeys.Right);
-                        //}
 
                         Point defPnt = new Point();
                         GetCursorPos(ref defPnt);
@@ -1543,45 +1292,7 @@ namespace D3Hot
                                    updown_keys(key_for_hold) + 1,
                                    0, (int)MakeLong(defPnt.X, defPnt.Y)); //(int)
                     }
-                    //else if (key_for_hold == (int)Keys.XButton1)
-                    //{
-                    //    ret = _MapVirtualKey((int)Keys.Shift, 0);
-                    //    Point defPnt = new Point();
-                    //    GetCursorPos(ref defPnt);
 
-                    //    //_PostMessage(handle, 0x104, (int)Keys.ShiftKey, 0x002A0001);
-                    //    //_PostMessage(handle, 0x104, (int)Keys.ShiftKey, 0x402A0001);
-                    //    PostMessage(handle, updown_keys(10), (int)Keys.Shift, ret | 0x00000001);
-                    //    System.Threading.Thread.Sleep(1);
-                    //    PostMessage(handle,
-                    //               updown_keys(1),
-                    //               1, (int)MakeLong(defPnt.X, defPnt.Y)); //(int)
-                    //    PostMessage(handle,
-                    //               updown_keys(1) + 1,
-                    //               0, (int)MakeLong(defPnt.X, defPnt.Y)); //(int)
-                    //    PostMessage(handle, updown_keys(10) + 1, (int)Keys.Shift, ret | (int)(MakeLong(1, ret) + 0xC0000000));
-                    //    //_PostMessage(handle, 0x105, (int)Keys.ShiftKey, 0xC02A0001);
-                    //    //PostMessage(handle, updown_keys(key_for_hold) + 1, (int)Keys.Shift, (int)(MakeLong(1, ret) + 0xC0000000));
-                    //}
-                    //else if (key_for_hold == (int)Keys.XButton2)
-                    //{
-                    //    ret = _MapVirtualKey((int)Keys.Shift, 0);
-                    //    Point defPnt = new Point();
-                    //    GetCursorPos(ref defPnt);
-
-                    //    PostMessage(handle, 0x100, 0x10, 0x002A0001);
-                    //    PostMessage(handle, 0x100, 0x10, 0x402A0001);
-                    //    System.Threading.Thread.Sleep(1);
-                    //    PostMessage(handle,
-                    //               updown_keys(2),
-                    //               2, (int)MakeLong(defPnt.X, defPnt.Y));
-                    //    System.Threading.Thread.Sleep(1);
-                    //    PostMessage(handle, 0x101, 0x10, (int)(MakeLong(1, ret) + 0xC0000000));
-                    //    PostMessage(handle,
-                    //               updown_keys(2) + 1,
-                    //               0, (int)MakeLong(defPnt.X, defPnt.Y));
-
-                    //}
                     else
                     {
                         PostMessage(handle,//hWindow,
@@ -1759,28 +1470,6 @@ namespace D3Hot
                 }
             }
 
-            //}
-
-            //            char item = new char();
-            //string st = "1";
-            //bool res = false ;
-            //if (st.Length > 0) res = Char.TryParse(st, out item);
-            //if (res)
-            //{
-            //    Key wikey = KeyInterop.KeyFromVirtualKey((int)item);
-            //    VirtualKeyCode vkc = (VirtualKeyCode)KeyInterop.VirtualKeyFromKey(wikey);
-            //    VirtualKeyCode vkc1 = (VirtualKeyCode)item
-
-            //    MessageBox.Show(item.ToString() + " " + ((int)item).ToString());
-            //    MessageBox.Show("Keys D1: " + key_hold_code(1).ToString() + " Virt: " + (VirtualKeyCode.VK_1).ToString() + " Vks: " + vkc1.ToString());
-                 
-            //    //Key.
-            //    //KeyInterop.VirtualKeyFromKey
-            //    //KeysConverter kc = new KeysConverter();
-            //    //kc.ConvertTo(Keys.D1, Type.);
-
-            //}
-
         }
 
         /// <summary>
@@ -1800,9 +1489,8 @@ namespace D3Hot
             Array.Clear(tmr_r, 0, 6); //tmr1_r = 0; tmr2_r = 0; tmr3_r = 0; tmr4_r = 0; tmr5_r = 0; tmr6_r = 0;
             Array.Clear(tmr_i, 0, 6); //tmr_i[0] = 0; tmr_i[1] = 0; tmr_i[2] = 0; tmr_i[3] = 0; tmr_i[4] = 0; tmr_i[5] = 0;
             Array.Clear(trig, 0, 6); delay_wait = 0; shift_press = 0;
-            Array.Clear(hold_key, 0, 6);//hold_key0 = 0; hold_key1 = 0; hold_key2 = 0; hold_key3 = 0; hold_key4 = 0; hold_key5 = 0; //17.03.2015
+            //Array.Clear(hold_key, 0, 6);//hold_key0 = 0; hold_key1 = 0; hold_key2 = 0; hold_key3 = 0; hold_key4 = 0; hold_key5 = 0; //17.03.2015
             t_press = 0; map_press = 0; return_press = 0; r_press = 0; delay_press = 0; return_press_count = 0;
-            tmr_all_count = 0;
 
             if (cb_start.Text != "Stop")
             {
@@ -1856,6 +1544,7 @@ namespace D3Hot
 
             if (cb_start.Checked)
             {
+                tmr_all_count = 0;
                 tmr = new System.Timers.Timer[6]; //09.07.2015
                 tmr_watch = new Stopwatch[6]; //09.07.2015
                 //test_sw.Start(); //07.07.2015
@@ -1873,13 +1562,6 @@ namespace D3Hot
 
                 if (nud_key_delay_ms.Value>0) delay_press_interval = Convert.ToInt32(nud_key_delay_ms.Value);
 
-                if (chb_key1.Checked) hold_key[0] = 1; //17.03.2015
-                if (chb_key2.Checked) hold_key[1] = 1;
-                if (chb_key3.Checked) hold_key[2] = 1;
-                if (chb_key4.Checked) hold_key[3] = 1;
-                if (chb_key5.Checked) hold_key[4] = 1;
-                if (chb_key6.Checked) hold_key[5] = 1;
-
                 //pause = cb_pause.SelectedIndex; //Tp, Enter, All
 
                 cb_start.Text = "Stop";
@@ -1893,12 +1575,13 @@ namespace D3Hot
                 cb_prog.Enabled = false; cb_proc.Enabled = false;
                 if (chb_hold.Checked) 
                     foreach (CheckBox chb in this.pan_main.Controls.OfType<CheckBox>()) chb.Enabled = false;
-                
-                b_opt.Enabled = false;
+                //b_opt.Enabled = false;
+                foreach (Button b in this.Controls.OfType<Button>()) b.Enabled = false; //13.08.2015
 
                 if ((nud_tmr1.Value > 0 || cdr_key[0] == 1 || chb_key1.Checked) && cb_trig_tmr1.SelectedIndex > 0 && cb_key1.SelectedIndex > 0)
                 {
-                    lb_tmr1_sec.Text = Math.Round((nud_tmr1.Value / 1000), 2).ToString() + " " + lng.lang_sec;
+                    if (lb_tmr1_sec.Text != lng.cb_tmr2 &&  lb_tmr1_sec.Text != lng.cb_tmr3)
+                        lb_tmr1_sec.Text = Math.Round((nud_tmr1.Value / 1000), 2).ToString() + " " + lng.lang_sec;
                     tmr_i[0] = Convert.ToDouble(nud_tmr1.Value);
                     trig[0] = cb_trig_tmr1.SelectedIndex;
                     //key1 = cb_key1.SelectedIndex;
@@ -1907,7 +1590,8 @@ namespace D3Hot
                 }
                 if ((nud_tmr2.Value > 0 || cdr_key[1] == 1 || chb_key2.Checked) && cb_trig_tmr2.SelectedIndex > 0 && cb_key2.SelectedIndex > 0)
                 {
-                    lb_tmr2_sec.Text = Math.Round((nud_tmr2.Value / 1000), 2).ToString() + " " + lng.lang_sec;
+                    if (lb_tmr2_sec.Text != lng.cb_tmr2 && lb_tmr2_sec.Text != lng.cb_tmr3)
+                        lb_tmr2_sec.Text = Math.Round((nud_tmr2.Value / 1000), 2).ToString() + " " + lng.lang_sec;
                     tmr_i[1] = Convert.ToDouble(nud_tmr2.Value);
                     trig[1] = cb_trig_tmr2.SelectedIndex;
                     //key2 = cb_key2.SelectedIndex;
@@ -1917,7 +1601,8 @@ namespace D3Hot
 
                 if ((nud_tmr3.Value > 0 || cdr_key[2] == 1 || chb_key3.Checked) && cb_trig_tmr3.SelectedIndex > 0 && cb_key3.SelectedIndex > 0)
                 {
-                    lb_tmr3_sec.Text = Math.Round((nud_tmr3.Value / 1000), 2).ToString() + " " + lng.lang_sec;
+                    if (lb_tmr3_sec.Text != lng.cb_tmr2 && lb_tmr3_sec.Text != lng.cb_tmr3)
+                        lb_tmr3_sec.Text = Math.Round((nud_tmr3.Value / 1000), 2).ToString() + " " + lng.lang_sec;
                     tmr_i[2] = Convert.ToDouble(nud_tmr3.Value);
                     trig[2] = cb_trig_tmr3.SelectedIndex;
                     //key3 = cb_key3.SelectedIndex;
@@ -1927,6 +1612,7 @@ namespace D3Hot
 
                 if ((nud_tmr4.Value > 0 || cdr_key[3] == 1 || chb_key4.Checked) && cb_trig_tmr4.SelectedIndex > 0 && cb_key4.SelectedIndex > 0)
                 {
+                    if (lb_tmr4_sec.Text != lng.cb_tmr2 && lb_tmr4_sec.Text != lng.cb_tmr3)
                     lb_tmr4_sec.Text = Math.Round((nud_tmr4.Value / 1000), 2).ToString() + " " + lng.lang_sec;
                     tmr_i[3] = Convert.ToDouble(nud_tmr4.Value);
                     trig[3] = cb_trig_tmr4.SelectedIndex;
@@ -1936,7 +1622,8 @@ namespace D3Hot
                 }
                 if ((nud_tmr5.Value > 0 || cdr_key[4] == 1 || chb_key5.Checked) && cb_trig_tmr5.SelectedIndex > 0 && cb_key5.SelectedIndex > 0)
                 {
-                    lb_tmr5_sec.Text = Math.Round((nud_tmr5.Value / 1000), 2).ToString() + " " + lng.lang_sec;
+                    if (lb_tmr5_sec.Text != lng.cb_tmr2 && lb_tmr5_sec.Text != lng.cb_tmr3)
+                        lb_tmr5_sec.Text = Math.Round((nud_tmr5.Value / 1000), 2).ToString() + " " + lng.lang_sec;
                     tmr_i[4] = Convert.ToDouble(nud_tmr5.Value);
                     trig[4] = cb_trig_tmr5.SelectedIndex;
                     //key5 = cb_key5.SelectedIndex;
@@ -1945,7 +1632,8 @@ namespace D3Hot
                 }
                 if ((nud_tmr6.Value > 0 || cdr_key[5] == 1 || chb_key6.Checked) && cb_trig_tmr6.SelectedIndex > 0 && cb_key6.SelectedIndex > 0)
                 {
-                    lb_tmr6_sec.Text = Math.Round((nud_tmr6.Value / 1000), 2).ToString() + " " + lng.lang_sec;
+                    if (lb_tmr6_sec.Text != lng.cb_tmr2 && lb_tmr6_sec.Text != lng.cb_tmr3)
+                        lb_tmr6_sec.Text = Math.Round((nud_tmr6.Value / 1000), 2).ToString() + " " + lng.lang_sec;
                     tmr_i[5] = Convert.ToDouble(nud_tmr6.Value);
                     trig[5] = cb_trig_tmr6.SelectedIndex;
                     //key6 = cb_key6.SelectedIndex;
@@ -1971,8 +1659,11 @@ namespace D3Hot
                     if (!tmr_all.Enabled) tmr_all.Enabled = true;
                 }
             }
-            else
+            else //Остановили работу программы
             {
+                tmr_cdr_destroy();
+
+                //MessageBox.Show(tmr_all_count.ToString());
                 //test_sw.Reset(); //07.07.2015
                 if (return_watch != null && return_watch.IsRunning)
                     return_watch.Stop();
@@ -1999,8 +1690,8 @@ namespace D3Hot
                         //if (chb.Checked) cb_prog.Enabled = false; //17.04.2015
                     }
                 //if (cb_proc.SelectedIndex > 0) cb_prog.Enabled = false; //17.04.2015
-   
-                b_opt.Enabled = true;
+                //b_opt.Enabled = true;
+                foreach (Button b in this.Controls.OfType<Button>()) b.Enabled = true; //13.08.2015
 
                 proc_selected = false; //Отменяем выбор процесса после остановки
 
@@ -2025,69 +1716,6 @@ namespace D3Hot
                 //Lang();
             }
 
-        }
-
-        private void key_assign(int i, ComboBox curr)
-        {
-            char item = Char.Parse(((string)curr.Items[curr.SelectedIndex]).Substring(0,1));
-            VirtualKeyCode vk = VirtualKeyCode.F12;
-            string test="";
-            int key_hold = 0;
-
-            
-
-            switch (test)
-            {
-                case "1":
-                    vk = VirtualKeyCode.VK_1;
-                    key_hold = (int)Keys.D1;
-                    break;
-                case "2":
-                    vk = VirtualKeyCode.VK_2;
-                    key_hold = (int)Keys.D2;
-                    break;
-                case "3":
-                    vk = VirtualKeyCode.VK_3;
-                    key_hold = (int)Keys.D3;
-                    break;
-                case "4":
-                    vk = VirtualKeyCode.VK_4;
-                    key_hold = (int)Keys.D4;
-                    break;
-
-                case "Q":
-                    vk = VirtualKeyCode.VK_1;
-                    key_hold = (int)Keys.D1;
-                    break;
-                case "W":
-                    vk = VirtualKeyCode.VK_2;
-                    key_hold = (int)Keys.D2;
-                    break;
-                case "E":
-                    vk = VirtualKeyCode.VK_3;
-                    key_hold = (int)Keys.D3;
-                    break;
-                case "R":
-                    vk = VirtualKeyCode.VK_4;
-                    key_hold = (int)Keys.D4;
-                    break;
-            }
-
-            switch (i)
-            {
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    break;
-                case 5:
-                    break;
-                case 6:
-                    break;
-            }
         }
 
         /// <summary>
@@ -2153,6 +1781,8 @@ namespace D3Hot
         /// </summary>
         public void Lang()
         {
+            lang_load = true;
+
             lb_trig1.Text = lng.lb_trig1;
             lb_trig2.Text = lng.lb_trig2;
             lb_trig3.Text = lng.lb_trig3;
@@ -2167,12 +1797,27 @@ namespace D3Hot
             lb_key5.Text = lng.lb_key5;
             lb_key6.Text = lng.lb_key6;
 
-            lb_tmr1_sec.Text = lng.lb_tmr_sec;
-            lb_tmr2_sec.Text = lng.lb_tmr_sec;
-            lb_tmr3_sec.Text = lng.lb_tmr_sec;
-            lb_tmr4_sec.Text = lng.lb_tmr_sec;
-            lb_tmr5_sec.Text = lng.lb_tmr_sec;
-            lb_tmr6_sec.Text = lng.lb_tmr_sec;
+            if (lb_tmr1_sec.Text.Contains("..")) lb_tmr1_sec.Text = lng.lb_tmr_sec;
+            if (lb_tmr2_sec.Text.Contains("..")) lb_tmr2_sec.Text = lng.lb_tmr_sec;
+            if (lb_tmr3_sec.Text.Contains("..")) lb_tmr3_sec.Text = lng.lb_tmr_sec;
+            if (lb_tmr4_sec.Text.Contains("..")) lb_tmr4_sec.Text = lng.lb_tmr_sec;
+            if (lb_tmr5_sec.Text.Contains("..")) lb_tmr5_sec.Text = lng.lb_tmr_sec;
+            if (lb_tmr6_sec.Text.Contains("..")) lb_tmr6_sec.Text = lng.lb_tmr_sec;
+
+            foreach (ComboBox cb in this.pan_main.Controls.OfType<ComboBox>())
+            {
+                if (cb.Name.Contains("cb_tmr"))
+                {
+                    int i = cb.SelectedIndex;
+                    cb.Items.Clear();
+                    cb.Items.Add(lng.cb_tmr1);
+                    if (resolution) cb.Items.Add(lng.cb_tmr2);
+                    //MessageBox.Show(resolution.ToString());
+                    if (!hold_key.Any(item => item == 1)) cb.Items.Add(lng.cb_tmr3);
+                    cb.SelectedIndex = i;
+                }
+            }
+
             lb_key_delay_desc.Text = lng.lb_tmr_sec;
             lb_nud_rand.Text = lng.lb_tmr_sec;
             lb_rand.Text = lng.lb_rand;
@@ -2242,6 +1887,9 @@ namespace D3Hot
                 case 1: path = Path.Combine(Directory.GetCurrentDirectory(), "d3h_prof1.xml"); break;
                 case 2: path = Path.Combine(Directory.GetCurrentDirectory(), "d3h_prof2.xml"); break;
                 case 3: path = Path.Combine(Directory.GetCurrentDirectory(), "d3h_prof3.xml"); break;
+                case 4: path = Path.Combine(Directory.GetCurrentDirectory(), "d3h_prof4.xml"); break;
+                case 5: path = Path.Combine(Directory.GetCurrentDirectory(), "d3h_prof5.xml"); break;
+                case 6: path = Path.Combine(Directory.GetCurrentDirectory(), "d3h_prof6.xml"); break;
             }
 
             if (path != "" && File.Exists(path)) ReadXML(path);
@@ -2258,6 +1906,16 @@ namespace D3Hot
             //if (!chb_proconly.Checked && cb_proc.SelectedIndex < 1) cb_prog.Enabled = true; //17.04.2015
             //cb_prog_SelectionChangeCommitted(null, null); //17.04.2015
             chb_hold_CheckedChanged(null, null);
+
+
+            foreach (ComboBox cb in this.pan_main.Controls.OfType<ComboBox>())
+            {
+                if (cb.Name.Contains("cb_tmr"))
+                {
+                    cb_tmr_SelectedIndexChanged(cb, null);
+                }
+            }
+
 
             if (chb_hold.Checked && cb_proc.SelectedIndex < 1
                 //&& (chb_key1.Checked || chb_key2.Checked || chb_key3.Checked || chb_key4.Checked || chb_key5.Checked || chb_key6.Checked) //17.04.2015
@@ -2441,6 +2099,7 @@ namespace D3Hot
                 {
                     handle = FindWindow(null, "akelpad");
                     handle = FindWindowEx(handle, IntPtr.Zero, "AkelEditW", null);  //For debugging
+                    if (handle == IntPtr.Zero) handle = FindWindow(null, "notepad");
                 }
 
                 //for (int i = 1; i < 7; i++)
@@ -3210,25 +2869,35 @@ namespace D3Hot
                 pan_proc.Visible = true;
                 pan_prog.Visible = false;
                 if (cb_proc.SelectedIndex < 1) cb_proc_Click(null, null);
-                foreach (CheckBox chb in this.pan_main.Controls.OfType<CheckBox>())
-                {
-                    if (chb.Name != "cb_start")
-                    {
-                        chb.Visible = true;
-                        chb_key_CheckedChanged(chb, null);
-                        //if (chb.Checked && cb_proc.SelectedIndex < 1) pan_hold.Visible = true;
-                    }
-                }
-                check_only();
-
+                
+                //14.07.2015
+                //foreach (CheckBox chb in this.pan_main.Controls.OfType<CheckBox>())
+                //{
+                //    if (chb.Name != "cb_start")
+                //    {
+                //        chb.Visible = true;
+                //        chb_key_CheckedChanged(chb, null);
+                //        //if (chb.Checked && cb_proc.SelectedIndex < 1) pan_hold.Visible = true;
+                //    }
+                //}
+                //check_only();//14.07.2015
                 foreach (ComboBox cb in this.pan_main.Controls.OfType<ComboBox>())
                 {
-                    if (cb.Name.Contains("tmr") && !cb.Name.Contains("trig")) cb.Visible = true;
-                    cb_tmr_SelectedIndexChanged(cb, null);
+                    if (cb.Name.Contains("tmr") && !cb.Name.Contains("trig"))
+                    {
+                        cb.Visible = true;
+                    }
                 }
+
+                //foreach (ComboBox cb in this.pan_main.Controls.OfType<ComboBox>())
+                //{
+                //    if (cb.Name.Contains("tmr") && !cb.Name.Contains("trig")) cb.Visible = true;
+                //    cb_tmr_SelectedIndexChanged(cb, null);
+                //}
 
                 //if (cb_key1.FindString("Shift+LM") > 1) 
                     cb_key_del(0);
+
             }
             else 
             {
@@ -3236,15 +2905,17 @@ namespace D3Hot
                 pan_proc.Visible = false;
                 pan_prog.Visible = true;
                 d3proc = false;
-                foreach (CheckBox chb in this.pan_main.Controls.OfType<CheckBox>())
-                {
-                    if (chb.Name != "cb_start")
-                    {
-                        chb.Checked = false;
-                        chb.Visible = false;
-                        chb_key_CheckedChanged(chb, null);
-                    }
-                }
+
+                //14.07.2015
+                //foreach (CheckBox chb in this.pan_main.Controls.OfType<CheckBox>())
+                //{
+                //    if (chb.Name != "cb_start")
+                //    {
+                //        chb.Checked = false;
+                //        chb.Visible = false;
+                //        chb_key_CheckedChanged(chb, null);
+                //    }
+                //}
 
                 foreach (ComboBox cb in this.pan_main.Controls.OfType<ComboBox>())
                 {
@@ -3408,11 +3079,17 @@ namespace D3Hot
         /// </summary>
         private void tb_prof_name_save()
         {
+            String[] profiles = new String[] { Settings.Default.profile1, Settings.Default.profile2, Settings.Default.profile3, 
+                                                Settings.Default.profile4, Settings.Default.profile5, Settings.Default.profile6 };
+
             //lb_lang_name.Focus();
             if (tb_prof_name.Text == "")
                 tb_prof_name.Text = Settings.Default.tb_prof_name;
             else
-            if (tb_prof_name.Text != Settings.Default.profile1 && tb_prof_name.Text != Settings.Default.profile3 && tb_prof_name.Text != Settings.Default.profile3)
+            //if (tb_prof_name.Text != Settings.Default.profile1 && 
+            //    tb_prof_name.Text != Settings.Default.profile2 && 
+            //    tb_prof_name.Text != Settings.Default.profile3)
+            if (!profiles.Contains (tb_prof_name.Text))
             {
                 //Save_settings(0);
 
@@ -3423,11 +3100,35 @@ namespace D3Hot
                 lng.Lang_rus();
                 if (lng.tb_prof_name == tb_prof_name.Text) j++;
                 if (prof_name.Length > 15) prof_name = prof_name.Substring(0, 15);
-                if (j == 0 && cb_prof.SelectedIndex == 1) Settings.Default.profile1 = prof_name;
-                else
-                    if (j == 0 && cb_prof.SelectedIndex == 2) Settings.Default.profile2 = prof_name;
-                    else
-                        if (j == 0 && cb_prof.SelectedIndex == 3) Settings.Default.profile3 = prof_name;
+                
+                if (j == 0)
+                    switch (cb_prof.SelectedIndex)
+                    {
+                        case 1:
+                            Settings.Default.profile1 = prof_name;
+                            break;
+                        case 2:
+                            Settings.Default.profile2 = prof_name;
+                            break;
+                        case 3:
+                            Settings.Default.profile3 = prof_name;
+                            break;
+                        case 4:
+                            Settings.Default.profile4 = prof_name;
+                            break;
+                        case 5:
+                            Settings.Default.profile5 = prof_name;
+                            break;
+                        case 6:
+                            Settings.Default.profile6 = prof_name;
+                            break;
+                    }
+                
+                //if (j == 0 && cb_prof.SelectedIndex == 1) Settings.Default.profile1 = prof_name;
+                //else
+                //    if (j == 0 && cb_prof.SelectedIndex == 2) Settings.Default.profile2 = prof_name;
+                //    else
+                //        if (j == 0 && cb_prof.SelectedIndex == 3) Settings.Default.profile3 = prof_name;
 
                 Settings.Default.Save();
 
@@ -3773,40 +3474,6 @@ namespace D3Hot
                     d3hot_KeyUp(sender, e);
         }
 
-
-        /// <summary>
-        /// Метод для работы с таймерами задержек. 1: Остновка всего, 2: запуск, 3: остановка. key/map/tele
-        /// </summary>
-        /// <param name="watch"></param>
-        /// <param name="i"></param>
-        //public void delay_timers(int i)
-        //{
-        //    switch (i)
-        //    {
-        //        case 1:
-        //            //if (key_watch != null) key_watch.Stop();
-        //            //if (map_watch != null) map_watch.Stop();
-        //            //if (tele_watch != null) tele_watch.Stop();
-        //            StopAll(key_watch);
-        //            StopAll(map_watch);
-        //            StopAll(tele_watch);
-        //            break;
-        //        case 21: RestartWatch(ref key_watch); break;//key_watch = Stopwatch.StartNew(); 
-        //        case 22: RestartWatch(ref map_watch); break;//map_watch = Stopwatch.StartNew(); break;
-        //        case 23: RestartWatch(ref tele_watch); break;//tele_watch = Stopwatch.StartNew(); break;
-
-        //        case 31:
-        //            StopWatch (key_watch);//if (key_watch != null) key_watch.Reset(); 
-        //            break;
-        //        case 32:
-        //            StopWatch (map_watch);//if (map_watch != null) map_watch.Reset();
-        //            break;
-        //        case 33:
-        //            StopWatch (tele_watch);//if (tele_watch != null) tele_watch.Reset();
-        //            break;
-        //    }
-        //}
-
         /// <summary>
         /// Остановка и сброс интервала Stopwatch
         /// </summary>
@@ -3825,43 +3492,6 @@ namespace D3Hot
         }
 
 
-        // P/Invoke declarations
-        //[DllImport("gdi32.dll")]
-        //static extern bool BitBlt(IntPtr hdcDest, int xDest, int yDest, int
-        //wDest, int hDest, IntPtr hdcSource, int xSrc, int ySrc, CopyPixelOperation rop);
-        //[DllImport("gdi32.dll")]
-        //static extern IntPtr DeleteDC(IntPtr hDc);
-        //[DllImport("gdi32.dll")]
-        //static extern IntPtr DeleteObject(IntPtr hDc);
-        //[DllImport("gdi32.dll")]
-        //static extern IntPtr CreateCompatibleBitmap(IntPtr hdc, int nWidth, int nHeight);
-        //[DllImport("gdi32.dll")]
-        //static extern IntPtr CreateCompatibleDC(IntPtr hdc);
-        //[DllImport("gdi32.dll")]
-        //static extern IntPtr SelectObject(IntPtr hdc, IntPtr bmp);
-        //[DllImport("user32.dll")]
-        //public static extern IntPtr GetDesktopWindow();
-        //[DllImport("user32.dll")]
-        //public static extern IntPtr GetWindowDC(IntPtr ptr);
-
-        //[DllImport("user32.dll")]
-        //static extern IntPtr GetDC(IntPtr hwnd);
-        //[DllImport("user32.dll")]
-        //static extern bool ReleaseDC(IntPtr hWnd, IntPtr hDc);
-        //[DllImport("gdi32.dll")]
-        //static extern uint GetPixel(IntPtr hdc, int nXPos, int nYPos);
-
-        //static public System.Drawing.Color GetPixelColor(int x, int y)
-        //{
-        //    IntPtr hdc = GetDC(IntPtr.Zero);
-        //    uint pixel = GetPixel(hdc, x, y);
-        //    ReleaseDC(IntPtr.Zero, hdc);
-        //    Color color = Color.FromArgb((int)(pixel & 0x000000FF),
-        //                 (int)(pixel & 0x0000FF00) >> 8,
-        //                 (int)(pixel & 0x00FF0000) >> 16);
-        //    return color;
-        //}
-
         private void d3hot_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
@@ -3878,124 +3508,268 @@ namespace D3Hot
 
         private void cb_tmr_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var cb = (ComboBox)sender;
-            string name = cb.Name;
-
-            //check_only();
-
-            switch (name)
+            if (lang_load)
             {
-                case "cb_tmr1":
-                    if (cb_tmr1.SelectedIndex > 0)
-                    {
-                        nud_tmr1.Enabled = false;
-                        chb_key1.Visible = false;
-                        cdr_key[0] = 1;
-                    }
-                    else
-                    {
-                        nud_tmr1.Enabled = true;
-                        if (!hold_use && chb_hold.Checked) chb_key1.Visible = true;
-                        cdr_key[0] = 0;
-                    }
-                    break;
-                case "cb_tmr2":
-                    if (cb_tmr2.SelectedIndex > 0)
-                    {
-                        nud_tmr2.Enabled = false;
-                        chb_key2.Visible = false;
-                        cdr_key[1] = 1;
-                    }
-                    else
-                    {
-                        nud_tmr2.Enabled = true;
-                        if (!hold_use && chb_hold.Checked) chb_key2.Visible = true;
-                        cdr_key[1] = 0;
-                    }
-                    break;
-                case "cb_tmr3":
-                    if (cb_tmr3.SelectedIndex > 0)
-                    {
-                        nud_tmr3.Enabled = false;
-                        chb_key3.Visible = false;
-                        cdr_key[2] = 1;
-                    }
-                    else
-                    {
-                        nud_tmr3.Enabled = true;
-                        if (!hold_use && chb_hold.Checked) chb_key3.Visible = true;
-                        cdr_key[2] = 0;
-                    }
-                    break;
-                case "cb_tmr4":
-                    if (cb_tmr4.SelectedIndex > 0)
-                    {
-                        nud_tmr4.Enabled = false;
-                        chb_key4.Visible = false;
-                        cdr_key[3] = 1;
-                    }
-                    else
-                    {
-                        nud_tmr4.Enabled = true;
-                        if (!hold_use && chb_hold.Checked) chb_key4.Visible = true;
-                        cdr_key[3] = 0;
-                    }
-                    break;
-                case "cb_tmr5":
-                    if (cb_tmr5.SelectedIndex > 0)
-                    {
-                        nud_tmr5.Enabled = false;
-                        chb_key5.Visible = false;
-                        cdr_key[4] = 1;
-                    }
-                    else
-                    {
-                        nud_tmr5.Enabled = true;
-                        if (!hold_use && chb_hold.Checked) chb_key5.Visible = true;
-                        cdr_key[4] = 0;
-                    }
-                    break;
-                case "cb_tmr6":
-                    if (cb_tmr6.SelectedIndex > 0)
-                    {
-                        nud_tmr6.Enabled = false;
-                        chb_key6.Visible = false;
-                        cdr_key[5] = 1;
-                    }
-                    else
-                    {
-                        nud_tmr6.Enabled = true;
-                        if (!hold_use && chb_hold.Checked) chb_key6.Visible = true;
-                        cdr_key[5] = 0;
-                    }
-                    break;
-            }
-            error_select();
+                var cb = (ComboBox)sender;
+                string name = cb.Name;
 
+                ComboBox[] cb_tmr = new ComboBox[] { cb_tmr1, cb_tmr2, cb_tmr3, cb_tmr4, cb_tmr5, cb_tmr6 }; //15.07.2015
+                NumericUpDown[] nud_tmr = new NumericUpDown[] { nud_tmr1, nud_tmr2, nud_tmr3, nud_tmr4, nud_tmr5, nud_tmr6 }; //15.07.2015
+                Label[] lb_tmr_sec = new Label[] { lb_tmr1_sec, lb_tmr2_sec, lb_tmr3_sec, lb_tmr4_sec, lb_tmr5_sec, lb_tmr6_sec }; //15.07.2015
+
+                int num = -1;
+                for (int i = 0; i < 6; i++)
+                {
+                    if (cb_tmr[i].Name == cb.Name) num = i;
+                }
+
+                //check_only();
+                if (resolution)  //Разрешение 16:10 или 16:9
+                {
+
+                    nud_tmr[num].Enabled = false;
+                    cdr_key[num] = 0;
+                    switch (cb.SelectedIndex)
+                    {
+                        case 1:
+                            cdr_key[num] = 1;
+                            lb_tmr_sec[num].Text = lng.cb_tmr2;
+                            break;
+                        case 2:
+                            lb_tmr_sec[num].Text = lng.cb_tmr3;
+                            break;
+                        default:
+                            nud_Leave(nud_tmr[num], null);
+                            nud_tmr[num].Enabled = true;
+                            break;
+                    }
+
+
+
+                    if (cb.SelectedIndex == 2)
+                    {
+                        cdr_del(cb);
+                        Array.Clear(hold_key, 0, 6);
+                        hold_key[num] = 1;
+                    }
+                    else
+                    {
+                        hold_key[num] = 0;
+                        if (!hold_key.Any(item => item == 1)) cdr_add();
+                    }
+                }
+                else //Разрешение не 16:10 или 16:9
+                {
+                    //MessageBox.Show(cb_tmr[1].Name + " / " + cb_tmr[2].Name + " Num:" + num.ToString());
+
+                    nud_tmr[num].Enabled = false;
+                    switch (cb.SelectedIndex)
+                    {
+                        case 1:
+                            lb_tmr_sec[num].Text = lng.cb_tmr3;
+                            break;
+                        default:
+                            nud_Leave(nud_tmr[num], null);
+                            nud_tmr[num].Enabled = true;
+                            break;
+                    }
+
+                    if (cb.SelectedIndex == 1)
+                    {
+                        cdr_del(cb);
+                        Array.Clear(hold_key, 0, 6);
+                        hold_key[num] = 1;
+                    }
+                    else 
+                    {
+                        hold_key[num] = 0;
+                        if (!hold_key.Any(item => item == 1)) cdr_add();
+                    }
+
+                }
+                
+                error_select();
+            }
         }
 
         private void cb_tmr_DrawItem(object sender, DrawItemEventArgs e)
         {
             var cb = (ComboBox)sender;
+
+            int pos = -1;
+            if (cb.SelectedIndex > -1) pos = cb.SelectedIndex;
+
+
             e.DrawBackground();
             Brush myBrush = Brushes.Black;
             Font ft = cb.Font;
             e.Graphics.DrawString(cb.Items[e.Index].ToString(), ft, myBrush, e.Bounds, StringFormat.GenericDefault);
-            e.DrawFocusRectangle();
+            
+            // Draw the focus rectangle if the mouse hovers over an item.
+            if ((e.State & DrawItemState.Focus) == DrawItemState.Focus)
+                e.DrawFocusRectangle();
+
+            cb.SelectedIndex = pos;
+        }
+
+        public void refreshList(List<string> list, ComboBox cb)
+        {
+            cb.DataSource = null;
+            cb.DataSource = list;
+        }
+
+        private void cdr_only()
+        {
+            tmr_holding = false;
+            foreach (ComboBox cb in this.pan_main.Controls.OfType<ComboBox>())
+            {
+                if (cb.Name.Contains("cb_tmr") && ((resolution && cb.SelectedIndex == 2) || (!resolution && cb.SelectedIndex == 1)))
+                {
+                    tmr_holding = true;
+                    break;
+                }
+            }
+
+        }
+
+        private void cdr_del(ComboBox input)
+        {
+            foreach (ComboBox cb in this.pan_main.Controls.OfType<ComboBox>())
+            {
+                if (cb.Name.Contains("cb_tmr") && input.Name.Contains("cb_tmr") && cb.Name != input.Name)
+                {
+                    int sel = !resolution && cb.SelectedIndex > 1 ? cb.SelectedIndex - 1 : cb.SelectedIndex;
+   
+                    if (resolution && cb.Items.Count > 2)
+                        cb.Items.Remove(cb.Items[2]);
+                    else if (!resolution && cb.Items.Count > 1)
+                    {
+                        cb.Items.Remove(cb.Items[1]);
+                        sel = 0;
+                    }
+
+                    if (cb.SelectedIndex != sel) cb.SelectedIndex = sel;
+                }
+            }
+        }
+
+        private void cdr_add()
+        {
+            bool res = true;
+
+            foreach (ComboBox cb in this.pan_main.Controls.OfType<ComboBox>())
+            {
+                if (cb.Name.Contains("cb_tmr") && (cb.SelectedIndex > 1 || (!resolution && cb.SelectedIndex > 0)))
+                    res = false;
+            }
+            if (res)
+            {
+                foreach (ComboBox cb in this.pan_main.Controls.OfType<ComboBox>())
+                {
+                    if (cb.Name.Contains("cb_tmr") && ((resolution && cb.Items.Count < 3) || (!resolution && cb.Items.Count < 2)))
+                    {
+                        cb.Items.Add(lng.cb_tmr3);
+                    }
+                }
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            cdr_run[0] = 1;
+            //cdr_run[0] = 1;
             //screen_capt_pre();
             //screen_capt_prereq(cdr_run);
             //get_picture(cdr_key);
             //cdr_key_check((int)nud_tmr6.Value);
-            get_pic();
-            int[] check_res = check_pic(cdr_run);
+            //get_pic();
+            //int[] check_res = check_pic(cdr_run);
 
-            if (check_res[0] == 0) bmp.Save("test_12.jpg");
+            //if (check_res[0] == 0) bmp.Save("test_12.jpg");
 
+            cdr_run[0] = 1;
+            cdr_run[1] = 1;
+            cdr_run[2] = 1;
+            test = 0; test1 = 0;
+
+            System.Timers.Timer test_timer = new System.Timers.Timer();
+            test_timer.Interval = 1;
+            test_timer.Elapsed += test_timer_Tick;
+            //test_timer.AutoReset = false;
+
+            sw = new Stopwatch();
+            sw.Start();
+            test_timer.Start();
+
+        }
+
+        public void test_timer_Tick(object sender, EventArgs eventArgs)
+        {
+            var timer = (System.Timers.Timer)sender;
+
+            //lock (valueLocker)
+            //    if (cdr_isrun)
+            //        return;
+            //    else
+            //        cdr_isrun = true;
+
+
+
+            //if (Monitor.TryEnter(valueLocker, 20))
+            //{
+            //    try
+            //    {
+            //lock (valueLocker)
+            //{
+                    //var timer = (System.Timers.Timer)sender;
+                    //test++;
+                    //ScreenCapture(cdr_run);
+                    //if (test == 1000)
+                    //{
+                    //    //timer.Stop();
+                    //    MessageBox.Show(sw.ElapsedMilliseconds.ToString() + " / " + test1.ToString());
+                    //    sw.Reset();
+                    //}
+            //}
+            //    }
+            //    finally { Monitor.Exit(valueLocker); }
+            //}
+
+                //lock (valueLocker)
+                //    cdr_isrun = false;
+
+            if (Monitor.TryEnter(valueLocker, TimeSpan.FromMilliseconds(2000)))
+            {
+                try
+                {
+                    test++;
+
+                    if (test > 10)
+                    {
+                        timer.Stop();
+                        MessageBox.Show("Прошло: " + sw.ElapsedMilliseconds.ToString() + " Посчитали: " + test1.ToString());
+                        sw.Reset();
+                    }
+
+                    for (int i = 0; i < 10; i++)
+                    {
+                        test1 += 10;
+                        //Thread.Sleep(2);
+                        
+                        //ProcessStartInfo psi = new ProcessStartInfo(); //Имя запускаемого приложения
+                        //psi.FileName = "cmd"; //команда, которую надо выполнить       
+                        //psi.Arguments = @"/c ping -n 1 127.0.0.1"; //c - после выполнения команды консоль закроется, k - нет
+                        //psi.WindowStyle = ProcessWindowStyle.Hidden;
+                        //Process.Start(psi);
+
+                    }
+                }
+                finally { Monitor.Exit(valueLocker); }
+            }
+            else
+            {
+                test++;
+            }
+                    
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -4010,38 +3784,112 @@ namespace D3Hot
 
             //cdr_key[0] = 1;
             //screen_capt_prereq(cdr_run);
-            cdr_run[0] = 1; cdr_run[1] = 1; cdr_run[2] = 1;
-
+            cdr_run[0] = 0; cdr_run[1] = 0; cdr_run[2] = 1;
+            trig[0] = cb_trig_tmr1.SelectedIndex;
+            trig[1] = cb_trig_tmr1.SelectedIndex;
+            trig[2] = cb_trig_tmr1.SelectedIndex;
+            test = 0; test1 = 0;
+            tmr = new System.Timers.Timer[6];
+            tmr_cdr = new System.Timers.Timer();
+            tmr_cdr.Elapsed += tmr_cdr_Elapsed;
+            tmr_cdr.AutoReset = false;
+            key_codes(1); key_codes(2); key_codes(3);
             screen_capt_pre();
 
-            for (int i = 0; i < 1000; i++)
-            {
-                //bmp = CaptureImage2(390, 420);
-                //PrintWindow("test").Save("img.jpg");
 
-                //ms = PrintWindow();
-                //if (ms != null && ms.Length > 0)
-                //{
-                //    bmp = (Bitmap)Image.FromStream(ms);
-                //    find_pic(bmp, 1, 1);
-                //    //Image.FromStream(ms).Save("img.jpg");
-                //}
+            System.Timers.Timer test_timer = new System.Timers.Timer();
+            test_timer.Interval = 15;
+            test_timer.Elapsed += Cooldown_Tick;
+            test_timer.Start();
 
-                //get_pic();
-                //int[] check_res = check_pic(cdr_run);
+            //screen_capt_pre();
 
-                //PrintWindow2();
-                int[] check_res = PrintWindow2(cdr_run);
+            //for (int i = 0; i < 10000; i++)
+            //{
+
+            //    using (Bitmap bmp = ScreenShot())//.Save("test444.jpg"); 
+            //    {
+            //        ScreenFind(cdr_run, bmp);
+            //    }
+
+            //    //ScreenCapture (cdr_run);
                 
-                //if (i == 0) bmpScreen[0].Save("img.jpg");
 
-            }
-            sw.Stop();
-            MessageBox.Show(sw.ElapsedMilliseconds.ToString());
-            //MessageBox.Show(test_times);
-            sw.Reset();
+            //}
+            //sw.Stop();
+            //MessageBox.Show(sw.ElapsedMilliseconds.ToString());
+            ////MessageBox.Show(test_times);
+            //sw.Reset();
         }
 
+        public void Cooldown_Tick(object sender, EventArgs eventArgs)
+        {
+            var timer = (System.Timers.Timer)sender;
+            
+            //test++;
+            //if (test > 999)
+            //{
+            //    timer.Stop();
+            //    sw.Stop();
+            //    MessageBox.Show("Времени прошло: " + sw.ElapsedMilliseconds.ToString() + ". Выполнилось кода (раз): " + (test1+1).ToString());
+            //    sw.Reset();
+            //}
+
+            if (Monitor.TryEnter(valueLocker, TimeSpan.FromMilliseconds(10)))
+            {
+                try
+                {
+                    if (cdr_run.Any(item => item == 1)) cdr_press = ScreenCapture(cdr_run);
+
+                    for (int i = 0; i < 6; i++) //прожимаем после предыдущего таймера
+                    {
+                        if (cdr_run[i] > 1) cdr_run[i]--;
+                        if (cdr_press[i] == 1 && key_press(trig[i]))
+                        {
+                            timer_cdr_create(i);
+                            cdr_press[i] = 0;
+                            cdr_run[i] = 10;
+                            Thread.Sleep(10); //Ждём после каждого нажатия 10мс.
+                            //test1++;
+                        }
+                    }
+
+                    //if (cdr_press.Any(item => item == 1))
+                    //{
+                    //    if (tmr_cdr == null)
+                    //    {
+                    //        tmr_cdr = new System.Timers.Timer();
+                    //        tmr_cdr.Elapsed += tmr_cdr_Elapsed;
+                    //        tmr_cdr.AutoReset = false;
+                    //    }
+                    //    tmr_cdr.Start();
+                    //}
+
+                    for (int i = 0; i < 6; i++)
+                    {
+                        if (tmr_f[i] == 1 && cdr_key[i] == 1)
+                            if (key_press(trig[i]) && cdr_run[i] == 0)
+                                cdr_run[i] = 1;
+                            else if (!key_press(trig[i]))
+                                cdr_run[i] = 0;
+                    }
+
+                    if (cdr_run.Sum() == 0) timer.Stop();
+
+                }
+                finally { Monitor.Exit(valueLocker); }
+            }
+
+        }
+
+        private void tmr_cdr_destroy() //21.07.2015
+        {
+            if (tmr_cdr != null && tmr_cdr.Enabled)
+            {
+                Array.Clear(cdr_run, 0, 6);
+                tmr_cdr.Stop();
+            }
+        }
 
     }
 }

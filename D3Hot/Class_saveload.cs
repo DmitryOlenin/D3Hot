@@ -134,6 +134,9 @@ namespace D3Hot
                     case 1: path = Path.Combine(Directory.GetCurrentDirectory(), "d3h_prof1.xml"); break;
                     case 2: path = Path.Combine(Directory.GetCurrentDirectory(), "d3h_prof2.xml"); break;
                     case 3: path = Path.Combine(Directory.GetCurrentDirectory(), "d3h_prof3.xml"); break;
+                    case 4: path = Path.Combine(Directory.GetCurrentDirectory(), "d3h_prof4.xml"); break; //14.08.2015
+                    case 5: path = Path.Combine(Directory.GetCurrentDirectory(), "d3h_prof5.xml"); break; //14.08.2015
+                    case 6: path = Path.Combine(Directory.GetCurrentDirectory(), "d3h_prof6.xml"); break; //14.08.2015
                 }
                 if (path != "") WriteXML(path);
                 path = "";
@@ -148,6 +151,9 @@ namespace D3Hot
             cb_prof.Items.Add(Settings.Default.profile1);
             cb_prof.Items.Add(Settings.Default.profile2);
             cb_prof.Items.Add(Settings.Default.profile3);
+            cb_prof.Items.Add(Settings.Default.profile4); //14.08.2015
+            cb_prof.Items.Add(Settings.Default.profile5); //14.08.2015
+            cb_prof.Items.Add(Settings.Default.profile6); //14.08.2015
             cb_prof.SelectedIndex = k;
         }
 
@@ -219,12 +225,16 @@ namespace D3Hot
             cb_trig_tmr4.SelectedIndex = Settings.Default.cb_trig_tmr4;
             cb_trig_tmr5.SelectedIndex = Settings.Default.cb_trig_tmr5;
             cb_trig_tmr6.SelectedIndex = Settings.Default.cb_trig_tmr6;
-            cb_tmr1.SelectedIndex = Settings.Default.cb_tmr1;
-            cb_tmr2.SelectedIndex = Settings.Default.cb_tmr2;
-            cb_tmr3.SelectedIndex = Settings.Default.cb_tmr3;
-            cb_tmr4.SelectedIndex = Settings.Default.cb_tmr4;
-            cb_tmr5.SelectedIndex = Settings.Default.cb_tmr5;
-            cb_tmr6.SelectedIndex = Settings.Default.cb_tmr6;
+
+            cb_tmr1.SelectedIndex = -1; cb_tmr2.SelectedIndex = -1; cb_tmr3.SelectedIndex = -1; 
+            cb_tmr4.SelectedIndex = -1; cb_tmr5.SelectedIndex = -1; cb_tmr6.SelectedIndex = -1;
+            
+            cb_tmr1.SelectedIndex = (!resolution && Settings.Default.cb_tmr1 > 1) ? Settings.Default.cb_tmr1 - 1 : Settings.Default.cb_tmr1;
+            cb_tmr2.SelectedIndex = (!resolution && Settings.Default.cb_tmr2 > 1) ? Settings.Default.cb_tmr2 - 1 : Settings.Default.cb_tmr2;
+            cb_tmr3.SelectedIndex = (!resolution && Settings.Default.cb_tmr3 > 1) ? Settings.Default.cb_tmr3 - 1 : Settings.Default.cb_tmr3;
+            cb_tmr4.SelectedIndex = (!resolution && Settings.Default.cb_tmr4 > 1) ? Settings.Default.cb_tmr4 - 1 : Settings.Default.cb_tmr4;
+            cb_tmr5.SelectedIndex = (!resolution && Settings.Default.cb_tmr5 > 1) ? Settings.Default.cb_tmr5 - 1 : Settings.Default.cb_tmr5;
+            cb_tmr6.SelectedIndex = (!resolution && Settings.Default.cb_tmr6 > 1) ? Settings.Default.cb_tmr6 - 1 : Settings.Default.cb_tmr6;
             cb_startstop.SelectedIndex = Settings.Default.cb_startstop;
             cb_prog.SelectedIndex = Settings.Default.cb_prog;
             nud_tmr1.Value = Settings.Default.nud_tmr1;

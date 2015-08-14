@@ -826,5 +826,41 @@ namespace D3Hot.Properties {
                 this["cb_tmr6"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Profile 4")]
+        public string profile4 {
+            get {
+                return ((string)(this["profile4"]));
+            }
+            set {
+                this["profile4"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Profile 5")]
+        public string profile5 {
+            get {
+                return ((string)(this["profile5"]));
+            }
+            set {
+                this["profile5"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Profile 6")]
+        public string profile6 {
+            get {
+                return ((string)(this["profile6"]));
+            }
+            set {
+                this["profile6"] = value;
+            }
+        }
     }
 }

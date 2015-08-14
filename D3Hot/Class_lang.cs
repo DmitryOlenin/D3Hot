@@ -15,7 +15,8 @@ namespace D3Hot
             chb_hold, chb_mpress, chb_ver_check,
             lb_map, lb_mapdelay,
             cb_keys_choose, lb_key_prev_used, lb_key_prev_err, lb_key_desc,
-            download, new_ver, no_new, ver_err_nover, ver_err_open, ver_cap
+            download, new_ver, no_new, ver_err_nover, ver_err_open, ver_cap,
+            cb_tmr1, cb_tmr2, cb_tmr3
             ;
 
 
@@ -90,6 +91,11 @@ namespace D3Hot
             ver_err_open = "Не могу открыть ";
             ver_cap = "Обновление версии";
 
+            cb_tmr1 = "Стандарт";
+            cb_tmr2 = "Кулдаун";
+            cb_tmr3 = "Зажатие";
+            
+
         }
         public void Lang_eng()
         {
@@ -160,6 +166,10 @@ namespace D3Hot
             ver_err_nover = "Can't recognize the version number!";
             ver_err_open = "Can't open ";
             ver_cap = "Version check";
+
+            cb_tmr1 = "Default";
+            cb_tmr2 = "Cooldown";
+            cb_tmr3 = "Holding";
         }
 
     }

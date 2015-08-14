@@ -112,12 +112,12 @@ namespace D3Hot
             //        key_for_hold = key_h[i];
             //}
 
-                if (timer == RepeatTimer[0] || timer == StartTimer[0] || timer == tmr[0] || tmr_cdr_curr == 1) key_for_hold = key_h[0]; else
-                if (timer == RepeatTimer[1] || timer == StartTimer[1] || timer == tmr[1] || tmr_cdr_curr == 2) key_for_hold = key_h[1]; else
-                if (timer == RepeatTimer[2] || timer == StartTimer[2] || timer == tmr[2] || tmr_cdr_curr == 3) key_for_hold = key_h[2]; else
-                if (timer == RepeatTimer[3] || timer == StartTimer[3] || timer == tmr[3] || tmr_cdr_curr == 4) key_for_hold = key_h[3]; else
-                if (timer == RepeatTimer[4] || timer == StartTimer[4] || timer == tmr[4] || tmr_cdr_curr == 5) key_for_hold = key_h[4]; else
-                if (timer == RepeatTimer[5] || timer == StartTimer[5] || timer == tmr[5] || tmr_cdr_curr == 6) key_for_hold = key_h[5]; 
+                if (tmr_cdr_curr == 1 || timer == RepeatTimer[0] || timer == StartTimer[0] || timer == tmr[0]) key_for_hold = key_h[0]; else
+                if (tmr_cdr_curr == 2 || timer == RepeatTimer[1] || timer == StartTimer[1] || timer == tmr[1]) key_for_hold = key_h[1]; else
+                if (tmr_cdr_curr == 3 || timer == RepeatTimer[2] || timer == StartTimer[2] || timer == tmr[2]) key_for_hold = key_h[2]; else
+                if (tmr_cdr_curr == 4 || timer == RepeatTimer[3] || timer == StartTimer[3] || timer == tmr[3]) key_for_hold = key_h[3]; else
+                if (tmr_cdr_curr == 5 || timer == RepeatTimer[4] || timer == StartTimer[4] || timer == tmr[4]) key_for_hold = key_h[4]; else
+                if (tmr_cdr_curr == 6 || timer == RepeatTimer[5] || timer == StartTimer[5] || timer == tmr[5]) key_for_hold = key_h[5]; 
                  
             return key_for_hold;
         }

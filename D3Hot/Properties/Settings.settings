@@ -203,5 +203,14 @@
     <Setting Name="cb_tmr6" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
+    <Setting Name="profile4" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Profile 4</Value>
+    </Setting>
+    <Setting Name="profile5" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Profile 5</Value>
+    </Setting>
+    <Setting Name="profile6" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Profile 6</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
