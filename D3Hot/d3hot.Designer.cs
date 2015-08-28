@@ -1825,8 +1825,8 @@
             this.Controls.Add(this.cb_start);
             this.Controls.Add(this.pan_proc);
             this.Controls.Add(this.pan_prog);
-            this.Controls.Add(this.pan_opt);
             this.Controls.Add(this.pan_main);
+            this.Controls.Add(this.pan_opt);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
             this.Name = "d3hot";

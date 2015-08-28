@@ -3508,12 +3508,13 @@ namespace D3Hot
 
         private void cb_tmr_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lang_load)
+            if (chb_hold.Checked && lang_load)
             {
                 var cb = (ComboBox)sender;
                 string name = cb.Name;
-
+                
                 ComboBox[] cb_tmr = new ComboBox[] { cb_tmr1, cb_tmr2, cb_tmr3, cb_tmr4, cb_tmr5, cb_tmr6 }; //15.07.2015
+                ComboBox[] cb_key = new ComboBox[] { cb_key1, cb_key2, cb_key3, cb_key4, cb_key5, cb_key6 }; //28.08.2015
                 NumericUpDown[] nud_tmr = new NumericUpDown[] { nud_tmr1, nud_tmr2, nud_tmr3, nud_tmr4, nud_tmr5, nud_tmr6 }; //15.07.2015
                 Label[] lb_tmr_sec = new Label[] { lb_tmr1_sec, lb_tmr2_sec, lb_tmr3_sec, lb_tmr4_sec, lb_tmr5_sec, lb_tmr6_sec }; //15.07.2015
 
@@ -3534,6 +3535,11 @@ namespace D3Hot
                         case 1:
                             cdr_key[num] = 1;
                             lb_tmr_sec[num].Text = lng.cb_tmr2;
+
+                            if (num == 4) cb_key[num].SelectedItem = "LMouse"; //28.08.2015
+                            else if (num == 5) cb_key[num].SelectedItem = "RMouse"; //28.08.2015
+                            else cb_key[num].SelectedIndex = num + 1; //28.08.2015
+
                             break;
                         case 2:
                             lb_tmr_sec[num].Text = lng.cb_tmr3;
