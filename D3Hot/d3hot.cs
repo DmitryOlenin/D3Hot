@@ -362,7 +362,9 @@ namespace D3Hot
             //MessageBox.Show((rect.Width / 16 * 10).ToString() + " / " + (rect.Width / 16 * 9).ToString() + " /  " + rect.Height.ToString());
             
             //resolution = false;
-            if (rect.Width / 16 * 10 != rect.Height && rect.Width / 16 * 9 != rect.Height) //15.07.2015
+
+            if (rect.Width / 16 * 10 != rect.Height && rect.Width / 16 * 9 != rect.Height //15.07.2015
+                && !(rect.Width == 1366 && rect.Height == 768)) //07.09.2015
                 resolution = false;
 
             Load_settings();
@@ -1578,7 +1580,7 @@ namespace D3Hot
                 //b_opt.Enabled = false;
                 foreach (Button b in this.Controls.OfType<Button>()) b.Enabled = false; //13.08.2015
 
-                if ((nud_tmr1.Value > 0 || cdr_key[0] == 1 || chb_key1.Checked) && cb_trig_tmr1.SelectedIndex > 0 && cb_key1.SelectedIndex > 0)
+                if ((nud_tmr1.Value > 0 || cdr_key[0] == 1 || hold_key[0] == 1) && cb_trig_tmr1.SelectedIndex > 0 && cb_key1.SelectedIndex > 0) //02.09.2015 chb_key1.Checked
                 {
                     if (lb_tmr1_sec.Text != lng.cb_tmr2 &&  lb_tmr1_sec.Text != lng.cb_tmr3)
                         lb_tmr1_sec.Text = Math.Round((nud_tmr1.Value / 1000), 2).ToString() + " " + lng.lang_sec;
@@ -1588,7 +1590,7 @@ namespace D3Hot
                     key_codes(1);
                     tmr_f[0] = 1;
                 }
-                if ((nud_tmr2.Value > 0 || cdr_key[1] == 1 || chb_key2.Checked) && cb_trig_tmr2.SelectedIndex > 0 && cb_key2.SelectedIndex > 0)
+                if ((nud_tmr2.Value > 0 || cdr_key[1] == 1 || hold_key[1] == 1) && cb_trig_tmr2.SelectedIndex > 0 && cb_key2.SelectedIndex > 0) //02.09.2015 chb_key2.Checked
                 {
                     if (lb_tmr2_sec.Text != lng.cb_tmr2 && lb_tmr2_sec.Text != lng.cb_tmr3)
                         lb_tmr2_sec.Text = Math.Round((nud_tmr2.Value / 1000), 2).ToString() + " " + lng.lang_sec;
@@ -1599,7 +1601,7 @@ namespace D3Hot
                     tmr_f[1] = 1;
                 }
 
-                if ((nud_tmr3.Value > 0 || cdr_key[2] == 1 || chb_key3.Checked) && cb_trig_tmr3.SelectedIndex > 0 && cb_key3.SelectedIndex > 0)
+                if ((nud_tmr3.Value > 0 || cdr_key[2] == 1 || hold_key[2] == 1) && cb_trig_tmr3.SelectedIndex > 0 && cb_key3.SelectedIndex > 0) //02.09.2015 chb_key3.Checked
                 {
                     if (lb_tmr3_sec.Text != lng.cb_tmr2 && lb_tmr3_sec.Text != lng.cb_tmr3)
                         lb_tmr3_sec.Text = Math.Round((nud_tmr3.Value / 1000), 2).ToString() + " " + lng.lang_sec;
@@ -1610,7 +1612,7 @@ namespace D3Hot
                     tmr_f[2] = 1;
                 }
 
-                if ((nud_tmr4.Value > 0 || cdr_key[3] == 1 || chb_key4.Checked) && cb_trig_tmr4.SelectedIndex > 0 && cb_key4.SelectedIndex > 0)
+                if ((nud_tmr4.Value > 0 || cdr_key[3] == 1 || hold_key[3] == 1) && cb_trig_tmr4.SelectedIndex > 0 && cb_key4.SelectedIndex > 0) //02.09.2015 chb_key4.Checked
                 {
                     if (lb_tmr4_sec.Text != lng.cb_tmr2 && lb_tmr4_sec.Text != lng.cb_tmr3)
                     lb_tmr4_sec.Text = Math.Round((nud_tmr4.Value / 1000), 2).ToString() + " " + lng.lang_sec;
@@ -1620,7 +1622,7 @@ namespace D3Hot
                     key_codes(4);
                     tmr_f[3] = 1;
                 }
-                if ((nud_tmr5.Value > 0 || cdr_key[4] == 1 || chb_key5.Checked) && cb_trig_tmr5.SelectedIndex > 0 && cb_key5.SelectedIndex > 0)
+                if ((nud_tmr5.Value > 0 || cdr_key[4] == 1 || hold_key[4] == 1) && cb_trig_tmr5.SelectedIndex > 0 && cb_key5.SelectedIndex > 0) //02.09.2015 chb_key5.Checked
                 {
                     if (lb_tmr5_sec.Text != lng.cb_tmr2 && lb_tmr5_sec.Text != lng.cb_tmr3)
                         lb_tmr5_sec.Text = Math.Round((nud_tmr5.Value / 1000), 2).ToString() + " " + lng.lang_sec;
@@ -1630,7 +1632,7 @@ namespace D3Hot
                     key_codes(5);
                     tmr_f[4] = 1;
                 }
-                if ((nud_tmr6.Value > 0 || cdr_key[5] == 1 || chb_key6.Checked) && cb_trig_tmr6.SelectedIndex > 0 && cb_key6.SelectedIndex > 0)
+                if ((nud_tmr6.Value > 0 || cdr_key[5] == 1 || hold_key[5] == 1) && cb_trig_tmr6.SelectedIndex > 0 && cb_key6.SelectedIndex > 0) //02.09.2015 chb_key6.Checked
                 {
                     if (lb_tmr6_sec.Text != lng.cb_tmr2 && lb_tmr6_sec.Text != lng.cb_tmr3)
                         lb_tmr6_sec.Text = Math.Round((nud_tmr6.Value / 1000), 2).ToString() + " " + lng.lang_sec;
@@ -1671,12 +1673,12 @@ namespace D3Hot
                 //if (Form.ActiveForm != this) d3hot_Deactivate(null, null);
 
                 mouseKeyEventProvider1.Enabled = false;
-                if ((!chb_key1.Checked || !chb_hold.Checked) && cb_tmr1.SelectedIndex < 1) nud_tmr1.Enabled = true;
-                if ((!chb_key2.Checked || !chb_hold.Checked) && cb_tmr2.SelectedIndex < 1) nud_tmr2.Enabled = true;
-                if ((!chb_key3.Checked || !chb_hold.Checked) && cb_tmr3.SelectedIndex < 1) nud_tmr3.Enabled = true;
-                if ((!chb_key4.Checked || !chb_hold.Checked) && cb_tmr4.SelectedIndex < 1) nud_tmr4.Enabled = true;
-                if ((!chb_key5.Checked || !chb_hold.Checked) && cb_tmr5.SelectedIndex < 1) nud_tmr5.Enabled = true;
-                if ((!chb_key6.Checked || !chb_hold.Checked) && cb_tmr6.SelectedIndex < 1) nud_tmr6.Enabled = true;
+                if ((!chb_hold.Checked || cb_tmr1.SelectedIndex < 2) && cb_tmr1.SelectedIndex < 1) nud_tmr1.Enabled = true; //02.09.2015 chb_key1.Checked
+                if ((!chb_hold.Checked || cb_tmr2.SelectedIndex < 2) && cb_tmr2.SelectedIndex < 1) nud_tmr2.Enabled = true; //02.09.2015 chb_key2.Checked
+                if ((!chb_hold.Checked || cb_tmr3.SelectedIndex < 2) && cb_tmr3.SelectedIndex < 1) nud_tmr3.Enabled = true; //02.09.2015 chb_key3.Checked
+                if ((!chb_hold.Checked || cb_tmr4.SelectedIndex < 2) && cb_tmr4.SelectedIndex < 1) nud_tmr4.Enabled = true; //02.09.2015 chb_key4.Checked
+                if ((!chb_hold.Checked || cb_tmr5.SelectedIndex < 2) && cb_tmr5.SelectedIndex < 1) nud_tmr5.Enabled = true; //02.09.2015 chb_key5.Checked
+                if ((!chb_hold.Checked || cb_tmr6.SelectedIndex < 2) && cb_tmr6.SelectedIndex < 1) nud_tmr6.Enabled = true; //02.09.2015 chb_key6.Checked
 
                 //foreach (NumericUpDown numud in this.pan_main.Controls.OfType<NumericUpDown>()) numud.Enabled = true;
                 tb_prof_name.Enabled = true;
@@ -2273,12 +2275,12 @@ namespace D3Hot
                 if (cb.Name.Contains("trig") && cb.SelectedIndex > 0) notrig = false;
             }
 
-            if (cb_trig_tmr1.SelectedIndex > 0 && (nud_tmr1.Value != 0 || chb_key1.Checked || cb_tmr1.SelectedIndex > 0)) nulls[0] = 1;
-            if (cb_trig_tmr2.SelectedIndex > 0 && (nud_tmr2.Value != 0 || chb_key2.Checked || cb_tmr2.SelectedIndex > 0)) nulls[1] = 1;
-            if (cb_trig_tmr3.SelectedIndex > 0 && (nud_tmr3.Value != 0 || chb_key3.Checked || cb_tmr3.SelectedIndex > 0)) nulls[2] = 1;
-            if (cb_trig_tmr4.SelectedIndex > 0 && (nud_tmr4.Value != 0 || chb_key4.Checked || cb_tmr4.SelectedIndex > 0)) nulls[3] = 1;
-            if (cb_trig_tmr5.SelectedIndex > 0 && (nud_tmr5.Value != 0 || chb_key5.Checked || cb_tmr5.SelectedIndex > 0)) nulls[4] = 1;
-            if (cb_trig_tmr6.SelectedIndex > 0 && (nud_tmr6.Value != 0 || chb_key6.Checked || cb_tmr6.SelectedIndex > 0)) nulls[5] = 1;
+            if (cb_trig_tmr1.SelectedIndex > 0 && (nud_tmr1.Value != 0 || cb_tmr1.SelectedIndex>1 || cb_tmr1.SelectedIndex > 0)) nulls[0] = 1; //02.09.2015 chb_key1.Checked
+            if (cb_trig_tmr2.SelectedIndex > 0 && (nud_tmr2.Value != 0 || cb_tmr2.SelectedIndex>1 || cb_tmr2.SelectedIndex > 0)) nulls[1] = 1; //02.09.2015 chb_key2.Checked
+            if (cb_trig_tmr3.SelectedIndex > 0 && (nud_tmr3.Value != 0 || cb_tmr3.SelectedIndex>1 || cb_tmr3.SelectedIndex > 0)) nulls[2] = 1; //02.09.2015 chb_key3.Checked
+            if (cb_trig_tmr4.SelectedIndex > 0 && (nud_tmr4.Value != 0 || cb_tmr4.SelectedIndex>1 || cb_tmr4.SelectedIndex > 0)) nulls[3] = 1; //02.09.2015 chb_key4.Checked
+            if (cb_trig_tmr5.SelectedIndex > 0 && (nud_tmr5.Value != 0 || cb_tmr5.SelectedIndex>1 || cb_tmr5.SelectedIndex > 0)) nulls[4] = 1; //02.09.2015 chb_key5.Checked
+            if (cb_trig_tmr6.SelectedIndex > 0 && (nud_tmr6.Value != 0 || cb_tmr6.SelectedIndex>1 || cb_tmr6.SelectedIndex > 0)) nulls[5] = 1; //02.09.2015 chb_key6.Checked
 
             if (nulls[0] == 1 && cb_key1.SelectedIndex > 0) key_nulls[0] = 1;
             if (nulls[1] == 1 && cb_key2.SelectedIndex > 0) key_nulls[1] = 1;

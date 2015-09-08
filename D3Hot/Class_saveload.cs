@@ -61,12 +61,12 @@ namespace D3Hot
             Settings.Default.cb_key_delay = cb_key_delay.SelectedIndex;
             Settings.Default.cb_returndelay = cb_returndelay.SelectedIndex;
 
-            Settings.Default.chb_key1 = chb_key1.Checked ? 1 : 0;
-            Settings.Default.chb_key2 = chb_key2.Checked ? 1 : 0;
-            Settings.Default.chb_key3 = chb_key3.Checked ? 1 : 0;
-            Settings.Default.chb_key4 = chb_key4.Checked ? 1 : 0;
-            Settings.Default.chb_key5 = chb_key5.Checked ? 1 : 0;
-            Settings.Default.chb_key6 = chb_key6.Checked ? 1 : 0;
+            //Settings.Default.chb_key1 = chb_key1.Checked ? 1 : 0; //02.09.2015
+            //Settings.Default.chb_key2 = chb_key2.Checked ? 1 : 0; //02.09.2015
+            //Settings.Default.chb_key3 = chb_key3.Checked ? 1 : 0; //02.09.2015
+            //Settings.Default.chb_key4 = chb_key4.Checked ? 1 : 0; //02.09.2015
+            //Settings.Default.chb_key5 = chb_key5.Checked ? 1 : 0; //02.09.2015
+            //Settings.Default.chb_key6 = chb_key6.Checked ? 1 : 0; //02.09.2015
 
             Settings.Default.chb_hold = chb_hold.Checked ? 1 : 0;
             Settings.Default.chb_mpress = chb_mpress.Checked ? 1 : 0;
@@ -254,13 +254,13 @@ namespace D3Hot
             nud_key_delay_ms.Value = Settings.Default.nud_key_delay_ms;
             cb_key_delay.SelectedIndex = Settings.Default.cb_key_delay;
             cb_returndelay.SelectedIndex = Settings.Default.cb_returndelay;
-            
-            chb_key1.Checked = Settings.Default.chb_key1 == 1 ? true : false;
-            chb_key2.Checked = Settings.Default.chb_key2 == 1 ? true : false;
-            chb_key3.Checked = Settings.Default.chb_key3 == 1 ? true : false;
-            chb_key4.Checked = Settings.Default.chb_key4 == 1 ? true : false;
-            chb_key5.Checked = Settings.Default.chb_key5 == 1 ? true : false;
-            chb_key6.Checked = Settings.Default.chb_key6 == 1 ? true : false;
+
+            //chb_key1.Checked = Settings.Default.chb_key1 == 1 ? true : false; //02.09.2015
+            //chb_key2.Checked = Settings.Default.chb_key2 == 1 ? true : false; //02.09.2015
+            //chb_key3.Checked = Settings.Default.chb_key3 == 1 ? true : false; //02.09.2015
+            //chb_key4.Checked = Settings.Default.chb_key4 == 1 ? true : false; //02.09.2015
+            //chb_key5.Checked = Settings.Default.chb_key5 == 1 ? true : false; //02.09.2015
+            //chb_key6.Checked = Settings.Default.chb_key6 == 1 ? true : false; //02.09.2015
 
             chb_mpress.Checked = Settings.Default.chb_mpress == 1 ? true : false;
             chb_saveload.Checked = Settings.Default.chb_saveload == 1 ? true : false;
@@ -369,12 +369,12 @@ namespace D3Hot
                     case "chb_mult": Settings.Default.chb_mult = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "cb_returndelay": Settings.Default.cb_returndelay = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
 
-                    case "chb_key1": Settings.Default.chb_key1 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
-                    case "chb_key2": Settings.Default.chb_key2 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
-                    case "chb_key3": Settings.Default.chb_key3 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
-                    case "chb_key4": Settings.Default.chb_key4 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
-                    case "chb_key5": Settings.Default.chb_key5 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
-                    case "chb_key6": Settings.Default.chb_key6 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    //case "chb_key1": Settings.Default.chb_key1 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break; //02.09.2015
+                    //case "chb_key2": Settings.Default.chb_key2 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break; //02.09.2015
+                    //case "chb_key3": Settings.Default.chb_key3 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break; //02.09.2015
+                    //case "chb_key4": Settings.Default.chb_key4 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break; //02.09.2015
+                    //case "chb_key5": Settings.Default.chb_key5 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break; //02.09.2015
+                    //case "chb_key6": Settings.Default.chb_key6 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break; //02.09.2015
 
                     case "chb_hold": Settings.Default.chb_hold = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "chb_mpress": Settings.Default.chb_mpress = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
