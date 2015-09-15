@@ -27,12 +27,39 @@ namespace D3Hot
             Settings.Default.cb_key4 = cb_key4.SelectedIndex;
             Settings.Default.cb_key5 = cb_key5.SelectedIndex;
             Settings.Default.cb_key6 = cb_key6.SelectedIndex;
+
+            if (cb_key1.SelectedIndex > -1 && cb_key1.Items[cb_key1.SelectedIndex].ToString().Contains("*")) //09.09.2015
+                Settings.Default.cb_key1_desc = cb_key1.Items[cb_key1.SelectedIndex].ToString();
+            if (cb_key2.SelectedIndex > -1 && cb_key2.Items[cb_key2.SelectedIndex].ToString().Contains("*"))
+                Settings.Default.cb_key2_desc = cb_key2.Items[cb_key2.SelectedIndex].ToString();
+            if (cb_key3.SelectedIndex > -1 && cb_key3.Items[cb_key3.SelectedIndex].ToString().Contains("*"))
+                Settings.Default.cb_key3_desc = cb_key3.Items[cb_key3.SelectedIndex].ToString();
+            if (cb_key4.SelectedIndex > -1 && cb_key4.Items[cb_key4.SelectedIndex].ToString().Contains("*"))
+                Settings.Default.cb_key4_desc = cb_key4.Items[cb_key4.SelectedIndex].ToString();
+            if (cb_key5.SelectedIndex > -1 && cb_key5.Items[cb_key5.SelectedIndex].ToString().Contains("*"))
+                Settings.Default.cb_key5_desc = cb_key5.Items[cb_key5.SelectedIndex].ToString();
+            if (cb_key6.SelectedIndex > -1 && cb_key6.Items[cb_key6.SelectedIndex].ToString().Contains("*"))
+                Settings.Default.cb_key6_desc = cb_key6.Items[cb_key6.SelectedIndex].ToString();
+
             Settings.Default.cb_trig_tmr1 = cb_trig_tmr1.SelectedIndex;
             Settings.Default.cb_trig_tmr2 = cb_trig_tmr2.SelectedIndex;
             Settings.Default.cb_trig_tmr3 = cb_trig_tmr3.SelectedIndex;
             Settings.Default.cb_trig_tmr4 = cb_trig_tmr4.SelectedIndex;
             Settings.Default.cb_trig_tmr5 = cb_trig_tmr5.SelectedIndex;
             Settings.Default.cb_trig_tmr6 = cb_trig_tmr6.SelectedIndex;
+
+            if (cb_trig_tmr1.SelectedIndex > -1 && cb_trig_tmr1.Items[cb_trig_tmr1.SelectedIndex].ToString().Contains("*")) //09.09.2015
+                Settings.Default.cb_trig_tmr1_desc = cb_trig_tmr1.Items[cb_trig_tmr1.SelectedIndex].ToString();
+            if (cb_trig_tmr2.SelectedIndex > -1 && cb_trig_tmr2.Items[cb_trig_tmr2.SelectedIndex].ToString().Contains("*"))
+                Settings.Default.cb_trig_tmr2_desc = cb_trig_tmr2.Items[cb_trig_tmr2.SelectedIndex].ToString();
+            if (cb_trig_tmr3.SelectedIndex > -1 && cb_trig_tmr3.Items[cb_trig_tmr3.SelectedIndex].ToString().Contains("*"))
+                Settings.Default.cb_trig_tmr3_desc = cb_trig_tmr3.Items[cb_trig_tmr3.SelectedIndex].ToString();
+            if (cb_trig_tmr4.SelectedIndex > -1 && cb_trig_tmr4.Items[cb_trig_tmr4.SelectedIndex].ToString().Contains("*"))
+                Settings.Default.cb_trig_tmr4_desc = cb_trig_tmr4.Items[cb_trig_tmr4.SelectedIndex].ToString();
+            if (cb_trig_tmr5.SelectedIndex > -1 && cb_trig_tmr5.Items[cb_trig_tmr5.SelectedIndex].ToString().Contains("*"))
+                Settings.Default.cb_trig_tmr5_desc = cb_trig_tmr5.Items[cb_trig_tmr5.SelectedIndex].ToString();
+            if (cb_trig_tmr6.SelectedIndex > -1 && cb_trig_tmr6.Items[cb_trig_tmr6.SelectedIndex].ToString().Contains("*"))
+                Settings.Default.cb_trig_tmr6_desc = cb_trig_tmr6.Items[cb_trig_tmr6.SelectedIndex].ToString();
 
             Settings.Default.cb_tmr1 = cb_tmr1.SelectedIndex;
             Settings.Default.cb_tmr2 = cb_tmr2.SelectedIndex;
@@ -58,15 +85,15 @@ namespace D3Hot
             Settings.Default.chb_tray = chb_tray.Checked ? 1 : 0;
             Settings.Default.chb_mult = chb_mult.Checked ? 1 : 0;
             Settings.Default.nud_key_delay_ms = nud_key_delay_ms.Value;
-            Settings.Default.cb_key_delay = cb_key_delay.SelectedIndex;
+            Settings.Default.cb_key_delay = (string)cb_key_delay.Text;//cb_key_delay.SelectedIndex; //09.09.2015
             Settings.Default.cb_returndelay = cb_returndelay.SelectedIndex;
 
-            //Settings.Default.chb_key1 = chb_key1.Checked ? 1 : 0; //02.09.2015
-            //Settings.Default.chb_key2 = chb_key2.Checked ? 1 : 0; //02.09.2015
-            //Settings.Default.chb_key3 = chb_key3.Checked ? 1 : 0; //02.09.2015
-            //Settings.Default.chb_key4 = chb_key4.Checked ? 1 : 0; //02.09.2015
-            //Settings.Default.chb_key5 = chb_key5.Checked ? 1 : 0; //02.09.2015
-            //Settings.Default.chb_key6 = chb_key6.Checked ? 1 : 0; //02.09.2015
+            Settings.Default.chb_trig1 = chb_trig1.Checked ? 1 : 0; //02.09.2015 //09.09.2015
+            Settings.Default.chb_trig2 = chb_trig2.Checked ? 1 : 0; //02.09.2015 //09.09.2015
+            Settings.Default.chb_trig3 = chb_trig3.Checked ? 1 : 0; //02.09.2015 //09.09.2015
+            Settings.Default.chb_trig4 = chb_trig4.Checked ? 1 : 0; //02.09.2015 //09.09.2015
+            Settings.Default.chb_trig5 = chb_trig5.Checked ? 1 : 0; //02.09.2015 //09.09.2015
+            Settings.Default.chb_trig6 = chb_trig6.Checked ? 1 : 0; //02.09.2015 //09.09.2015
 
             Settings.Default.chb_hold = chb_hold.Checked ? 1 : 0;
             Settings.Default.chb_mpress = chb_mpress.Checked ? 1 : 0;
@@ -75,6 +102,7 @@ namespace D3Hot
             Settings.Default.chb_ver_check = chb_ver_check.Checked ? 1 : 0;
 
             Settings.Default.nud_rand = nud_rand.Value;
+            Settings.Default.nud_coold = nud_coold.Value;
 
             Settings.Default.cb_hot_prof = cb_hot_prof.SelectedIndex;
 
@@ -189,6 +217,17 @@ namespace D3Hot
                         break;
                 }
 
+            //string[] cb_name = new string[] { "cb_trig_tmr1", "cb_trig_tmr2", "cb_trig_tmr3", "cb_trig_tmr4", "cb_trig_tmr5", "cb_trig_tmr6" };
+            ComboBox[] cb_tr = new ComboBox[] { cb_trig_tmr1, cb_trig_tmr2, cb_trig_tmr3, cb_trig_tmr4, cb_trig_tmr5, cb_trig_tmr6 }; //08.09.2015
+            string[] cb_desc = new string[] { Settings.Default.cb_trig_tmr1_desc, Settings.Default.cb_trig_tmr2_desc, Settings.Default.cb_trig_tmr3_desc,
+                                    Settings.Default.cb_trig_tmr4_desc,Settings.Default.cb_trig_tmr5_desc,Settings.Default.cb_trig_tmr6_desc };
+
+            for (int i = 0; i < 6; i++)
+            {
+                if (cb_tr[i].FindString("*") > 0) cb_tr[i].Items.RemoveAt(cb_tr[i].FindString("*"));
+                if (cb_desc[i].Length > 0) star_add(cb_tr[i]);
+            }
+
             //if (Settings.Default.cb_key1_desc != null && cb_key1.FindString(Settings.Default.cb_key1_desc) < 1) 
             //    cb_key1.Items.Add(Settings.Default.cb_key1_desc);
 
@@ -252,21 +291,22 @@ namespace D3Hot
             chb_tray.Checked = Settings.Default.chb_tray == 1 ? true : false;
             chb_mult.Checked = Settings.Default.chb_mult == 1 ? true : false;
             nud_key_delay_ms.Value = Settings.Default.nud_key_delay_ms;
-            cb_key_delay.SelectedIndex = Settings.Default.cb_key_delay;
+            cb_key_delay.SelectedIndex = cb_key_delay.FindStringExact(Settings.Default.cb_key_delay);//Settings.Default.cb_key_delay; //09.09.2015
             cb_returndelay.SelectedIndex = Settings.Default.cb_returndelay;
 
-            //chb_key1.Checked = Settings.Default.chb_key1 == 1 ? true : false; //02.09.2015
-            //chb_key2.Checked = Settings.Default.chb_key2 == 1 ? true : false; //02.09.2015
-            //chb_key3.Checked = Settings.Default.chb_key3 == 1 ? true : false; //02.09.2015
-            //chb_key4.Checked = Settings.Default.chb_key4 == 1 ? true : false; //02.09.2015
-            //chb_key5.Checked = Settings.Default.chb_key5 == 1 ? true : false; //02.09.2015
-            //chb_key6.Checked = Settings.Default.chb_key6 == 1 ? true : false; //02.09.2015
+            chb_trig1.Checked = Settings.Default.chb_trig1 == 1 ? true : false; //02.09.2015 //09.09.2015
+            chb_trig2.Checked = Settings.Default.chb_trig2 == 1 ? true : false; //02.09.2015 //09.09.2015
+            chb_trig3.Checked = Settings.Default.chb_trig3 == 1 ? true : false; //02.09.2015 //09.09.2015
+            chb_trig4.Checked = Settings.Default.chb_trig4 == 1 ? true : false; //02.09.2015 //09.09.2015
+            chb_trig5.Checked = Settings.Default.chb_trig5 == 1 ? true : false; //02.09.2015 //09.09.2015
+            chb_trig6.Checked = Settings.Default.chb_trig6 == 1 ? true : false; //02.09.2015 //09.09.2015
 
             chb_mpress.Checked = Settings.Default.chb_mpress == 1 ? true : false;
             chb_saveload.Checked = Settings.Default.chb_saveload == 1 ? true : false;
             chb_users.Checked = Settings.Default.chb_users == 1 ? true : false;
 
             nud_rand.Value = Settings.Default.nud_rand;
+            nud_coold.Value = Settings.Default.nud_coold;
             cb_hot_prof.SelectedIndex = Settings.Default.cb_hot_prof;
             tb_prof_name.Text = Settings.Default.tb_prof_name;
 
@@ -308,6 +348,7 @@ namespace D3Hot
                 if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "lb_lang") Settings.Default.lb_lang = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
                 if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_tp") Settings.Default.cb_tp = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
                 if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_map") Settings.Default.cb_map = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
+                if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_key_delay") Settings.Default.cb_key_delay = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
                 if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "tb_prof_name") Settings.Default.tb_prof_name = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
                 if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_key1_desc") Settings.Default.cb_key1_desc = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
                 if (overview.dataset.Tables["Strings"].Rows[i][0].ToString() == "cb_key2_desc") Settings.Default.cb_key2_desc = overview.dataset.Tables["Strings"].Rows[i][1].ToString();
@@ -331,6 +372,7 @@ namespace D3Hot
                     case "nud_tmr6": Settings.Default.nud_tmr6 = Convert.ToDecimal(overview.dataset.Tables[1].Rows[j][1]); break;
                     case "nud_key_delay_ms": Settings.Default.nud_key_delay_ms = Convert.ToDecimal(overview.dataset.Tables[1].Rows[j][1]); break;
                     case "nud_rand": Settings.Default.nud_rand = Convert.ToDecimal(overview.dataset.Tables[1].Rows[j][1]); break;
+                    case "nud_coold": Settings.Default.nud_coold = Convert.ToDecimal(overview.dataset.Tables[1].Rows[j][1]); break;
                 }
             }
             for (int k = 0; k < overview.dataset.Tables[2].Rows.Count; k++)
@@ -358,7 +400,7 @@ namespace D3Hot
                     case "cb_key4": Settings.Default.cb_key4 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "cb_key5": Settings.Default.cb_key5 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "cb_key6": Settings.Default.cb_key6 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
-                    case "cb_key_delay": Settings.Default.cb_key_delay = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
+                    //case "cb_key_delay": Settings.Default.cb_key_delay = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break; //09.09.2015
 
                     case "cb_prog": Settings.Default.cb_prog = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "cb_pause": Settings.Default.cb_pause = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
@@ -369,12 +411,12 @@ namespace D3Hot
                     case "chb_mult": Settings.Default.chb_mult = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "cb_returndelay": Settings.Default.cb_returndelay = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
 
-                    //case "chb_key1": Settings.Default.chb_key1 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break; //02.09.2015
-                    //case "chb_key2": Settings.Default.chb_key2 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break; //02.09.2015
-                    //case "chb_key3": Settings.Default.chb_key3 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break; //02.09.2015
-                    //case "chb_key4": Settings.Default.chb_key4 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break; //02.09.2015
-                    //case "chb_key5": Settings.Default.chb_key5 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break; //02.09.2015
-                    //case "chb_key6": Settings.Default.chb_key6 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break; //02.09.2015
+                    case "chb_trig1": Settings.Default.chb_trig1 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break; //02.09.2015
+                    case "chb_trig2": Settings.Default.chb_trig2 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break; //02.09.2015
+                    case "chb_trig3": Settings.Default.chb_trig3 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break; //02.09.2015
+                    case "chb_trig4": Settings.Default.chb_trig4 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break; //02.09.2015
+                    case "chb_trig5": Settings.Default.chb_trig5 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break; //02.09.2015
+                    case "chb_trig6": Settings.Default.chb_trig6 = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break; //02.09.2015
 
                     case "chb_hold": Settings.Default.chb_hold = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
                     case "chb_mpress": Settings.Default.chb_mpress = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;

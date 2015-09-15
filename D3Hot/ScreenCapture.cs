@@ -162,7 +162,7 @@ namespace D3Hot
                                     if (bmp.GetPixel(x, j).B < 45 || bmp.GetPixel(x, j).R > 130)
                                     //if (lockBitmap.GetPixel(i, j).B < 45 || lockBitmap.GetPixel(i, j).R > 130)
                                     {
-                                        result[i] = 0;
+                                        if (!debug) result[i] = 0;
                                         //bmp.Save("temp"+x.ToString()+"-"+j.ToString()+".jpg");
                                         break;
                                     }
@@ -182,7 +182,7 @@ namespace D3Hot
             }
             //return bmp_short;
             
-            //test_times = test_times + " 3: " + sw.ElapsedMilliseconds.ToString();
+            //test_times = test_times + " 3: " + sw.ElapsedMilliseconds.ToString(); 
             return result;
         }
 

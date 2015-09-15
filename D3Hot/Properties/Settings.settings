@@ -83,28 +83,28 @@
     <Setting Name="chb_mult" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="cb_key_delay" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
+    <Setting Name="cb_key_delay" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="nud_key_delay_ms" Type="System.Decimal" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="chb_key1" Type="System.Int32" Scope="User">
+    <Setting Name="chb_trig1" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="chb_key2" Type="System.Int32" Scope="User">
+    <Setting Name="chb_trig2" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="chb_key3" Type="System.Int32" Scope="User">
+    <Setting Name="chb_trig3" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="chb_key4" Type="System.Int32" Scope="User">
+    <Setting Name="chb_trig4" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="chb_key5" Type="System.Int32" Scope="User">
+    <Setting Name="chb_trig5" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="chb_key6" Type="System.Int32" Scope="User">
+    <Setting Name="chb_trig6" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="chb_hold" Type="System.Int32" Scope="User">
@@ -211,6 +211,27 @@
     </Setting>
     <Setting Name="profile6" Type="System.String" Scope="User">
       <Value Profile="(Default)">Profile 6</Value>
+    </Setting>
+    <Setting Name="cb_trig_tmr1_desc" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="cb_trig_tmr2_desc" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="cb_trig_tmr3_desc" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="cb_trig_tmr4_desc" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="cb_trig_tmr5_desc" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="cb_trig_tmr6_desc" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="nud_coold" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">300</Value>
     </Setting>
   </Settings>
 </SettingsFile>

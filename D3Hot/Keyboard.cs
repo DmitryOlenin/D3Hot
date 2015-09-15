@@ -4,6 +4,7 @@ using Microsoft.Win32;
 using System.Diagnostics;
 using System.Windows.Forms;
 using WindowsInput.Native;
+using System.Runtime.InteropServices;
 //using InputManager; //26.03.2015
 
 namespace D3Hot
@@ -26,6 +27,7 @@ namespace D3Hot
 
         //public int counter = 0, maxRepeatedCharacters = 30; // repeat char 30 times
         public IntPtr handle = IntPtr.Zero;// = GetForegroundWindow();
+        public HandleRef handle_ref; //new HandleRef(this, handle);
         Dictionary<string, IntPtr> proc_handle;
         const uint WM_KEYDOWN = 0x100;
         const uint WM_KEYUP = 0x101;
@@ -53,8 +55,9 @@ namespace D3Hot
 
         public void keyup(int i)
         {
-            int key_for_keyup = key_h[i];//0;
-            int ret = 0;
+            uint key_for_keyup = key_h[i];//0;
+            
+            uint ret = 0;
 
             //switch (i)
             //{
@@ -96,15 +99,27 @@ namespace D3Hot
             }
             else
             {
-                PostMessage(handle,//hWindow,
-                       updown_keys(key_for_keyup) + 1,//(int)WM_KEYUP,
-                       key_for_keyup, (int)(MakeLong(1, ret) + 0xC0000000)); //(int)
+                try
+                {
+                    PostMessage(handle_ref,//hWindow,
+                           updown_keys(key_for_keyup) + 1,//(int)WM_KEYUP,
+                           (IntPtr)key_for_keyup, UIntPtr.Zero); //(int) //key_for_keyup //(IntPtr)(MakeLong(1, ret) + 0xC0000000)
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Data: " + e.Data + " Exeption: " + e.Message
+                        //"Handle: " + handle_ref.ToString() + " updown_keys: " 
+                        //+ (updown_keys(key_for_keyup) + 1).ToString()
+                        //+ " key_for_keyup "+ ((IntPtr)key_for_keyup).ToString() 
+                        //+ " lparam: " + ((IntPtr)(MakeLong(1, ret) + 0xC0000000)).ToString()
+                        ); 
+                }
             }
         }
 
-        public int timer_key(System.Timers.Timer timer)
+        public uint timer_key(System.Timers.Timer timer)
         {
-            int key_for_hold = 0;
+            uint key_for_hold = 0; //09.09.2015
 
             //for (int i = 0; i < 6; i++)
             //{
@@ -122,7 +137,7 @@ namespace D3Hot
             return key_for_hold;
         }
 
-        public uint updown_keys(int key_for_hold)
+        public uint updown_keys(uint key_for_hold)
         {
             uint key_down = 0;
             switch (key_for_hold)
@@ -148,44 +163,50 @@ namespace D3Hot
             if (holded)
             {
                 System.Timers.Timer timer = sender as System.Timers.Timer;
-                int key_for_hold = timer_key(timer);
+                uint key_for_hold = timer_key(timer);
 
-                int ret = 0;
-                ret = _MapVirtualKey(key_for_hold, 0);
-
-                if ((key_for_hold == (int)Keys.LButton) || (key_for_hold == (int)Keys.RButton))
+                if (key_for_hold > 0) //09.09.2015
                 {
-                    //IntPtr handle1;
-                    //handle1 = FindWindow(null, "akelpad");
-                    //handle1 = FindWindowEx(handle1, IntPtr.Zero, "AkelEditW", null); //For debugging
-                    //if (usage_area() || handle == handle1)
+                    uint ret = 0;
+                    ret = _MapVirtualKey(key_for_hold, 0);
 
-                    if (usage_area()
-                        || (lb_debug.Visible && handle == FindWindowEx(FindWindow(null, "akelpad"), IntPtr.Zero, "AkelEditW", null))
-                        )
+                    if ((key_for_hold == (int)Keys.LButton) || (key_for_hold == (int)Keys.RButton))
                     {
-                        if (key_for_hold == (int)Keys.LButton && !lmousehold) // && inp.InputDeviceState.IsKeyUp(VirtualKeyCode.LBUTTON)
+                        //IntPtr handle1;
+                        //handle1 = FindWindow(null, "akelpad");
+                        //handle1 = FindWindowEx(handle1, IntPtr.Zero, "AkelEditW", null); //For debugging
+                        //if (usage_area() || handle == handle1)
+
+                        if (usage_area()
+                            || (lb_debug.Visible && handle == FindWindowEx(FindWindow(null, "akelpad"), IntPtr.Zero, "AkelEditW", null))
+                            )
                         {
-                            //System.Threading.Thread.Sleep(100); 
-                            inp.Mouse.LeftButtonDown();
-                            lmousehold = true;
-                        }
-                        if (key_for_hold == (int)Keys.RButton && !rmousehold) // && inp.InputDeviceState.IsKeyUp(VirtualKeyCode.RBUTTON)
-                        {
-                            //System.Threading.Thread.Sleep(100);
-                            inp.Mouse.RightButtonDown();
-                            rmousehold = true;
+                            if (key_for_hold == (int)Keys.LButton && !lmousehold) // && inp.InputDeviceState.IsKeyUp(VirtualKeyCode.LBUTTON)
+                            {
+                                //System.Threading.Thread.Sleep(100); 
+                                inp.Mouse.LeftButtonDown();
+                                lmousehold = true;
+                            }
+                            if (key_for_hold == (int)Keys.RButton && !rmousehold) // && inp.InputDeviceState.IsKeyUp(VirtualKeyCode.RBUTTON)
+                            {
+                                //System.Threading.Thread.Sleep(100);
+                                inp.Mouse.RightButtonDown();
+                                rmousehold = true;
+                            }
                         }
                     }
-                }
-                else
-                {
+                    else
+                    {
+                        //MessageBox.Show("Make long: " + ((IntPtr)(MakeLong(1, ret))).ToString() + "Another way: " + MakeLParam(1, ret).ToString());
+                        PostMessage(handle_ref,//hWindow,
+                                    updown_keys(key_for_hold),
+                                    (IntPtr)key_for_hold, (UIntPtr)(MakeLong(1, ret)));
 
-                    PostMessage(handle,//hWindow,
-                                updown_keys(key_for_hold),
-                                key_for_hold, (int)(MakeLong(1, ret)));
-                }
+                        //MessageBox.Show("Process ID: "+proc_curr + ", Handle: " + handle.ToString() + ", Клавиша: " + key_for_hold.ToString());
+                    }
 
+                }
+                else timer.Stop();
             }
         }
 
@@ -193,97 +214,99 @@ namespace D3Hot
         {
             System.Timers.Timer timer = sender as System.Timers.Timer;
             if (timer != null) timer.Stop();
-            int key_for_hold = timer_key(timer);
+            uint key_for_hold = timer_key(timer);
 
-            int i = -1;
-
-            for (int j = 0; j < 6; j++)
+            if (key_for_hold > 0) //09.09.2015
             {
-                if (timer == StartTimer[j] && st_timer_r[j] > 0)
+                int i = -1;
+
+                for (int j = 0; j < 6; j++)
                 {
-                    i = j;
-                    st_timer_r[j] = 0;
-                    break;
-                }
-            }
-
-            //if (timer == StartTimer[0] && st_timer_r[0] > 0)
-            //{
-            //    i = 1;
-            //    st_timer_r[0] = 0;
-            //} 
-            //else if (timer == StartTimer[1] && st_timer_r[1] > 0)
-            //{
-            //    i = 2;
-            //    st_timer_r[1] = 0;
-            //} 
-            //else if (timer == StartTimer[2] && st_timer_r[2] > 0)
-            //{
-            //    i = 3;
-            //    st_timer_r[2] = 0;
-            //}
-            //else if (timer == StartTimer[3] && st_timer_r[3] > 0)
-            //{
-            //    i = 4;
-            //    st_timer_r[3] = 0;
-            //}
-            //else if (timer == StartTimer[4] && st_timer_r[4] > 0)
-            //{
-            //    i = 5;
-            //    st_timer_r[4] = 0;
-            //}
-            //else if (timer == StartTimer[5] && st_timer_r[5] > 0)
-            //{
-            //    i = 6;
-            //    st_timer_r[5] = 0;
-            //}
-
-            int ret = 0;
-            ret = _MapVirtualKey(key_for_hold, 0);
-
-            if ((key_for_hold == (int)Keys.LButton) || (key_for_hold == (int)Keys.RButton))
-            {
-                if (i != -1)
-                {
-                    //IntPtr handle1;
-                    //handle1 = FindWindow(null, "akelpad");
-                    //handle1 = FindWindowEx(handle1, IntPtr.Zero, "AkelEditW", null);  //For debugging
-                    //if (usage_area() || handle == handle1)
-
-                    if (usage_area()
-                        || (lb_debug.Visible && handle == FindWindowEx(FindWindow(null, "akelpad"), IntPtr.Zero, "AkelEditW", null))
-                        )
+                    if (timer == StartTimer[j] && st_timer_r[j] > 0)
                     {
-                        if (key_for_hold == (int)Keys.LButton)
-                            inp.Mouse.LeftButtonDown();
-                        if (key_for_hold == (int)Keys.RButton)
-                            inp.Mouse.RightButtonDown();
+                        i = j;
+                        st_timer_r[j] = 0;
+                        break;
                     }
-
-                    //if (key_for_hold == (int)Keys.LButton) Mouse.ButtonDown(Mouse.MouseKeys.Left); //26.03.2015
-                    //if (key_for_hold == (int)Keys.RButton) Mouse.ButtonDown(Mouse.MouseKeys.Right); //26.03.2015
-
-                    //Point defPnt = new Point();
-                    //GetCursorPos(ref defPnt);
-
-                    //PostMessage(handle,
-                    //           updown_keys(key_for_hold),
-                    //           key_for_hold, (int)MakeLong(defPnt.X, defPnt.Y));
                 }
-            }
-            else
-            {
-                PostMessage(handle,//hWindow,
-                           updown_keys(key_for_hold),//(int)WM_KEYDOWN,
-                           key_for_hold, (int)(MakeLong(1, ret)));
-            }
 
-                    //PostMessage(handle,//hWindow,
-                    //           updown_keys(key_for_hold),//(int)WM_KEYDOWN,
-                    //           key_for_hold, 0);
+                //if (timer == StartTimer[0] && st_timer_r[0] > 0)
+                //{
+                //    i = 1;
+                //    st_timer_r[0] = 0;
+                //} 
+                //else if (timer == StartTimer[1] && st_timer_r[1] > 0)
+                //{
+                //    i = 2;
+                //    st_timer_r[1] = 0;
+                //} 
+                //else if (timer == StartTimer[2] && st_timer_r[2] > 0)
+                //{
+                //    i = 3;
+                //    st_timer_r[2] = 0;
+                //}
+                //else if (timer == StartTimer[3] && st_timer_r[3] > 0)
+                //{
+                //    i = 4;
+                //    st_timer_r[3] = 0;
+                //}
+                //else if (timer == StartTimer[4] && st_timer_r[4] > 0)
+                //{
+                //    i = 5;
+                //    st_timer_r[4] = 0;
+                //}
+                //else if (timer == StartTimer[5] && st_timer_r[5] > 0)
+                //{
+                //    i = 6;
+                //    st_timer_r[5] = 0;
+                //}
 
-            if (i >-1)
-                System.Threading.Thread.Sleep(50);
+                uint ret = 0;
+                ret = _MapVirtualKey(key_for_hold, 0);
+
+                if ((key_for_hold == (int)Keys.LButton) || (key_for_hold == (int)Keys.RButton))
+                {
+                    if (i != -1)
+                    {
+                        //IntPtr handle1;
+                        //handle1 = FindWindow(null, "akelpad");
+                        //handle1 = FindWindowEx(handle1, IntPtr.Zero, "AkelEditW", null);  //For debugging
+                        //if (usage_area() || handle == handle1)
+
+                        if (usage_area()
+                            || (lb_debug.Visible && handle == FindWindowEx(FindWindow(null, "akelpad"), IntPtr.Zero, "AkelEditW", null))
+                            )
+                        {
+                            if (key_for_hold == (int)Keys.LButton)
+                                inp.Mouse.LeftButtonDown();
+                            if (key_for_hold == (int)Keys.RButton)
+                                inp.Mouse.RightButtonDown();
+                        }
+
+                        //if (key_for_hold == (int)Keys.LButton) Mouse.ButtonDown(Mouse.MouseKeys.Left); //26.03.2015
+                        //if (key_for_hold == (int)Keys.RButton) Mouse.ButtonDown(Mouse.MouseKeys.Right); //26.03.2015
+
+                        //Point defPnt = new Point();
+                        //GetCursorPos(ref defPnt);
+
+                        //PostMessage(handle,
+                        //           updown_keys(key_for_hold),
+                        //           key_for_hold, (int)MakeLong(defPnt.X, defPnt.Y));
+                    }
+                }
+                else
+                {
+                    PostMessage(handle_ref,//hWindow,
+                               updown_keys(key_for_hold),//(int)WM_KEYDOWN,
+                               (IntPtr)key_for_hold, (UIntPtr)(MakeLong(1, ret)));
+                }
+
+                //PostMessage(handle,//hWindow,
+                //           updown_keys(key_for_hold),//(int)WM_KEYDOWN,
+                //           key_for_hold, 0);
+
+                if (i > -1)
+                    System.Threading.Thread.Sleep(50);
 
                 RepeatTimer[i] = new System.Timers.Timer { Interval = keyboardSpeed };
                 RepeatTimer[i].Elapsed += repeatTimer_Tick;
@@ -329,6 +352,7 @@ namespace D3Hot
                 //        RepeatTimer[5].Start();
                 //        break;
                 //}
+            }
         }
 
 

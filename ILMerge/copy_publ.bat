@@ -2,6 +2,7 @@
 
 set ilm_path="c:\GitHub\D3Hot\ILMerge\ILMerge.exe"
 set z_path="c:\GitHub\D3Hot\ILMerge\7z.exe"
+set touch_path="c:\GitHub\D3Hot\ILMerge\FileTouch.exe"
 set target_path=%2
 set target_file=%~nx2
 set target_dir=%~dp2
@@ -24,7 +25,9 @@ rem #    run merge cmd
 REM WindowsInput
 
 echo "%z_path%" a %result%" "%target_path%"
+REM del /q /f %result%
 %z_path% a %result% %target_dir%\D3H.exe
+%touch_path% /c %result%
 
 REM pause
 
