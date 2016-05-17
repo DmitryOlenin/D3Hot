@@ -12,7 +12,7 @@ namespace D3Hot
         /// <summary>
         /// Главная точка входа для приложения.
         /// </summary>
-        [STAThread]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Ликвидировать объекты перед потерей области"), STAThread]
         static void Main()
         {
             bool onlyInstance;
@@ -32,9 +32,9 @@ namespace D3Hot
                 {
                     // send our Win32 message to make the currently running instance
                     // jump on top of all the other windows
-                    NativeMethods.PostMessage(
-                        (IntPtr)NativeMethods.HWND_BROADCAST,
-                        NativeMethods.WM_SHOWME,
+                    d3hot.NativeMethods.PostMessage(
+                        (IntPtr)d3hot.NativeMethods.HWND_BROADCAST,
+                        d3hot.NativeMethods.WM_SHOWME,
                         IntPtr.Zero,
                         IntPtr.Zero);
 
@@ -64,16 +64,6 @@ namespace D3Hot
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new d3hot());
-        }
-
-        internal class NativeMethods
-        {
-            public const int HWND_BROADCAST = 0xffff;
-            public static readonly int WM_SHOWME = RegisterWindowMessage("WM_SHOWME");
-            [DllImport("user32")]
-            public static extern bool PostMessage(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam);
-            [DllImport("user32")]
-            public static extern int RegisterWindowMessage(string message);
         }
 
     }

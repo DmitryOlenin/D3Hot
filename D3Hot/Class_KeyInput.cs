@@ -89,7 +89,7 @@ namespace D3Hot
             //d3hot_FormClosing(null, null);
             for (int i = 0; i < 4; i++)
             {
-                UnregisterHotKey(this.Handle, i);    
+                NativeMethods.UnregisterHotKey(this.Handle, i);    
             }
             lb_key_prev.Text = "";
 

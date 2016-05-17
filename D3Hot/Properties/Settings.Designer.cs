@@ -946,5 +946,281 @@ namespace D3Hot.Properties {
                 this["nud_coold"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Profile 7")]
+        public string profile7 {
+            get {
+                return ((string)(this["profile7"]));
+            }
+            set {
+                this["profile7"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Profile 8")]
+        public string profile8 {
+            get {
+                return ((string)(this["profile8"]));
+            }
+            set {
+                this["profile8"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Profile 9")]
+        public string profile9 {
+            get {
+                return ((string)(this["profile9"]));
+            }
+            set {
+                this["profile9"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int chb_trig_once_0 {
+            get {
+                return ((int)(this["chb_trig_once_0"]));
+            }
+            set {
+                this["chb_trig_once_0"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int chb_trig_once_1 {
+            get {
+                return ((int)(this["chb_trig_once_1"]));
+            }
+            set {
+                this["chb_trig_once_1"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int chb_trig_once_2 {
+            get {
+                return ((int)(this["chb_trig_once_2"]));
+            }
+            set {
+                this["chb_trig_once_2"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int chb_trig_once_3 {
+            get {
+                return ((int)(this["chb_trig_once_3"]));
+            }
+            set {
+                this["chb_trig_once_3"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int chb_trig_once_4 {
+            get {
+                return ((int)(this["chb_trig_once_4"]));
+            }
+            set {
+                this["chb_trig_once_4"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int chb_trig_once_5 {
+            get {
+                return ((int)(this["chb_trig_once_5"]));
+            }
+            set {
+                this["chb_trig_once_5"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal nud_trig_time_0 {
+            get {
+                return ((decimal)(this["nud_trig_time_0"]));
+            }
+            set {
+                this["nud_trig_time_0"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal nud_trig_time_1 {
+            get {
+                return ((decimal)(this["nud_trig_time_1"]));
+            }
+            set {
+                this["nud_trig_time_1"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal nud_trig_time_2 {
+            get {
+                return ((decimal)(this["nud_trig_time_2"]));
+            }
+            set {
+                this["nud_trig_time_2"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal nud_trig_time_3 {
+            get {
+                return ((decimal)(this["nud_trig_time_3"]));
+            }
+            set {
+                this["nud_trig_time_3"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal nud_trig_time_4 {
+            get {
+                return ((decimal)(this["nud_trig_time_4"]));
+            }
+            set {
+                this["nud_trig_time_4"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal nud_trig_time_5 {
+            get {
+                return ((decimal)(this["nud_trig_time_5"]));
+            }
+            set {
+                this["nud_trig_time_5"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal nud_trig_delay_0 {
+            get {
+                return ((decimal)(this["nud_trig_delay_0"]));
+            }
+            set {
+                this["nud_trig_delay_0"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal nud_trig_delay_1 {
+            get {
+                return ((decimal)(this["nud_trig_delay_1"]));
+            }
+            set {
+                this["nud_trig_delay_1"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal nud_trig_delay_2 {
+            get {
+                return ((decimal)(this["nud_trig_delay_2"]));
+            }
+            set {
+                this["nud_trig_delay_2"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal nud_trig_delay_3 {
+            get {
+                return ((decimal)(this["nud_trig_delay_3"]));
+            }
+            set {
+                this["nud_trig_delay_3"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal nud_trig_delay_4 {
+            get {
+                return ((decimal)(this["nud_trig_delay_4"]));
+            }
+            set {
+                this["nud_trig_delay_4"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal nud_trig_delay_5 {
+            get {
+                return ((decimal)(this["nud_trig_delay_5"]));
+            }
+            set {
+                this["nud_trig_delay_5"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int chb_log {
+            get {
+                return ((int)(this["chb_log"]));
+            }
+            set {
+                this["chb_log"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int cb_press_type {
+            get {
+                return ((int)(this["cb_press_type"]));
+            }
+            set {
+                this["cb_press_type"] = value;
+            }
+        }
     }
 }

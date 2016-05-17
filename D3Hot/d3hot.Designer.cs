@@ -56,7 +56,6 @@
             this.lb_key3 = new System.Windows.Forms.Label();
             this.lb_key2 = new System.Windows.Forms.Label();
             this.lb_key1 = new System.Windows.Forms.Label();
-            this.tt_start = new System.Windows.Forms.ToolTip(this.components);
             this.mouseKeyEventProvider1 = new MouseKeyboardActivityMonitor.Controls.MouseKeyEventProvider();
             this.lb_auth = new System.Windows.Forms.Label();
             this.lb_lang = new System.Windows.Forms.Label();
@@ -89,6 +88,7 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.b_opt = new System.Windows.Forms.Button();
             this.pan_opt = new System.Windows.Forms.Panel();
+            this.chb_log = new System.Windows.Forms.CheckBox();
             this.lb_nud_coold = new System.Windows.Forms.Label();
             this.nud_coold = new System.Windows.Forms.NumericUpDown();
             this.lb_coold = new System.Windows.Forms.Label();
@@ -145,6 +145,23 @@
             this.mouseKeyEventProvider2 = new MouseKeyboardActivityMonitor.Controls.MouseKeyEventProvider();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
+            this.lb_help = new System.Windows.Forms.Label();
+            this.gb_set = new System.Windows.Forms.GroupBox();
+            this.b_trig_ok = new System.Windows.Forms.Button();
+            this.lb_trig_delay_ms = new System.Windows.Forms.Label();
+            this.lb_trig_time_ms = new System.Windows.Forms.Label();
+            this.lb_trig_delay = new System.Windows.Forms.Label();
+            this.nud_trig_delay = new System.Windows.Forms.NumericUpDown();
+            this.cb_trig_once = new System.Windows.Forms.CheckBox();
+            this.lb_trig_enable = new System.Windows.Forms.Label();
+            this.cb_trig_enable = new System.Windows.Forms.ComboBox();
+            this.lb_trig_time = new System.Windows.Forms.Label();
+            this.nud_trig_time = new System.Windows.Forms.NumericUpDown();
+            this.trb_coold = new System.Windows.Forms.TrackBar();
+            this.lb_trb_coold = new System.Windows.Forms.Label();
+            this.pan_press_type = new System.Windows.Forms.Panel();
+            this.cb_press_type = new System.Windows.Forms.ComboBox();
+            this.lb_press_type = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_tmr3)).BeginInit();
@@ -161,6 +178,11 @@
             this.pan_prof_name.SuspendLayout();
             this.pan_proc.SuspendLayout();
             this.pan_prog.SuspendLayout();
+            this.gb_set.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nud_trig_delay)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nud_trig_time)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trb_coold)).BeginInit();
+            this.pan_press_type.SuspendLayout();
             this.SuspendLayout();
             // 
             // nud_tmr1
@@ -173,7 +195,7 @@
             0});
             this.nud_tmr1.Location = new System.Drawing.Point(9, 111);
             this.nud_tmr1.Maximum = new decimal(new int[] {
-            600000,
+            999999,
             0,
             0,
             0});
@@ -193,7 +215,7 @@
             0});
             this.nud_tmr2.Location = new System.Drawing.Point(84, 111);
             this.nud_tmr2.Maximum = new decimal(new int[] {
-            600000,
+            999999,
             0,
             0,
             0});
@@ -213,7 +235,7 @@
             0});
             this.nud_tmr3.Location = new System.Drawing.Point(160, 111);
             this.nud_tmr3.Maximum = new decimal(new int[] {
-            600000,
+            999999,
             0,
             0,
             0});
@@ -233,7 +255,7 @@
             0});
             this.nud_tmr4.Location = new System.Drawing.Point(234, 111);
             this.nud_tmr4.Maximum = new decimal(new int[] {
-            600000,
+            999999,
             0,
             0,
             0});
@@ -379,6 +401,8 @@
             this.cb_trig_tmr1.TabIndex = 0;
             this.cb_trig_tmr1.SelectionChangeCommitted += new System.EventHandler(this.cb_trig_SelectionChangeCommitted);
             this.cb_trig_tmr1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.key_choose_MouseClick);
+            this.cb_trig_tmr1.MouseLeave += new System.EventHandler(this.cb_trig_tmr_MouseLeave);
+            this.cb_trig_tmr1.MouseHover += new System.EventHandler(this.cb_trig_tmr_MouseHover);
             // 
             // cb_trig_tmr2
             // 
@@ -396,6 +420,8 @@
             this.cb_trig_tmr2.TabIndex = 1;
             this.cb_trig_tmr2.SelectionChangeCommitted += new System.EventHandler(this.cb_trig_SelectionChangeCommitted);
             this.cb_trig_tmr2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.key_choose_MouseClick);
+            this.cb_trig_tmr2.MouseLeave += new System.EventHandler(this.cb_trig_tmr_MouseLeave);
+            this.cb_trig_tmr2.MouseHover += new System.EventHandler(this.cb_trig_tmr_MouseHover);
             // 
             // cb_trig_tmr3
             // 
@@ -411,8 +437,11 @@
             this.cb_trig_tmr3.Name = "cb_trig_tmr3";
             this.cb_trig_tmr3.Size = new System.Drawing.Size(58, 21);
             this.cb_trig_tmr3.TabIndex = 2;
+            this.cb_trig_tmr3.SelectedIndexChanged += new System.EventHandler(this.cb_trig_tmr3_SelectedIndexChanged);
             this.cb_trig_tmr3.SelectionChangeCommitted += new System.EventHandler(this.cb_trig_SelectionChangeCommitted);
             this.cb_trig_tmr3.MouseDown += new System.Windows.Forms.MouseEventHandler(this.key_choose_MouseClick);
+            this.cb_trig_tmr3.MouseLeave += new System.EventHandler(this.cb_trig_tmr_MouseLeave);
+            this.cb_trig_tmr3.MouseHover += new System.EventHandler(this.cb_trig_tmr_MouseHover);
             // 
             // cb_trig_tmr4
             // 
@@ -430,6 +459,8 @@
             this.cb_trig_tmr4.TabIndex = 3;
             this.cb_trig_tmr4.SelectionChangeCommitted += new System.EventHandler(this.cb_trig_SelectionChangeCommitted);
             this.cb_trig_tmr4.MouseDown += new System.Windows.Forms.MouseEventHandler(this.key_choose_MouseClick);
+            this.cb_trig_tmr4.MouseLeave += new System.EventHandler(this.cb_trig_tmr_MouseLeave);
+            this.cb_trig_tmr4.MouseHover += new System.EventHandler(this.cb_trig_tmr_MouseHover);
             // 
             // cb_key4
             // 
@@ -652,7 +683,10 @@
             "Profile 3",
             "Profile 4",
             "Profile 5",
-            "Profile 6"});
+            "Profile 6",
+            "Profile 7",
+            "Profile 8",
+            "Profile 9"});
             this.cb_prof.Location = new System.Drawing.Point(225, 211);
             this.cb_prof.Name = "cb_prof";
             this.cb_prof.Size = new System.Drawing.Size(100, 21);
@@ -729,6 +763,8 @@
             this.cb_trig_tmr5.TabIndex = 51;
             this.cb_trig_tmr5.SelectionChangeCommitted += new System.EventHandler(this.cb_trig_SelectionChangeCommitted);
             this.cb_trig_tmr5.MouseDown += new System.Windows.Forms.MouseEventHandler(this.key_choose_MouseClick);
+            this.cb_trig_tmr5.MouseLeave += new System.EventHandler(this.cb_trig_tmr_MouseLeave);
+            this.cb_trig_tmr5.MouseHover += new System.EventHandler(this.cb_trig_tmr_MouseHover);
             // 
             // lb_tmr5_sec
             // 
@@ -754,6 +790,7 @@
             // nud_tmr5
             // 
             this.nud_tmr5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.nud_tmr5.ForeColor = System.Drawing.SystemColors.WindowText;
             this.nud_tmr5.Increment = new decimal(new int[] {
             1000,
             0,
@@ -761,7 +798,7 @@
             0});
             this.nud_tmr5.Location = new System.Drawing.Point(309, 111);
             this.nud_tmr5.Maximum = new decimal(new int[] {
-            600000,
+            999999,
             0,
             0,
             0});
@@ -831,6 +868,8 @@
             this.cb_trig_tmr6.TabIndex = 57;
             this.cb_trig_tmr6.SelectionChangeCommitted += new System.EventHandler(this.cb_trig_SelectionChangeCommitted);
             this.cb_trig_tmr6.MouseDown += new System.Windows.Forms.MouseEventHandler(this.key_choose_MouseClick);
+            this.cb_trig_tmr6.MouseLeave += new System.EventHandler(this.cb_trig_tmr_MouseLeave);
+            this.cb_trig_tmr6.MouseHover += new System.EventHandler(this.cb_trig_tmr_MouseHover);
             // 
             // lb_tmr6_sec
             // 
@@ -863,7 +902,7 @@
             0});
             this.nud_tmr6.Location = new System.Drawing.Point(384, 111);
             this.nud_tmr6.Maximum = new decimal(new int[] {
-            600000,
+            999999,
             0,
             0,
             0});
@@ -1049,6 +1088,7 @@
             // 
             this.pan_opt.BackColor = System.Drawing.Color.Transparent;
             this.pan_opt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pan_opt.Controls.Add(this.chb_log);
             this.pan_opt.Controls.Add(this.lb_nud_coold);
             this.pan_opt.Controls.Add(this.nud_coold);
             this.pan_opt.Controls.Add(this.lb_coold);
@@ -1088,6 +1128,18 @@
             this.pan_opt.TabIndex = 74;
             this.pan_opt.Visible = false;
             // 
+            // chb_log
+            // 
+            this.chb_log.AutoSize = true;
+            this.chb_log.Location = new System.Drawing.Point(330, 146);
+            this.chb_log.Name = "chb_log";
+            this.chb_log.Size = new System.Drawing.Size(93, 17);
+            this.chb_log.TabIndex = 96;
+            this.chb_log.Text = "Логирование";
+            this.chb_log.UseVisualStyleBackColor = true;
+            this.chb_log.Visible = false;
+            this.chb_log.CheckedChanged += new System.EventHandler(this.cb_users_CheckedChanged);
+            // 
             // lb_nud_coold
             // 
             this.lb_nud_coold.AutoSize = true;
@@ -1107,7 +1159,7 @@
             0});
             this.nud_coold.Location = new System.Drawing.Point(257, 102);
             this.nud_coold.Maximum = new decimal(new int[] {
-            1000,
+            3000,
             0,
             0,
             0});
@@ -1187,11 +1239,12 @@
             this.chb_ver_check.Size = new System.Drawing.Size(15, 14);
             this.chb_ver_check.TabIndex = 90;
             this.chb_ver_check.UseVisualStyleBackColor = true;
+            this.chb_ver_check.CheckedChanged += new System.EventHandler(this.cb_users_CheckedChanged);
             // 
             // chb_users
             // 
             this.chb_users.AutoSize = true;
-            this.chb_users.Location = new System.Drawing.Point(330, 108);
+            this.chb_users.Location = new System.Drawing.Point(330, 109);
             this.chb_users.Name = "chb_users";
             this.chb_users.Size = new System.Drawing.Size(112, 17);
             this.chb_users.TabIndex = 89;
@@ -1346,7 +1399,7 @@
             // chb_saveload
             // 
             this.chb_saveload.AutoSize = true;
-            this.chb_saveload.Location = new System.Drawing.Point(330, 86);
+            this.chb_saveload.Location = new System.Drawing.Point(330, 88);
             this.chb_saveload.Name = "chb_saveload";
             this.chb_saveload.Size = new System.Drawing.Size(80, 17);
             this.chb_saveload.TabIndex = 79;
@@ -1357,7 +1410,7 @@
             // chb_mpress
             // 
             this.chb_mpress.AutoSize = true;
-            this.chb_mpress.Location = new System.Drawing.Point(330, 64);
+            this.chb_mpress.Location = new System.Drawing.Point(330, 67);
             this.chb_mpress.Name = "chb_mpress";
             this.chb_mpress.Size = new System.Drawing.Size(106, 17);
             this.chb_mpress.TabIndex = 78;
@@ -1368,7 +1421,9 @@
             // chb_hold
             // 
             this.chb_hold.AutoSize = true;
-            this.chb_hold.Location = new System.Drawing.Point(330, 44);
+            this.chb_hold.Checked = true;
+            this.chb_hold.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chb_hold.Location = new System.Drawing.Point(330, 46);
             this.chb_hold.Name = "chb_hold";
             this.chb_hold.Size = new System.Drawing.Size(118, 17);
             this.chb_hold.TabIndex = 77;
@@ -1471,7 +1526,7 @@
             // chb_tray
             // 
             this.chb_tray.AutoSize = true;
-            this.chb_tray.Location = new System.Drawing.Point(330, 24);
+            this.chb_tray.Location = new System.Drawing.Point(330, 25);
             this.chb_tray.Name = "chb_tray";
             this.chb_tray.Size = new System.Drawing.Size(126, 17);
             this.chb_tray.TabIndex = 69;
@@ -1534,6 +1589,7 @@
             this.pan_main.Name = "pan_main";
             this.pan_main.Size = new System.Drawing.Size(455, 165);
             this.pan_main.TabIndex = 75;
+            this.pan_main.Paint += new System.Windows.Forms.PaintEventHandler(this.pan_main_Paint);
             this.pan_main.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.d3hot_MouseDoubleClick);
             // 
             // chb_trig6
@@ -1605,7 +1661,8 @@
             this.cb_tmr1.Items.AddRange(new object[] {
             "",
             "",
-            ""});
+            "",
+            " "});
             this.cb_tmr1.Location = new System.Drawing.Point(9, 111);
             this.cb_tmr1.Name = "cb_tmr1";
             this.cb_tmr1.Size = new System.Drawing.Size(68, 20);
@@ -1623,7 +1680,8 @@
             this.cb_tmr2.Items.AddRange(new object[] {
             "",
             "",
-            ""});
+            "",
+            " "});
             this.cb_tmr2.Location = new System.Drawing.Point(84, 111);
             this.cb_tmr2.Name = "cb_tmr2";
             this.cb_tmr2.Size = new System.Drawing.Size(68, 20);
@@ -1641,7 +1699,8 @@
             this.cb_tmr6.Items.AddRange(new object[] {
             "",
             "",
-            ""});
+            "",
+            " "});
             this.cb_tmr6.Location = new System.Drawing.Point(384, 111);
             this.cb_tmr6.Name = "cb_tmr6";
             this.cb_tmr6.Size = new System.Drawing.Size(68, 20);
@@ -1658,8 +1717,9 @@
             this.cb_tmr5.ItemHeight = 14;
             this.cb_tmr5.Items.AddRange(new object[] {
             "",
-            "",
-            ""});
+            " ",
+            " ",
+            " "});
             this.cb_tmr5.Location = new System.Drawing.Point(309, 111);
             this.cb_tmr5.Name = "cb_tmr5";
             this.cb_tmr5.Size = new System.Drawing.Size(68, 20);
@@ -1677,7 +1737,8 @@
             this.cb_tmr4.Items.AddRange(new object[] {
             "",
             "",
-            ""});
+            " ",
+            " "});
             this.cb_tmr4.Location = new System.Drawing.Point(234, 111);
             this.cb_tmr4.Name = "cb_tmr4";
             this.cb_tmr4.Size = new System.Drawing.Size(68, 20);
@@ -1693,9 +1754,10 @@
             this.cb_tmr3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.cb_tmr3.ItemHeight = 14;
             this.cb_tmr3.Items.AddRange(new object[] {
-            "",
-            "",
-            ""});
+            " ",
+            " ",
+            " ",
+            " "});
             this.cb_tmr3.Location = new System.Drawing.Point(160, 111);
             this.cb_tmr3.Name = "cb_tmr3";
             this.cb_tmr3.Size = new System.Drawing.Size(68, 20);
@@ -1794,7 +1856,7 @@
             // lb_debug
             // 
             this.lb_debug.AutoSize = true;
-            this.lb_debug.Location = new System.Drawing.Point(123, 293);
+            this.lb_debug.Location = new System.Drawing.Point(110, 299);
             this.lb_debug.Name = "lb_debug";
             this.lb_debug.Size = new System.Drawing.Size(37, 13);
             this.lb_debug.TabIndex = 84;
@@ -1843,18 +1905,17 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(206, 268);
+            this.button1.Location = new System.Drawing.Point(229, 294);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 94;
             this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Visible = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(206, 288);
+            this.button2.Location = new System.Drawing.Point(155, 294);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 95;
@@ -1863,11 +1924,238 @@
             this.button2.Visible = false;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // lb_help
+            // 
+            this.lb_help.AutoSize = true;
+            this.lb_help.BackColor = System.Drawing.Color.Transparent;
+            this.lb_help.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lb_help.Location = new System.Drawing.Point(296, 299);
+            this.lb_help.Name = "lb_help";
+            this.lb_help.Size = new System.Drawing.Size(50, 13);
+            this.lb_help.TabIndex = 96;
+            this.lb_help.Text = "Помощь";
+            this.lb_help.Click += new System.EventHandler(this.lb_help_Click);
+            this.lb_help.MouseLeave += new System.EventHandler(this.lb_auth_MouseLeave);
+            this.lb_help.MouseHover += new System.EventHandler(this.lb_auth_MouseHover);
+            // 
+            // gb_set
+            // 
+            this.gb_set.Controls.Add(this.b_trig_ok);
+            this.gb_set.Controls.Add(this.lb_trig_delay_ms);
+            this.gb_set.Controls.Add(this.lb_trig_time_ms);
+            this.gb_set.Controls.Add(this.lb_trig_delay);
+            this.gb_set.Controls.Add(this.nud_trig_delay);
+            this.gb_set.Controls.Add(this.cb_trig_once);
+            this.gb_set.Controls.Add(this.lb_trig_enable);
+            this.gb_set.Controls.Add(this.cb_trig_enable);
+            this.gb_set.Controls.Add(this.lb_trig_time);
+            this.gb_set.Controls.Add(this.nud_trig_time);
+            this.gb_set.Location = new System.Drawing.Point(463, 53);
+            this.gb_set.Name = "gb_set";
+            this.gb_set.Size = new System.Drawing.Size(443, 116);
+            this.gb_set.TabIndex = 97;
+            this.gb_set.TabStop = false;
+            this.gb_set.Text = "Настройка работы триггера";
+            this.gb_set.Move += new System.EventHandler(this.gb_set_Move);
+            // 
+            // b_trig_ok
+            // 
+            this.b_trig_ok.Location = new System.Drawing.Point(190, 89);
+            this.b_trig_ok.Name = "b_trig_ok";
+            this.b_trig_ok.Size = new System.Drawing.Size(43, 23);
+            this.b_trig_ok.TabIndex = 31;
+            this.b_trig_ok.Text = "OK";
+            this.b_trig_ok.UseVisualStyleBackColor = true;
+            this.b_trig_ok.Click += new System.EventHandler(this.b_trig_ok_Click);
+            // 
+            // lb_trig_delay_ms
+            // 
+            this.lb_trig_delay_ms.AutoSize = true;
+            this.lb_trig_delay_ms.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lb_trig_delay_ms.Location = new System.Drawing.Point(354, 74);
+            this.lb_trig_delay_ms.Name = "lb_trig_delay_ms";
+            this.lb_trig_delay_ms.Size = new System.Drawing.Size(58, 13);
+            this.lb_trig_delay_ms.TabIndex = 30;
+            this.lb_trig_delay_ms.Text = "Пауза..мс";
+            this.lb_trig_delay_ms.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lb_trig_time_ms
+            // 
+            this.lb_trig_time_ms.AutoSize = true;
+            this.lb_trig_time_ms.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lb_trig_time_ms.Location = new System.Drawing.Point(112, 73);
+            this.lb_trig_time_ms.Name = "lb_trig_time_ms";
+            this.lb_trig_time_ms.Size = new System.Drawing.Size(58, 13);
+            this.lb_trig_time_ms.TabIndex = 29;
+            this.lb_trig_time_ms.Text = "Пауза..мс";
+            this.lb_trig_time_ms.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lb_trig_delay
+            // 
+            this.lb_trig_delay.AutoSize = true;
+            this.lb_trig_delay.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lb_trig_delay.Location = new System.Drawing.Point(202, 53);
+            this.lb_trig_delay.Name = "lb_trig_delay";
+            this.lb_trig_delay.Size = new System.Drawing.Size(139, 13);
+            this.lb_trig_delay.TabIndex = 28;
+            this.lb_trig_delay.Text = "Задержка включения (мс)";
+            // 
+            // nud_trig_delay
+            // 
+            this.nud_trig_delay.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.nud_trig_delay.Increment = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nud_trig_delay.Location = new System.Drawing.Point(357, 51);
+            this.nud_trig_delay.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.nud_trig_delay.Name = "nud_trig_delay";
+            this.nud_trig_delay.Size = new System.Drawing.Size(79, 20);
+            this.nud_trig_delay.TabIndex = 27;
+            this.nud_trig_delay.ValueChanged += new System.EventHandler(this.nud_Leave);
+            this.nud_trig_delay.Leave += new System.EventHandler(this.nud_Leave);
+            // 
+            // cb_trig_once
+            // 
+            this.cb_trig_once.AutoSize = true;
+            this.cb_trig_once.Location = new System.Drawing.Point(9, 22);
+            this.cb_trig_once.Name = "cb_trig_once";
+            this.cb_trig_once.Size = new System.Drawing.Size(139, 17);
+            this.cb_trig_once.TabIndex = 26;
+            this.cb_trig_once.Text = "Однократное нажатие";
+            this.cb_trig_once.UseVisualStyleBackColor = true;
+            this.cb_trig_once.CheckedChanged += new System.EventHandler(this.cb_trig_once_CheckedChanged);
+            // 
+            // lb_trig_enable
+            // 
+            this.lb_trig_enable.AutoSize = true;
+            this.lb_trig_enable.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lb_trig_enable.Location = new System.Drawing.Point(202, 23);
+            this.lb_trig_enable.Name = "lb_trig_enable";
+            this.lb_trig_enable.Size = new System.Drawing.Size(144, 13);
+            this.lb_trig_enable.TabIndex = 25;
+            this.lb_trig_enable.Text = "Включение после триггера";
+            // 
+            // cb_trig_enable
+            // 
+            this.cb_trig_enable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_trig_enable.FormattingEnabled = true;
+            this.cb_trig_enable.Items.AddRange(new object[] {
+            "",
+            "Триггер 1",
+            "Триггер 2",
+            "Триггер 3",
+            "Триггер 4",
+            "Триггер 5",
+            "Триггер 6"});
+            this.cb_trig_enable.Location = new System.Drawing.Point(357, 20);
+            this.cb_trig_enable.Name = "cb_trig_enable";
+            this.cb_trig_enable.Size = new System.Drawing.Size(79, 21);
+            this.cb_trig_enable.TabIndex = 24;
+            // 
+            // lb_trig_time
+            // 
+            this.lb_trig_time.AutoSize = true;
+            this.lb_trig_time.Enabled = false;
+            this.lb_trig_time.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lb_trig_time.Location = new System.Drawing.Point(6, 52);
+            this.lb_trig_time.Name = "lb_trig_time";
+            this.lb_trig_time.Size = new System.Drawing.Size(103, 13);
+            this.lb_trig_time.TabIndex = 23;
+            this.lb_trig_time.Text = "Время работы (мс)";
+            // 
+            // nud_trig_time
+            // 
+            this.nud_trig_time.Enabled = false;
+            this.nud_trig_time.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.nud_trig_time.Increment = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nud_trig_time.Location = new System.Drawing.Point(115, 50);
+            this.nud_trig_time.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.nud_trig_time.Name = "nud_trig_time";
+            this.nud_trig_time.Size = new System.Drawing.Size(79, 20);
+            this.nud_trig_time.TabIndex = 22;
+            this.nud_trig_time.ValueChanged += new System.EventHandler(this.nud_Leave);
+            this.nud_trig_time.Leave += new System.EventHandler(this.nud_Leave);
+            // 
+            // trb_coold
+            // 
+            this.trb_coold.AutoSize = false;
+            this.trb_coold.Location = new System.Drawing.Point(607, 207);
+            this.trb_coold.Maximum = 5;
+            this.trb_coold.Minimum = -5;
+            this.trb_coold.Name = "trb_coold";
+            this.trb_coold.Size = new System.Drawing.Size(104, 25);
+            this.trb_coold.TabIndex = 96;
+            this.trb_coold.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trb_coold.Scroll += new System.EventHandler(this.trb_coold_Scroll);
+            // 
+            // lb_trb_coold
+            // 
+            this.lb_trb_coold.AutoSize = true;
+            this.lb_trb_coold.Location = new System.Drawing.Point(708, 211);
+            this.lb_trb_coold.Name = "lb_trb_coold";
+            this.lb_trb_coold.Size = new System.Drawing.Size(13, 13);
+            this.lb_trb_coold.TabIndex = 97;
+            this.lb_trb_coold.Text = "0";
+            // 
+            // pan_press_type
+            // 
+            this.pan_press_type.Controls.Add(this.cb_press_type);
+            this.pan_press_type.Controls.Add(this.lb_press_type);
+            this.pan_press_type.Location = new System.Drawing.Point(125, 269);
+            this.pan_press_type.Name = "pan_press_type";
+            this.pan_press_type.Size = new System.Drawing.Size(202, 24);
+            this.pan_press_type.TabIndex = 83;
+            this.pan_press_type.Visible = false;
+            // 
+            // cb_press_type
+            // 
+            this.cb_press_type.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_press_type.FormattingEnabled = true;
+            this.cb_press_type.Items.AddRange(new object[] {
+            "Default",
+            "PostMessage",
+            "Keybd_event",
+            "Input Simulator"});
+            this.cb_press_type.Location = new System.Drawing.Point(100, 3);
+            this.cb_press_type.Name = "cb_press_type";
+            this.cb_press_type.Size = new System.Drawing.Size(100, 21);
+            this.cb_press_type.TabIndex = 70;
+            this.cb_press_type.SelectionChangeCommitted += new System.EventHandler(this.cb_press_type_SelectionChangeCommitted);
+            // 
+            // lb_press_type
+            // 
+            this.lb_press_type.AutoSize = true;
+            this.lb_press_type.BackColor = System.Drawing.Color.Transparent;
+            this.lb_press_type.Location = new System.Drawing.Point(-3, 6);
+            this.lb_press_type.Name = "lb_press_type";
+            this.lb_press_type.Size = new System.Drawing.Size(78, 13);
+            this.lb_press_type.TabIndex = 71;
+            this.lb_press_type.Text = "Тип прожатия";
+            // 
             // d3hot
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(459, 316);
+            this.ClientSize = new System.Drawing.Size(925, 316);
+            this.Controls.Add(this.pan_press_type);
+            this.Controls.Add(this.lb_trb_coold);
+            this.Controls.Add(this.trb_coold);
+            this.Controls.Add(this.gb_set);
+            this.Controls.Add(this.lb_help);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.lb_scroll);
@@ -1887,13 +2175,13 @@
             this.Controls.Add(this.cb_start);
             this.Controls.Add(this.pan_proc);
             this.Controls.Add(this.pan_prog);
-            this.Controls.Add(this.pan_main);
             this.Controls.Add(this.pan_opt);
+            this.Controls.Add(this.pan_main);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
             this.Name = "d3hot";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Diablo 3 Hotkeys ver. 2.3";
+            this.Text = "Diablo 3 Hotkeys ver. 2.4";
             this.Activated += new System.EventHandler(this.d3hot_Activated);
             this.Deactivate += new System.EventHandler(this.d3hot_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.d3hot_FormClosing);
@@ -1923,6 +2211,13 @@
             this.pan_proc.PerformLayout();
             this.pan_prog.ResumeLayout(false);
             this.pan_prog.PerformLayout();
+            this.gb_set.ResumeLayout(false);
+            this.gb_set.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nud_trig_delay)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nud_trig_time)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trb_coold)).EndInit();
+            this.pan_press_type.ResumeLayout(false);
+            this.pan_press_type.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1957,7 +2252,6 @@
         private System.Windows.Forms.Label lb_key3;
         private System.Windows.Forms.Label lb_key2;
         private System.Windows.Forms.Label lb_key1;
-        private System.Windows.Forms.ToolTip tt_start;
         private MouseKeyboardActivityMonitor.Controls.MouseKeyEventProvider mouseKeyEventProvider1;
         private System.Windows.Forms.Label lb_auth;
         private System.Windows.Forms.Label lb_lang;
@@ -2046,6 +2340,24 @@
         private System.Windows.Forms.Label lb_nud_coold;
         private System.Windows.Forms.NumericUpDown nud_coold;
         private System.Windows.Forms.Label lb_coold;
+        private System.Windows.Forms.Label lb_help;
+        private System.Windows.Forms.GroupBox gb_set;
+        private System.Windows.Forms.Label lb_trig_delay;
+        private System.Windows.Forms.NumericUpDown nud_trig_delay;
+        private System.Windows.Forms.CheckBox cb_trig_once;
+        private System.Windows.Forms.Label lb_trig_enable;
+        private System.Windows.Forms.ComboBox cb_trig_enable;
+        private System.Windows.Forms.Label lb_trig_time;
+        private System.Windows.Forms.NumericUpDown nud_trig_time;
+        private System.Windows.Forms.Button b_trig_ok;
+        private System.Windows.Forms.Label lb_trig_delay_ms;
+        private System.Windows.Forms.Label lb_trig_time_ms;
+        private System.Windows.Forms.TrackBar trb_coold;
+        private System.Windows.Forms.Label lb_trb_coold;
+        private System.Windows.Forms.CheckBox chb_log;
+        private System.Windows.Forms.Panel pan_press_type;
+        private System.Windows.Forms.ComboBox cb_press_type;
+        private System.Windows.Forms.Label lb_press_type;
     }
 }
 

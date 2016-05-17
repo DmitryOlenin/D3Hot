@@ -12,6 +12,14 @@ namespace D3Hot
     public partial class d3hot : Form
     {
 
+        //[System.Runtime.InteropServices.DllImport("user32.dll")]
+        //public static extern void mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
+
+        //public const int MOUSEEVENTF_LEFTDOWN = 0x02;
+        //public const int MOUSEEVENTF_LEFTUP = 0x04;
+        //public const int MOUSEEVENTF_RIGHTDOWN = 0x08;
+        //public const int MOUSEEVENTF_RIGHTUP = 0x10;
+
         //[DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
         //public static extern IntPtr GetFocus();
 
@@ -26,8 +34,8 @@ namespace D3Hot
 
 
         //public int counter = 0, maxRepeatedCharacters = 30; // repeat char 30 times
-        public IntPtr handle = IntPtr.Zero;// = GetForegroundWindow();
-        public HandleRef handle_ref; //new HandleRef(this, handle);
+        private IntPtr handle = IntPtr.Zero;// = GetForegroundWindow();
+        private HandleRef handle_ref; //new HandleRef(this, handle);
         Dictionary<string, IntPtr> proc_handle;
         const uint WM_KEYDOWN = 0x100;
         const uint WM_KEYUP = 0x101;
@@ -56,6 +64,7 @@ namespace D3Hot
         public void keyup(int i)
         {
             uint key_for_keyup = key_h[i];//0;
+            VirtualKeyCode key = key_v[i];
             
             uint ret = 0;
 
@@ -69,7 +78,7 @@ namespace D3Hot
             //    case 6: key_for_keyup = key_h[5]; break; //key_hold_code(key6)
             //}
 
-            ret = _MapVirtualKey(key_for_keyup, 0);
+            ret = NativeMethods._MapVirtualKey(key_for_keyup, 0);
 
             //if ((key_for_keyup == (int)Keys.LButton) || (key_for_keyup == (int)Keys.RButton))
             //{
@@ -101,9 +110,12 @@ namespace D3Hot
             {
                 try
                 {
-                    PostMessage(handle_ref,//hWindow,
-                           updown_keys(key_for_keyup) + 1,//(int)WM_KEYUP,
-                           (IntPtr)key_for_keyup, UIntPtr.Zero); //(int) //key_for_keyup //(IntPtr)(MakeLong(1, ret) + 0xC0000000)
+                    if (usage_area()) //09.12.2015
+                        keyb_down(key_for_keyup, 2);//inp.Keyboard.KeyUp(key);
+                    else
+                        NativeMethods.PostMessage(handle_ref,//hWindow,
+                               updown_keys(key_for_keyup) + 1,//(int)WM_KEYUP,
+                               (IntPtr)key_for_keyup, UIntPtr.Zero); //(int) //key_for_keyup //(IntPtr)(MakeLong(1, ret) + 0xC0000000)
                 }
                 catch (Exception e)
                 {
@@ -117,9 +129,10 @@ namespace D3Hot
             }
         }
 
-        public uint timer_key(System.Timers.Timer timer)
+        public uint timer_key(System.Timers.Timer timer, out VirtualKeyCode key)
         {
             uint key_for_hold = 0; //09.09.2015
+            key = VirtualKeyCode.ESCAPE;
 
             //for (int i = 0; i < 6; i++)
             //{
@@ -127,12 +140,20 @@ namespace D3Hot
             //        key_for_hold = key_h[i];
             //}
 
-                if (tmr_cdr_curr == 1 || timer == RepeatTimer[0] || timer == StartTimer[0] || timer == tmr[0]) key_for_hold = key_h[0]; else
-                if (tmr_cdr_curr == 2 || timer == RepeatTimer[1] || timer == StartTimer[1] || timer == tmr[1]) key_for_hold = key_h[1]; else
-                if (tmr_cdr_curr == 3 || timer == RepeatTimer[2] || timer == StartTimer[2] || timer == tmr[2]) key_for_hold = key_h[2]; else
-                if (tmr_cdr_curr == 4 || timer == RepeatTimer[3] || timer == StartTimer[3] || timer == tmr[3]) key_for_hold = key_h[3]; else
-                if (tmr_cdr_curr == 5 || timer == RepeatTimer[4] || timer == StartTimer[4] || timer == tmr[4]) key_for_hold = key_h[4]; else
-                if (tmr_cdr_curr == 6 || timer == RepeatTimer[5] || timer == StartTimer[5] || timer == tmr[5]) key_for_hold = key_h[5]; 
+            int i = -1;
+
+                if (tmr_cdr_curr == 1 || timer == RepeatTimer[0] || timer == StartTimer[0] || timer == tmr[0]) i=0; else //key_for_hold = key_h[0]
+                if (tmr_cdr_curr == 2 || timer == RepeatTimer[1] || timer == StartTimer[1] || timer == tmr[1]) i=1; else
+                if (tmr_cdr_curr == 3 || timer == RepeatTimer[2] || timer == StartTimer[2] || timer == tmr[2]) i=2; else
+                if (tmr_cdr_curr == 4 || timer == RepeatTimer[3] || timer == StartTimer[3] || timer == tmr[3]) i=3; else
+                if (tmr_cdr_curr == 5 || timer == RepeatTimer[4] || timer == StartTimer[4] || timer == tmr[4]) i=4; else
+                if (tmr_cdr_curr == 6 || timer == RepeatTimer[5] || timer == StartTimer[5] || timer == tmr[5]) i=5;
+
+                if (i > -1)
+                {
+                    key_for_hold = key_h[i];
+                    key = key_v[i];
+                }
                  
             return key_for_hold;
         }
@@ -163,12 +184,14 @@ namespace D3Hot
             if (holded)
             {
                 System.Timers.Timer timer = sender as System.Timers.Timer;
-                uint key_for_hold = timer_key(timer);
+
+                VirtualKeyCode key = VirtualKeyCode.ESCAPE;//VirtualKeyCode.VK_0;
+                uint key_for_hold = timer_key(timer, out key);
 
                 if (key_for_hold > 0) //09.09.2015
                 {
                     uint ret = 0;
-                    ret = _MapVirtualKey(key_for_hold, 0);
+                    ret = NativeMethods._MapVirtualKey(key_for_hold, 0);
 
                     if ((key_for_hold == (int)Keys.LButton) || (key_for_hold == (int)Keys.RButton))
                     {
@@ -178,7 +201,8 @@ namespace D3Hot
                         //if (usage_area() || handle == handle1)
 
                         if (usage_area()
-                            || (lb_debug.Visible && handle == FindWindowEx(FindWindow(null, "akelpad"), IntPtr.Zero, "AkelEditW", null))
+                            || (lb_debug.Visible && handle == NativeMethods.FindWindowEx(NativeMethods.FindWindow(null, "akelpad"), IntPtr.Zero, "AkelEditW", null))
+                            //|| (lb_debug.Visible && handle == FindWindowEx(proc_handle[proc_curr], IntPtr.Zero, "Chrome_RenderWidgetHostHWND", null))
                             )
                         {
                             if (key_for_hold == (int)Keys.LButton && !lmousehold) // && inp.InputDeviceState.IsKeyUp(VirtualKeyCode.LBUTTON)
@@ -197,10 +221,14 @@ namespace D3Hot
                     }
                     else
                     {
-                        //MessageBox.Show("Make long: " + ((IntPtr)(MakeLong(1, ret))).ToString() + "Another way: " + MakeLParam(1, ret).ToString());
-                        PostMessage(handle_ref,//hWindow,
-                                    updown_keys(key_for_hold),
-                                    (IntPtr)key_for_hold, (UIntPtr)(MakeLong(1, ret)));
+
+                        if (usage_area()) //09.12.2015
+                            keyb_down(key_for_hold, 0);//inp.Keyboard.KeyDown(key);
+                        else
+                            //MessageBox.Show("Make long: " + ((IntPtr)(MakeLong(1, ret))).ToString() + "Another way: " + MakeLParam(1, ret).ToString());
+                            NativeMethods.PostMessage(handle_ref,//hWindow,
+                                        updown_keys(key_for_hold),
+                                        (IntPtr)key_for_hold, (UIntPtr)(MakeLong(1, ret)));
 
                         //MessageBox.Show("Process ID: "+proc_curr + ", Handle: " + handle.ToString() + ", Клавиша: " + key_for_hold.ToString());
                     }
@@ -210,11 +238,14 @@ namespace D3Hot
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Ликвидировать объекты перед потерей области")]
         public void startTimer_Tick(object sender, EventArgs eventArgs)
         {
             System.Timers.Timer timer = sender as System.Timers.Timer;
             if (timer != null) timer.Stop();
-            uint key_for_hold = timer_key(timer);
+
+            VirtualKeyCode key = VirtualKeyCode.ESCAPE;//VirtualKeyCode.VK_0;
+            uint key_for_hold = timer_key(timer, out key);
 
             if (key_for_hold > 0) //09.09.2015
             {
@@ -230,80 +261,72 @@ namespace D3Hot
                     }
                 }
 
-                //if (timer == StartTimer[0] && st_timer_r[0] > 0)
-                //{
-                //    i = 1;
-                //    st_timer_r[0] = 0;
-                //} 
-                //else if (timer == StartTimer[1] && st_timer_r[1] > 0)
-                //{
-                //    i = 2;
-                //    st_timer_r[1] = 0;
-                //} 
-                //else if (timer == StartTimer[2] && st_timer_r[2] > 0)
-                //{
-                //    i = 3;
-                //    st_timer_r[2] = 0;
-                //}
-                //else if (timer == StartTimer[3] && st_timer_r[3] > 0)
-                //{
-                //    i = 4;
-                //    st_timer_r[3] = 0;
-                //}
-                //else if (timer == StartTimer[4] && st_timer_r[4] > 0)
-                //{
-                //    i = 5;
-                //    st_timer_r[4] = 0;
-                //}
-                //else if (timer == StartTimer[5] && st_timer_r[5] > 0)
-                //{
-                //    i = 6;
-                //    st_timer_r[5] = 0;
-                //}
-
                 uint ret = 0;
-                ret = _MapVirtualKey(key_for_hold, 0);
+                ret = NativeMethods._MapVirtualKey(key_for_hold, 0);
 
-                if ((key_for_hold == (int)Keys.LButton) || (key_for_hold == (int)Keys.RButton))
+
+                if (press_type == 0)
                 {
-                    if (i != -1)
+                    if (usage_area()) //09.12.2015
                     {
-                        //IntPtr handle1;
-                        //handle1 = FindWindow(null, "akelpad");
-                        //handle1 = FindWindowEx(handle1, IntPtr.Zero, "AkelEditW", null);  //For debugging
-                        //if (usage_area() || handle == handle1)
+                        if (key_for_hold == (int)Keys.LButton) inp.Mouse.LeftButtonDown();
+                        else if (key_for_hold == (int)Keys.RButton) inp.Mouse.RightButtonDown();
+                        else sendinput_push(key, key_for_hold);
+                    }
 
-                        if (usage_area()
-                            || (lb_debug.Visible && handle == FindWindowEx(FindWindow(null, "akelpad"), IntPtr.Zero, "AkelEditW", null))
-                            )
-                        {
-                            if (key_for_hold == (int)Keys.LButton)
-                                inp.Mouse.LeftButtonDown();
-                            if (key_for_hold == (int)Keys.RButton)
-                                inp.Mouse.RightButtonDown();
-                        }
-
-                        //if (key_for_hold == (int)Keys.LButton) Mouse.ButtonDown(Mouse.MouseKeys.Left); //26.03.2015
-                        //if (key_for_hold == (int)Keys.RButton) Mouse.ButtonDown(Mouse.MouseKeys.Right); //26.03.2015
-
-                        //Point defPnt = new Point();
-                        //GetCursorPos(ref defPnt);
-
-                        //PostMessage(handle,
-                        //           updown_keys(key_for_hold),
-                        //           key_for_hold, (int)MakeLong(defPnt.X, defPnt.Y));
+                    else if ((int)handle > 0)
+                    {
+                        post_push(key_for_hold);
                     }
                 }
-                else
-                {
-                    PostMessage(handle_ref,//hWindow,
-                               updown_keys(key_for_hold),//(int)WM_KEYDOWN,
-                               (IntPtr)key_for_hold, (UIntPtr)(MakeLong(1, ret)));
-                }
 
-                //PostMessage(handle,//hWindow,
-                //           updown_keys(key_for_hold),//(int)WM_KEYDOWN,
-                //           key_for_hold, 0);
+                else if (press_type == 1)
+                    post_push(key_for_hold);
+
+                else if (press_type > 1)
+                    {
+                        if (key_for_hold == (int)Keys.LButton) inp.Mouse.LeftButtonDown();
+                        else if (key_for_hold == (int)Keys.RButton) inp.Mouse.RightButtonDown();
+                        else sendinput_push(key, key_for_hold);
+                    }
+
+                //if ((key_for_hold == (int)Keys.LButton) || (key_for_hold == (int)Keys.RButton))
+                //{
+                //    if (i != -1)
+                //    {
+                //        //IntPtr handle1;
+                //        //handle1 = FindWindow(null, "akelpad");
+                //        //handle1 = FindWindowEx(handle1, IntPtr.Zero, "AkelEditW", null);  //For debugging
+                //        //if (usage_area() || handle == handle1)
+
+                //        if (usage_area()
+                //            || (lb_debug.Visible && handle == FindWindowEx(FindWindow(null, "akelpad"), IntPtr.Zero, "AkelEditW", null))
+                //            //|| (lb_debug.Visible && handle == FindWindowEx(proc_handle[proc_curr], IntPtr.Zero, "Chrome_RenderWidgetHostHWND", null))
+                //            )
+                //        {
+                //            if (key_for_hold == (int)Keys.LButton)
+                //                inp.Mouse.LeftButtonDown();
+                //            if (key_for_hold == (int)Keys.RButton)
+                //                inp.Mouse.RightButtonDown();
+                //        }
+
+                //        //if (key_for_hold == (int)Keys.LButton) Mouse.ButtonDown(Mouse.MouseKeys.Left); //26.03.2015
+                //        //if (key_for_hold == (int)Keys.RButton) Mouse.ButtonDown(Mouse.MouseKeys.Right); //26.03.2015
+
+                //        //Point defPnt = new Point();
+                //        //GetCursorPos(ref defPnt);
+
+                //        //PostMessage(handle,
+                //        //           updown_keys(key_for_hold),
+                //        //           key_for_hold, (int)MakeLong(defPnt.X, defPnt.Y));
+                //    }
+                //}
+                //else
+                //{
+                //    PostMessage(handle_ref,//hWindow,
+                //               updown_keys(key_for_hold),//(int)WM_KEYDOWN,
+                //               (IntPtr)key_for_hold, (UIntPtr)(MakeLong(1, ret)));
+                //}
 
                 if (i > -1)
                     System.Threading.Thread.Sleep(50);
@@ -312,51 +335,12 @@ namespace D3Hot
                 RepeatTimer[i].Elapsed += repeatTimer_Tick;
                 r_timer_r[i] = 1;
                 RepeatTimer[i].Start();
-
-                //switch (i)
-                //{
-                //    case (1):
-                //        RepeatTimer[0] = new System.Timers.Timer { Interval = keyboardSpeed };
-                //        RepeatTimer[0].Elapsed += repeatTimer_Tick;
-                //        r_timer_r[0] = 1;
-                //        RepeatTimer[0].Start();
-                //        break;
-                //    case (2):
-                //        RepeatTimer[1] = new System.Timers.Timer { Interval = keyboardSpeed };
-                //        RepeatTimer[1].Elapsed += repeatTimer_Tick;
-                //        r_timer_r[1] = 1;
-                //        RepeatTimer[1].Start();
-                //        break;
-                //    case (3):
-                //        RepeatTimer[2] = new System.Timers.Timer { Interval = keyboardSpeed };
-                //        RepeatTimer[2].Elapsed += repeatTimer_Tick;
-                //        r_timer_r[2] = 1;
-                //        RepeatTimer[2].Start();
-                //        break;
-                //    case (4):
-                //        RepeatTimer[3] = new System.Timers.Timer { Interval = keyboardSpeed };
-                //        RepeatTimer[3].Elapsed += repeatTimer_Tick;
-                //        r_timer_r[3] = 1;
-                //        RepeatTimer[3].Start();
-                //        break;
-                //    case (5):
-                //        RepeatTimer[4] = new System.Timers.Timer { Interval = keyboardSpeed };
-                //        RepeatTimer[4].Elapsed += repeatTimer_Tick;
-                //        r_timer_r[4] = 1;
-                //        RepeatTimer[4].Start();
-                //        break;
-                //    case (6):
-                //        RepeatTimer[5] = new System.Timers.Timer { Interval = keyboardSpeed };
-                //        RepeatTimer[5].Elapsed += repeatTimer_Tick;
-                //        r_timer_r[5] = 1;
-                //        RepeatTimer[5].Start();
-                //        break;
-                //}
             }
         }
 
 
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Ликвидировать объекты перед потерей области")]
         public void hold_load(int i)
         {
             holded = true;
