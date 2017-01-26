@@ -1,16 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Win32;
-using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 using WindowsInput.Native;
-using System.Runtime.InteropServices;
-//using InputManager; //26.03.2015
+using Microsoft.Win32;
+using Timer = System.Timers.Timer;
 
 namespace D3Hot
 {
-    public partial class d3hot : Form
+    public partial class D3Hotkeys //: Form
     {
+        private const uint WmKeydown = 0x100;
+        //const uint WmKeyup = 0x101;
+        //const uint WM_CHAR = 0x102;
+        //const uint WM_SYSKEYDOWN = 0x104;
+        private const uint WmLbuttondown = 0x201;
+        //const uint WM_LBUTTONUP = 0x202;
+        private const uint WmRbuttondown = 0x204;
+        //const uint WM_RBUTTONUP = 0x205;
+
+        //public System.Windows.Forms.Timer startTimer;
+        //public System.Windows.Forms.Timer repeatTimer;
+
+        private readonly Timer[] //09.07.2015
+            _startTimer = new Timer[6],
+            _repeatTimer = new Timer[6];
+
+        private readonly int[] _stTimerR = {0, 0, 0, 0, 0, 0},
+            //09.07.2015
+            _rTimerR = {0, 0, 0, 0, 0, 0}; //09.07.2015
 
         //[System.Runtime.InteropServices.DllImport("user32.dll")]
         //public static extern void mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
@@ -34,39 +53,23 @@ namespace D3Hot
 
 
         //public int counter = 0, maxRepeatedCharacters = 30; // repeat char 30 times
-        private IntPtr handle = IntPtr.Zero;// = GetForegroundWindow();
-        private HandleRef handle_ref; //new HandleRef(this, handle);
-        Dictionary<string, IntPtr> proc_handle;
-        const uint WM_KEYDOWN = 0x100;
-        const uint WM_KEYUP = 0x101;
-        const uint WM_CHAR = 0x102;
-        const uint WM_SYSKEYDOWN = 0x104;
-        const uint WM_LBUTTONDOWN = 0x201;
-        const uint WM_LBUTTONUP = 0x202;
-        const uint WM_RBUTTONDOWN = 0x204;
-        const uint WM_RBUTTONUP = 0x205;
+        private IntPtr _handle = IntPtr.Zero; // = GetForegroundWindow();
+        private HandleRef _handleRef; //new HandleRef(this, handle);
 
-        //public System.Windows.Forms.Timer startTimer;
-        //public System.Windows.Forms.Timer repeatTimer;
-        public System.Timers.Timer[] StartTimer = new System.Timers.Timer[6];//09.07.2015
-        public System.Timers.Timer[] RepeatTimer = new System.Timers.Timer[6];//09.07.2015
-        
+
         //public int key_for_hold = 0, key_for_keyup = 0;
-        public uint key_down = 0, key_up=0;
+        //public uint key_down = 0, key_up=0;
         //public int st_timer1_r = 0, st_timer2_r = 0, st_timer3_r = 0, st_timer4_r = 0, st_timer5_r = 0, st_timer6_r = 0,
         //    r_timer1_r = 0, r_timer2_r = 0, r_timer3_r = 0, r_timer4_r = 0, r_timer5_r = 0, r_timer6_r = 0;
-        public int keyboardDelay, keyboardSpeed;
+        private int _keyboardDelay, _keyboardSpeed, _procId;
+        private Dictionary<string, IntPtr> _procHandle;
 
-        public int[] st_timer_r = new int[] { 0, 0, 0, 0, 0, 0 }; //09.07.2015
-        public int[] r_timer_r = new int[] { 0, 0, 0, 0, 0, 0 }; //09.07.2015
-
-
-        public void keyup(int i)
+        private void Keyup(int i)
         {
-            uint key_for_keyup = key_h[i];//0;
-            VirtualKeyCode key = key_v[i];
-            
-            uint ret = 0;
+            var keyForKeyup = KeyH[i]; //0;
+            //var key = KeyV[i];
+
+            //uint ret = 0;
 
             //switch (i)
             //{
@@ -78,60 +81,59 @@ namespace D3Hot
             //    case 6: key_for_keyup = key_h[5]; break; //key_hold_code(key6)
             //}
 
-            ret = NativeMethods._MapVirtualKey(key_for_keyup, 0);
-
             //if ((key_for_keyup == (int)Keys.LButton) || (key_for_keyup == (int)Keys.RButton))
             //{
-                //Point defPnt = new Point();
-                //GetCursorPos(ref defPnt);
+            //Point defPnt = new Point();
+            //GetCursorPos(ref defPnt);
 
-                //PostMessage(handle,
-                //           updown_keys(key_for_keyup)+1,
-                //           0, (int)MakeLong(defPnt.X, defPnt.Y));
+            //PostMessage(handle,
+            //           updown_keys(key_for_keyup)+1,
+            //           0, (int)MakeLong(defPnt.X, defPnt.Y));
 
             //}
-            if (key_for_keyup == (int)Keys.LButton)
+            switch (keyForKeyup)
             {
-                inp.Mouse.LeftButtonUp(); //Mouse.ButtonUp(Mouse.MouseKeys.Left);
-                System.Threading.Thread.Sleep(50);
-                if (inp.InputDeviceState.IsKeyDown(VirtualKeyCode.LBUTTON))
-                    inp.Mouse.LeftButtonUp();
-                lmousehold = false;
-            }
-            else if (key_for_keyup == (int)Keys.RButton)
-            {
-                inp.Mouse.RightButtonUp(); //Mouse.ButtonUp(Mouse.MouseKeys.Right);
-                System.Threading.Thread.Sleep(50);
-                if (inp.InputDeviceState.IsKeyDown(VirtualKeyCode.RBUTTON))
-                    inp.Mouse.RightButtonUp();
-                rmousehold = false;
-            }
-            else
-            {
-                try
-                {
-                    if (usage_area()) //09.12.2015
-                        keyb_down(key_for_keyup, 2);//inp.Keyboard.KeyUp(key);
-                    else
-                        NativeMethods.PostMessage(handle_ref,//hWindow,
-                               updown_keys(key_for_keyup) + 1,//(int)WM_KEYUP,
-                               (IntPtr)key_for_keyup, UIntPtr.Zero); //(int) //key_for_keyup //(IntPtr)(MakeLong(1, ret) + 0xC0000000)
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show("Data: " + e.Data + " Exeption: " + e.Message
-                        //"Handle: " + handle_ref.ToString() + " updown_keys: " 
-                        //+ (updown_keys(key_for_keyup) + 1).ToString()
-                        //+ " key_for_keyup "+ ((IntPtr)key_for_keyup).ToString() 
-                        //+ " lparam: " + ((IntPtr)(MakeLong(1, ret) + 0xC0000000)).ToString()
-                        ); 
-                }
+                case (int) Keys.LButton:
+                    _inp.Mouse.LeftButtonUp(); //Mouse.ButtonUp(Mouse.MouseKeys.Left);
+                    Thread.Sleep(50);
+                    if (_inp.InputDeviceState.IsKeyDown(VirtualKeyCode.LBUTTON))
+                        _inp.Mouse.LeftButtonUp();
+                    _lmousehold = false;
+                    break;
+                case (int) Keys.RButton:
+                    _inp.Mouse.RightButtonUp(); //Mouse.ButtonUp(Mouse.MouseKeys.Right);
+                    Thread.Sleep(50);
+                    if (_inp.InputDeviceState.IsKeyDown(VirtualKeyCode.RBUTTON))
+                        _inp.Mouse.RightButtonUp();
+                    _rmousehold = false;
+                    break;
+                default:
+                    try
+                    {
+                        if (usage_area()) //09.12.2015
+                            keyb_down(keyForKeyup, 2); //inp.Keyboard.KeyUp(key);
+                        else
+                            NativeMethods.PostMessage(_handleRef, //hWindow,
+                                    updown_keys(keyForKeyup) + 1, //(int)WM_KEYUP,
+                                    (IntPtr) keyForKeyup, UIntPtr.Zero);
+                                //(int) //key_for_keyup //(IntPtr)(MakeLong(1, ret) + 0xC0000000)
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(@"Data: " + e.Data + @" Exeption: " + e.Message
+                            //"Handle: " + handle_ref.ToString() + " updown_keys: " 
+                            //+ (updown_keys(key_for_keyup) + 1).ToString()
+                            //+ " key_for_keyup "+ ((IntPtr)key_for_keyup).ToString() 
+                            //+ " lparam: " + ((IntPtr)(MakeLong(1, ret) + 0xC0000000)).ToString()
+                        );
+                    }
+                    break;
             }
         }
 
-        public uint timer_key(System.Timers.Timer timer, out VirtualKeyCode key)
+        private uint timer_key(Timer timer, out VirtualKeyCode key)
         {
-            uint key_for_hold = 0; //09.09.2015
+            uint keyForHold = 0; //09.09.2015
             key = VirtualKeyCode.ESCAPE;
 
             //for (int i = 0; i < 6; i++)
@@ -140,311 +142,259 @@ namespace D3Hot
             //        key_for_hold = key_h[i];
             //}
 
-            int i = -1;
+            var i = -1;
 
-                if (tmr_cdr_curr == 1 || timer == RepeatTimer[0] || timer == StartTimer[0] || timer == tmr[0]) i=0; else //key_for_hold = key_h[0]
-                if (tmr_cdr_curr == 2 || timer == RepeatTimer[1] || timer == StartTimer[1] || timer == tmr[1]) i=1; else
-                if (tmr_cdr_curr == 3 || timer == RepeatTimer[2] || timer == StartTimer[2] || timer == tmr[2]) i=2; else
-                if (tmr_cdr_curr == 4 || timer == RepeatTimer[3] || timer == StartTimer[3] || timer == tmr[3]) i=3; else
-                if (tmr_cdr_curr == 5 || timer == RepeatTimer[4] || timer == StartTimer[4] || timer == tmr[4]) i=4; else
-                if (tmr_cdr_curr == 6 || timer == RepeatTimer[5] || timer == StartTimer[5] || timer == tmr[5]) i=5;
+            if (timer == _repeatTimer[0] || timer == _startTimer[0] || timer == _tmr[0]) i = 0;
+            else //key_for_hold = key_h[0] //_tmrCdrCurr == 1 || 
+            if (timer == _repeatTimer[1] || timer == _startTimer[1] || timer == _tmr[1]) i = 1;
+            else //_tmrCdrCurr == 2 || 
+            if (timer == _repeatTimer[2] || timer == _startTimer[2] || timer == _tmr[2]) i = 2;
+            else //_tmrCdrCurr == 3 || 
+            if (timer == _repeatTimer[3] || timer == _startTimer[3] || timer == _tmr[3]) i = 3;
+            else //_tmrCdrCurr == 4 || 
+            if (timer == _repeatTimer[4] || timer == _startTimer[4] || timer == _tmr[4]) i = 4;
+            else //_tmrCdrCurr == 5 || 
+            if (timer == _repeatTimer[5] || timer == _startTimer[5] || timer == _tmr[5]) i = 5; //_tmrCdrCurr == 6 || 
 
-                if (i > -1)
-                {
-                    key_for_hold = key_h[i];
-                    key = key_v[i];
-                }
-                 
-            return key_for_hold;
+            if (i <= -1) return keyForHold;
+            keyForHold = KeyH[i];
+            key = KeyV[i];
+
+            return keyForHold;
         }
 
-        public uint updown_keys(uint key_for_hold)
+        private static uint updown_keys(uint keyForHold)
         {
-            uint key_down = 0;
-            switch (key_for_hold)
+            uint keyDown;
+            switch (keyForHold)
             {
                 case 1:
-                    key_down = WM_LBUTTONDOWN;
+                    keyDown = WmLbuttondown;
                     //key_up = WM_LBUTTONUP;
                     break;
                 case 2:
-                    key_down = WM_RBUTTONDOWN;
+                    keyDown = WmRbuttondown;
                     //key_up = WM_RBUTTONUP;
                     break;
                 default:
-                    key_down = WM_KEYDOWN;
+                    keyDown = WmKeydown;
                     //key_up = WM_KEYUP;
                     break;
             }
-            return key_down;
+            return keyDown;
         }
 
-        public void repeatTimer_Tick(object sender, EventArgs e)
+        private void repeatTimer_Tick(object sender, EventArgs e)
         {
-            if (holded)
+            if (!_holded) return;
+            var timer = sender as Timer;
+
+            VirtualKeyCode key; //VirtualKeyCode.VK_0;
+            var keyForHold = timer_key(timer, out key);
+
+            if (keyForHold > 0) //09.09.2015
             {
-                System.Timers.Timer timer = sender as System.Timers.Timer;
+                var ret = NativeMethods._MapVirtualKey(keyForHold, 0);
 
-                VirtualKeyCode key = VirtualKeyCode.ESCAPE;//VirtualKeyCode.VK_0;
-                uint key_for_hold = timer_key(timer, out key);
-
-                if (key_for_hold > 0) //09.09.2015
+                if (keyForHold == (int) Keys.LButton || keyForHold == (int) Keys.RButton)
                 {
-                    uint ret = 0;
-                    ret = NativeMethods._MapVirtualKey(key_for_hold, 0);
+                    //IntPtr handle1;
+                    //handle1 = FindWindow(null, "akelpad");
+                    //handle1 = FindWindowEx(handle1, IntPtr.Zero, "AkelEditW", null); //For debugging
+                    //if (usage_area() || handle == handle1)
 
-                    if ((key_for_hold == (int)Keys.LButton) || (key_for_hold == (int)Keys.RButton))
+                    if (!usage_area() &&
+                        (!lb_debug.Visible ||
+                         _handle !=
+                         NativeMethods.FindWindowEx(NativeMethods.FindWindow(null, "akelpad"), IntPtr.Zero, "AkelEditW",
+                             null))) return;
+                    if (keyForHold == (int) Keys.LButton && !_lmousehold)
+                        // && inp.InputDeviceState.IsKeyUp(VirtualKeyCode.LBUTTON)
                     {
-                        //IntPtr handle1;
-                        //handle1 = FindWindow(null, "akelpad");
-                        //handle1 = FindWindowEx(handle1, IntPtr.Zero, "AkelEditW", null); //For debugging
-                        //if (usage_area() || handle == handle1)
-
-                        if (usage_area()
-                            || (lb_debug.Visible && handle == NativeMethods.FindWindowEx(NativeMethods.FindWindow(null, "akelpad"), IntPtr.Zero, "AkelEditW", null))
-                            //|| (lb_debug.Visible && handle == FindWindowEx(proc_handle[proc_curr], IntPtr.Zero, "Chrome_RenderWidgetHostHWND", null))
-                            )
-                        {
-                            if (key_for_hold == (int)Keys.LButton && !lmousehold) // && inp.InputDeviceState.IsKeyUp(VirtualKeyCode.LBUTTON)
-                            {
-                                //System.Threading.Thread.Sleep(100); 
-                                inp.Mouse.LeftButtonDown();
-                                lmousehold = true;
-                            }
-                            if (key_for_hold == (int)Keys.RButton && !rmousehold) // && inp.InputDeviceState.IsKeyUp(VirtualKeyCode.RBUTTON)
-                            {
-                                //System.Threading.Thread.Sleep(100);
-                                inp.Mouse.RightButtonDown();
-                                rmousehold = true;
-                            }
-                        }
+                        //System.Threading.Thread.Sleep(100); 
+                        _inp.Mouse.LeftButtonDown();
+                        _lmousehold = true;
                     }
-                    else
-                    {
-
-                        if (usage_area()) //09.12.2015
-                            keyb_down(key_for_hold, 0);//inp.Keyboard.KeyDown(key);
-                        else
-                            //MessageBox.Show("Make long: " + ((IntPtr)(MakeLong(1, ret))).ToString() + "Another way: " + MakeLParam(1, ret).ToString());
-                            NativeMethods.PostMessage(handle_ref,//hWindow,
-                                        updown_keys(key_for_hold),
-                                        (IntPtr)key_for_hold, (UIntPtr)(MakeLong(1, ret)));
-
-                        //MessageBox.Show("Process ID: "+proc_curr + ", Handle: " + handle.ToString() + ", Клавиша: " + key_for_hold.ToString());
-                    }
-
+                    if (keyForHold != (int) Keys.RButton || _rmousehold) return;
+                    //System.Threading.Thread.Sleep(100);
+                    _inp.Mouse.RightButtonDown();
+                    _rmousehold = true;
                 }
-                else timer.Stop();
-            }
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Ликвидировать объекты перед потерей области")]
-        public void startTimer_Tick(object sender, EventArgs eventArgs)
-        {
-            System.Timers.Timer timer = sender as System.Timers.Timer;
-            if (timer != null) timer.Stop();
-
-            VirtualKeyCode key = VirtualKeyCode.ESCAPE;//VirtualKeyCode.VK_0;
-            uint key_for_hold = timer_key(timer, out key);
-
-            if (key_for_hold > 0) //09.09.2015
-            {
-                int i = -1;
-
-                for (int j = 0; j < 6; j++)
-                {
-                    if (timer == StartTimer[j] && st_timer_r[j] > 0)
-                    {
-                        i = j;
-                        st_timer_r[j] = 0;
-                        break;
-                    }
-                }
-
-                uint ret = 0;
-                ret = NativeMethods._MapVirtualKey(key_for_hold, 0);
-
-
-                if (press_type == 0)
+                else
                 {
                     if (usage_area()) //09.12.2015
-                    {
-                        if (key_for_hold == (int)Keys.LButton) inp.Mouse.LeftButtonDown();
-                        else if (key_for_hold == (int)Keys.RButton) inp.Mouse.RightButtonDown();
-                        else sendinput_push(key, key_for_hold);
-                    }
+                        keyb_down(keyForHold, 0); //inp.Keyboard.KeyDown(key);
+                    else
+                        //MessageBox.Show("Make long: " + ((IntPtr)(MakeLong(1, ret))).ToString() + "Another way: " + MakeLParam(1, ret).ToString());
+                        NativeMethods.PostMessage(_handleRef, //hWindow,
+                            updown_keys(keyForHold),
+                            (IntPtr) keyForHold, (UIntPtr) MakeLong(1, ret));
 
-                    else if ((int)handle > 0)
-                    {
-                        post_push(key_for_hold);
-                    }
+                    //MessageBox.Show("Process ID: "+proc_curr + ", Handle: " + handle.ToString() + ", Клавиша: " + key_for_hold.ToString());
                 }
+            }
+            else if (timer != null)
+            {
+                timer.Stop();
+            }
+        }
 
-                else if (press_type == 1)
-                    post_push(key_for_hold);
+        private void startTimer_Tick(object sender, EventArgs eventArgs)
+        {
+            var timer = sender as Timer;
+            if (timer != null) timer.Stop();
 
-                else if (press_type > 1)
+            VirtualKeyCode key; // = VirtualKeyCode.ESCAPE;//VirtualKeyCode.VK_0;
+            var keyForHold = timer_key(timer, out key);
+
+            if (keyForHold <= 0) return;
+            var i = -1;
+
+            for (var j = 0; j < 6; j++)
+            {
+                if (timer != _startTimer[j] || _stTimerR[j] <= 0) continue;
+                i = j;
+                _stTimerR[j] = 0;
+                break;
+            }
+
+            //uint ret = 0;
+            //ret = NativeMethods._MapVirtualKey(keyForHold, 0);
+
+
+            switch (_pressType)
+            {
+                case 0:
+                    if (usage_area()) //09.12.2015
+                        switch (keyForHold)
+                        {
+                            case (int) Keys.LButton:
+                                _inp.Mouse.LeftButtonDown();
+                                break;
+                            case (int) Keys.RButton:
+                                _inp.Mouse.RightButtonDown();
+                                break;
+                            default:
+                                sendinput_push(key, keyForHold);
+                                break;
+                        }
+
+                    else if ((int) _handle > 0)
+                        post_push(keyForHold);
+                    break;
+                case 1:
+                    post_push(keyForHold);
+                    break;
+                default:
+                    if (_pressType > 1)
                     {
-                        if (key_for_hold == (int)Keys.LButton) inp.Mouse.LeftButtonDown();
-                        else if (key_for_hold == (int)Keys.RButton) inp.Mouse.RightButtonDown();
-                        else sendinput_push(key, key_for_hold);
+                        switch (keyForHold)
+                        {
+                            case (int) Keys.LButton:
+                                _inp.Mouse.LeftButtonDown();
+                                break;
+                            case (int) Keys.RButton:
+                                _inp.Mouse.RightButtonDown();
+                                break;
+                            default:
+                                sendinput_push(key, keyForHold);
+                                break;
+                        }
                     }
+                    break;
+            }
 
-                //if ((key_for_hold == (int)Keys.LButton) || (key_for_hold == (int)Keys.RButton))
-                //{
-                //    if (i != -1)
-                //    {
-                //        //IntPtr handle1;
-                //        //handle1 = FindWindow(null, "akelpad");
-                //        //handle1 = FindWindowEx(handle1, IntPtr.Zero, "AkelEditW", null);  //For debugging
-                //        //if (usage_area() || handle == handle1)
+            //if ((key_for_hold == (int)Keys.LButton) || (key_for_hold == (int)Keys.RButton))
+            //{
+            //    if (i != -1)
+            //    {
+            //        //IntPtr handle1;
+            //        //handle1 = FindWindow(null, "akelpad");
+            //        //handle1 = FindWindowEx(handle1, IntPtr.Zero, "AkelEditW", null);  //For debugging
+            //        //if (usage_area() || handle == handle1)
 
-                //        if (usage_area()
-                //            || (lb_debug.Visible && handle == FindWindowEx(FindWindow(null, "akelpad"), IntPtr.Zero, "AkelEditW", null))
-                //            //|| (lb_debug.Visible && handle == FindWindowEx(proc_handle[proc_curr], IntPtr.Zero, "Chrome_RenderWidgetHostHWND", null))
-                //            )
-                //        {
-                //            if (key_for_hold == (int)Keys.LButton)
-                //                inp.Mouse.LeftButtonDown();
-                //            if (key_for_hold == (int)Keys.RButton)
-                //                inp.Mouse.RightButtonDown();
-                //        }
+            //        if (usage_area()
+            //            || (lb_debug.Visible && handle == FindWindowEx(FindWindow(null, "akelpad"), IntPtr.Zero, "AkelEditW", null))
+            //            //|| (lb_debug.Visible && handle == FindWindowEx(proc_handle[proc_curr], IntPtr.Zero, "Chrome_RenderWidgetHostHWND", null))
+            //            )
+            //        {
+            //            if (key_for_hold == (int)Keys.LButton)
+            //                inp.Mouse.LeftButtonDown();
+            //            if (key_for_hold == (int)Keys.RButton)
+            //                inp.Mouse.RightButtonDown();
+            //        }
 
-                //        //if (key_for_hold == (int)Keys.LButton) Mouse.ButtonDown(Mouse.MouseKeys.Left); //26.03.2015
-                //        //if (key_for_hold == (int)Keys.RButton) Mouse.ButtonDown(Mouse.MouseKeys.Right); //26.03.2015
+            //        //if (key_for_hold == (int)Keys.LButton) Mouse.ButtonDown(Mouse.MouseKeys.Left); //26.03.2015
+            //        //if (key_for_hold == (int)Keys.RButton) Mouse.ButtonDown(Mouse.MouseKeys.Right); //26.03.2015
 
-                //        //Point defPnt = new Point();
-                //        //GetCursorPos(ref defPnt);
+            //        //Point defPnt = new Point();
+            //        //GetCursorPos(ref defPnt);
 
-                //        //PostMessage(handle,
-                //        //           updown_keys(key_for_hold),
-                //        //           key_for_hold, (int)MakeLong(defPnt.X, defPnt.Y));
-                //    }
-                //}
-                //else
-                //{
-                //    PostMessage(handle_ref,//hWindow,
-                //               updown_keys(key_for_hold),//(int)WM_KEYDOWN,
-                //               (IntPtr)key_for_hold, (UIntPtr)(MakeLong(1, ret)));
-                //}
+            //        //PostMessage(handle,
+            //        //           updown_keys(key_for_hold),
+            //        //           key_for_hold, (int)MakeLong(defPnt.X, defPnt.Y));
+            //    }
+            //}
+            //else
+            //{
+            //    PostMessage(handle_ref,//hWindow,
+            //               updown_keys(key_for_hold),//(int)WM_KEYDOWN,
+            //               (IntPtr)key_for_hold, (UIntPtr)(MakeLong(1, ret)));
+            //}
 
-                if (i > -1)
-                    System.Threading.Thread.Sleep(50);
+            if (i <= -1) return;
+//11.01.2017 Анализ PVS Studio - возможны ситуации, где i == -1, добавил остальные строки в if
+            Thread.Sleep(50);
 
-                RepeatTimer[i] = new System.Timers.Timer { Interval = keyboardSpeed };
-                RepeatTimer[i].Elapsed += repeatTimer_Tick;
-                r_timer_r[i] = 1;
-                RepeatTimer[i].Start();
+            _repeatTimer[i] = new Timer ();
+            try
+            {
+                _repeatTimer[i].Interval = _keyboardSpeed;
+                _repeatTimer[i].Elapsed += repeatTimer_Tick;
+                _rTimerR[i] = 1;
+                _repeatTimer[i].Start();
+            }
+            catch 
+            {
+                _repeatTimer[i].Dispose();
             }
         }
 
 
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Ликвидировать объекты перед потерей области")]
-        public void hold_load(int i)
+        private void hold_load(int i)
         {
-            holded = true;
+            _holded = true;
             //int keyboardDelay, keyboardSpeed;
             using (var key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Keyboard"))
             {
-                Debug.Assert(key != null);
-                keyboardDelay = 1;
-                int.TryParse((String)key.GetValue("KeyboardDelay", "1"), out keyboardDelay);
-                keyboardSpeed = 31;
-                int.TryParse((String)key.GetValue("KeyboardSpeed", "31"), out keyboardSpeed);
+                //Debug.Assert(key != null);
+                _keyboardDelay = 1;
+                if (key != null)
+                {
+                    int.TryParse((string) key.GetValue("KeyboardDelay", "1"), out _keyboardDelay);
+                    _keyboardSpeed = 31;
+                    int.TryParse((string) key.GetValue("KeyboardSpeed", "31"), out _keyboardSpeed);
+                }
             }
 
-            StartTimer[i] = new System.Timers.Timer { Interval = keyboardDelay };
-            StartTimer[i].Elapsed += startTimer_Tick;
-            st_timer_r[i] = 1;
-            StartTimer[i].Start();
+            _startTimer[i] = new Timer();
 
-            //switch (i)
-            //{
-            //    case 1:
-            //        StartTimer[0] = new System.Timers.Timer { Interval = keyboardDelay };
-            //        StartTimer[0].Elapsed += startTimer_Tick;
-            //        st_timer_r[0] = 1; 
-            //        StartTimer[0].Start();
-            //        //if (!mouse(1))
-            //        //{
-            //            //RepeatTimer[0] = new System.Timers.Timer { Interval = keyboardSpeed };
-            //            //RepeatTimer[0].Elapsed += repeatTimer_Tick;
-            //            //r_timer_r[0] = 1;
-            //            //RepeatTimer[0].Start();
-            //        //}
-            //        break;
-            //    case 2:
-            //        StartTimer[1] = new System.Timers.Timer { Interval = keyboardDelay };
-            //        StartTimer[1].Elapsed += startTimer_Tick;
-            //        st_timer_r[1] = 1; 
-            //        StartTimer[1].Start();
-            //        //if (!mouse(2))
-            //        //{
-            //            //RepeatTimer[1] = new System.Timers.Timer { Interval = keyboardSpeed };
-            //            //RepeatTimer[1].Elapsed += repeatTimer_Tick;
-            //            //r_timer_r[1] = 1;
-            //            //RepeatTimer[1].Start();
-            //        //}
-            //        break;
-            //    case 3:
-            //        StartTimer[2] = new System.Timers.Timer { Interval = keyboardDelay };
-            //        StartTimer[2].Elapsed += startTimer_Tick;
-            //        st_timer_r[2] = 1; 
-            //        StartTimer[2].Start();
-            //        //if (!mouse(3))
-            //        //{
-            //            //RepeatTimer[2] = new System.Timers.Timer { Interval = keyboardSpeed };
-            //            //RepeatTimer[2].Elapsed += repeatTimer_Tick;
-            //            //r_timer_r[2] = 1;
-            //            //RepeatTimer[2].Start();
-            //        //}
-            //        break;
-            //    case 4:
-            //        StartTimer[3] = new System.Timers.Timer { Interval = keyboardDelay };
-            //        StartTimer[3].Elapsed += startTimer_Tick;
-            //        StartTimer[3].AutoReset = false;
-            //        st_timer_r[3] = 1; 
-            //        StartTimer[3].Start();
-            //        //if (!mouse(4))
-            //        //{
-            //            //RepeatTimer[3] = new System.Timers.Timer { Interval = keyboardSpeed };
-            //            //RepeatTimer[3].Elapsed += repeatTimer_Tick;
-            //            //r_timer_r[3] = 1;
-            //            //RepeatTimer[3].Start();
-            //        //}
-            //        break;
-            //    case 5:
-            //        StartTimer[4] = new System.Timers.Timer { Interval = keyboardDelay };
-            //        StartTimer[4].Elapsed += startTimer_Tick;
-            //        st_timer_r[4] = 1; 
-            //        StartTimer[4].Start();
-            //        //if (!mouse(5))
-            //        //{
-            //            //RepeatTimer[4] = new System.Timers.Timer { Interval = keyboardSpeed };
-            //            //RepeatTimer[4].Elapsed += repeatTimer_Tick;
-            //            //r_timer_r[4] = 1;
-            //            //RepeatTimer[4].Start();
-            //        //}
-            //        break;
-            //    case 6:
-            //        StartTimer[5] = new System.Timers.Timer { Interval = keyboardDelay };
-            //        StartTimer[5].Elapsed += startTimer_Tick;
-            //        st_timer_r[5] = 1; 
-            //        StartTimer[5].Start();
-            //        //if (!mouse(6))
-            //        //{
-            //            //RepeatTimer[5] = new System.Timers.Timer { Interval = keyboardSpeed };
-            //            //RepeatTimer[5].Elapsed += repeatTimer_Tick;
-            //            //r_timer_r[5] = 1;
-            //            //RepeatTimer[5].Start();
-            //        //}
-            //        break;
-            //}
+            try
+            {
+                _startTimer[i].Interval = _keyboardDelay;
+                _startTimer[i].Elapsed += startTimer_Tick;
+                _stTimerR[i] = 1;
+                _startTimer[i].Start();
+            }
+            catch 
+            {
+                _startTimer[i].Dispose();
+            }
+
         }
 
         /// <summary>
-        /// Метод определения не мышь ли выбрана для нажатия
+        ///     Метод определения не мышь ли выбрана для нажатия
         /// </summary>
         /// <param name="i"></param>
         /// <returns></returns>
@@ -462,59 +412,35 @@ namespace D3Hot
         //    }
         //    return m;
         //}
-
-        public void hold_unload(int i)
+        private void hold_unload(int i)
         {
-            if (StartTimer[i] != null && StartTimer[i].Enabled) StartTimer[i].Dispose();//.Stop()
-            if (RepeatTimer[i] != null && RepeatTimer[i].Enabled) RepeatTimer[i].Dispose();//.Stop()
-            
-            //switch (i)
-            //{
-            //    case 1:
-            //        if (StartTimer[0] != null && StartTimer[0].Enabled) StartTimer[0].Dispose();//.Stop()
-            //        if (RepeatTimer[0] != null && RepeatTimer[0].Enabled) RepeatTimer[0].Dispose();//.Stop()
-            //        break;
-            //    case 2:
-            //        if (StartTimer[1] != null && StartTimer[1].Enabled) StartTimer[1].Dispose();//.Stop()
-            //        if (RepeatTimer[1] != null && RepeatTimer[1].Enabled) RepeatTimer[1].Dispose();//.Stop()
-            //        break;
-            //    case 3:
-            //        if (StartTimer[2] != null && StartTimer[2].Enabled) StartTimer[2].Dispose();//.Stop()
-            //        if (RepeatTimer[2] != null && RepeatTimer[2].Enabled) RepeatTimer[2].Dispose();//.Stop()
-            //        break;
-            //    case 4:
-            //        if (StartTimer[3] != null && StartTimer[3].Enabled) StartTimer[3].Dispose();//.Stop()
-            //        if (RepeatTimer[3] != null && RepeatTimer[3].Enabled) RepeatTimer[3].Dispose();//.Stop()
-            //        break;
-            //    case 5:
-            //        if (StartTimer[4] != null && StartTimer[4].Enabled) StartTimer[4].Dispose();//.Stop()
-            //        if (RepeatTimer[4] != null && RepeatTimer[4].Enabled) RepeatTimer[4].Dispose();//.Stop()
-            //        break;
-            //    case 6:
-            //        if (StartTimer[5] != null && StartTimer[5].Enabled) StartTimer[5].Dispose();//.Stop()
-            //        if (RepeatTimer[5] != null && RepeatTimer[5].Enabled) RepeatTimer[5].Dispose();//.Stop()
-            //        break;
-            //}
-                //hold[i - 1] = 0;
-                //keyup(i);
+            if (_startTimer[i] != null) //&& _startTimer[i].Enabled 23.01.2017
+            {
+                _startTimer[i].Dispose(); //.Stop()
+                _startTimer[i] = null;
+            }
+            if (_repeatTimer[i] == null) return; //|| !_repeatTimer[i].Enabled 23.01.2017
+            _repeatTimer[i].Dispose(); //.Stop()
+            _repeatTimer[i] = null;
         }
 
-        /// <summary>
-        /// Метод для нахождения окна с фокусом
-        /// </summary>
-        /// <returns></returns>
-        //public IntPtr GetFocusedControl()
-        //{
-        //    IntPtr hFocus = IntPtr.Zero;
-        //    IntPtr hFore;
-        //    int id = 0;
-        //    //узнаем в каком окне находится фокус ввода
-        //    hFore = GetForegroundWindow();
-        //    //подключаемся к процессу
-        //    AttachThreadInput(GetWindowThreadProcessId(hFore, out id), GetCurrentThreadId(), true);
-        //    //получаем хэндл фокуса
-        //    hFocus = GetFocus();
         //    //отключаемся от процесса
+        //    hFocus = GetFocus();
+        //    //получаем хэндл фокуса
+        //    AttachThreadInput(GetWindowThreadProcessId(hFore, out id), GetCurrentThreadId(), true);
+        //    //подключаемся к процессу
+        //    hFore = GetForegroundWindow();
+        //    //узнаем в каком окне находится фокус ввода
+        //    int id = 0;
+        //    IntPtr hFore;
+        //    IntPtr hFocus = IntPtr.Zero;
+        //{
+        //public IntPtr GetFocusedControl()
+        // <returns></returns>
+        // </summary>
+        // Метод для нахождения окна с фокусом
+
+        // <summary>
         //    AttachThreadInput(GetWindowThreadProcessId(hFore, out id), GetCurrentThreadId(), false);
         //    return hFocus;
         //}
@@ -535,7 +461,5 @@ namespace D3Hot
         //    }
         //    return hWnd; //Should contain the handle but may be zero if the title doesn't match
         //}
-
-
     }
 }

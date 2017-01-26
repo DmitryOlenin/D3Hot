@@ -5,19 +5,18 @@ using WindowsInput.Native;
 
 namespace D3Hot
 {
-    public partial class d3hot : Form
+    public partial class D3Hotkeys //: Form
     {
-        private void post_push(uint key_for_hold)
+        private void post_push(uint keyForHold)
         {
-            uint ret = 0;
-            ret = NativeMethods._MapVirtualKey(key_for_hold, 0);
+            var ret = NativeMethods._MapVirtualKey(keyForHold, 0);
 
-            if ((key_for_hold == (int)Keys.LButton) || (key_for_hold == (int)Keys.RButton))
+            if (keyForHold == (int)Keys.LButton || keyForHold == (int)Keys.RButton)
             {
-                Point defPnt = new Point();
+                var defPnt = new Point();
                 NativeMethods.GetCursorPos(ref defPnt);
 
-                if (debug)
+                if (_debug)
                 {
                     //Cursor.Position = new Point(1556, 705);
                     //mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 1);
@@ -31,18 +30,19 @@ namespace D3Hot
                     //mouse_event(MOUSEEVENTF_LEFTDOWN, 1556, 705, 0, 0);
                     //mouse_event(MOUSEEVENTF_LEFTUP, 1556, 705, 0, 0);
 
-                    if (key_for_hold == (int)Keys.LButton) //08.12.2015
-                        inp.Mouse.LeftButtonClick();
+                    if (keyForHold == (int)Keys.LButton) //08.12.2015
+                        _inp.Mouse.LeftButtonClick();
                     else
-                        inp.Mouse.RightButtonClick();
+                        _inp.Mouse.RightButtonClick();
                 }
                 else
                 {
-                    NativeMethods.PostMessage(handle_ref,
-                               updown_keys(key_for_hold),
+                    NativeMethods.PostMessage(_handleRef,
+                               updown_keys(keyForHold),
                                IntPtr.Zero, MakeLParam(defPnt.X, defPnt.Y)); //(IntPtr)key_for_hold //11.09.2015
-                    NativeMethods.PostMessage(handle_ref,
-                               updown_keys(key_for_hold) + 1,
+                    System.Threading.Thread.Sleep(20); //08.07.2016 Ждём 20мс до отжатия кнопки.
+                    NativeMethods.PostMessage(_handleRef,
+                               updown_keys(keyForHold) + 1,
                                IntPtr.Zero, MakeLParam(defPnt.X, defPnt.Y)); //(IntPtr)0 //11.09.2015
                 }
 
@@ -51,17 +51,17 @@ namespace D3Hot
             else
             {
 
-                uint repeatCount = 1;
-                uint scanCode = ret; //0x03;//0x2D;
-                uint extended = 0;
-                uint context = 0;
+                const uint repeatCount = 1;
+                var scanCode = ret; //0x03;//0x2D;
+                const uint extended = 0;
+                const uint context = 0;
                 uint previousState = 0;
                 uint transition = 0;
 
                 // combine the parameters above according to the bit
                 // fields described in the MSDN page for WM_KEYDOWN
 
-                uint lParam = repeatCount
+                var lParam = repeatCount
                     | (scanCode << 16)
                     | (extended << 24)
                     | (context << 29)
@@ -69,9 +69,9 @@ namespace D3Hot
                     | (transition << 31);
 
                 //11.11.2015
-                NativeMethods.PostMessage(handle_ref,//hWindow,
-                           updown_keys(key_for_hold),//(int)WM_KEYDOWN,
-                           (IntPtr)key_for_hold, (UIntPtr)lParam); //(IntPtr)(MakeLong(1, ret)) //11.09.2015 //UIntPtr.Zero //07.12.2015
+                NativeMethods.PostMessage(_handleRef,//hWindow,
+                           updown_keys(keyForHold),//(int)WM_KEYDOWN,
+                           (IntPtr)keyForHold, (UIntPtr)lParam); //(IntPtr)(MakeLong(1, ret)) //11.09.2015 //UIntPtr.Zero //07.12.2015
 
                 //System.Threading.Thread.Sleep(5); //11.11.2015
 
@@ -85,19 +85,20 @@ namespace D3Hot
                     | (previousState << 30)
                     | (transition << 31);
 
-                NativeMethods.PostMessage(handle_ref,//hWindow,
-                            updown_keys(key_for_hold) + 1,//(int)WM_KEYUP,
-                            (IntPtr)key_for_hold, (UIntPtr)lParam); //(IntPtr)(MakeLong(1, ret) + 0xC0000000) //11.09.2015  //(IntPtr)(0 | 0xc0000000) //(0 | 0xc0000000)
+                NativeMethods.PostMessage(_handleRef,//hWindow,
+                            updown_keys(keyForHold) + 1,//(int)WM_KEYUP,
+                            (IntPtr)keyForHold, (UIntPtr)lParam); //(IntPtr)(MakeLong(1, ret) + 0xC0000000) //11.09.2015  //(IntPtr)(0 | 0xc0000000) //(0 | 0xc0000000)
                 //MessageBox.Show("1: " + tmr_local.Enabled.ToString() + " " + ret.ToString());
             }
         }
 
-        private void sendinput_push(VirtualKeyCode key, uint key_for_hold)
+        private void sendinput_push(VirtualKeyCode key, uint keyForHold)
         {
+            // ReSharper disable once SwitchStatementMissingSomeCases - Используем  не все клавиши
             switch (key)
             {
-                case VirtualKeyCode.LBUTTON: inp.Mouse.LeftButtonClick(); break;
-                case VirtualKeyCode.RBUTTON: inp.Mouse.RightButtonClick(); break;
+                case VirtualKeyCode.LBUTTON: _inp.Mouse.LeftButtonClick(); break;
+                case VirtualKeyCode.RBUTTON: _inp.Mouse.RightButtonClick(); break;
                 case VirtualKeyCode.XBUTTON1: shift_click(1); break;
                 case VirtualKeyCode.XBUTTON2: shift_click(2); break;
                 case VirtualKeyCode.ESCAPE: break; //VK_0
@@ -118,15 +119,18 @@ namespace D3Hot
                     //byte keyp = 0x41; //A
                     //uint scanCode = MapVirtualKey((uint)keyp, 0);
 
-                    if (press_type == 2) 
+                    switch (_pressType)
                     {
-                        keyb_down(key_for_hold, 0); //06.05.2016
-                        System.Threading.Thread.Sleep(20); //06.05.2016
-                        keyb_down(key_for_hold, 2); //06.05.2016
+                        case 2:
+                            keyb_down(keyForHold, 0); //06.05.2016
+                            System.Threading.Thread.Sleep(20); //06.05.2016
+                            keyb_down(keyForHold, 2); //06.05.2016
+                            break;
+                        case 0:
+                        case 3:
+                            _inp.Keyboard.KeyPress(key);
+                            break;
                     }
-
-                    else if (press_type == 0 || press_type == 3) 
-                        inp.Keyboard.KeyPress(key);
 
                     //keybd_event((byte)key_for_hold, (byte)ret, 1 | 0, 0);
                     //keybd_event((byte)key_for_hold, (byte)ret, 1 | 2, 0);
@@ -145,13 +149,12 @@ namespace D3Hot
         }
 
 
-        private void keyb_down(uint key_for_hold, int action)
+        private void keyb_down(uint keyForHold, int action)
         {
             if (action != 0) action = 2; //0  - Down, 2 - Up.
-            uint ret = NativeMethods._MapVirtualKey(key_for_hold, 0);
-            NativeMethods.keybd_event((byte)key_for_hold, (byte)ret, (uint)action, 0);
+            var ret = NativeMethods._MapVirtualKey(keyForHold, 0);
+            NativeMethods.keybd_event((byte)keyForHold, (byte)ret, (uint)action, IntPtr.Zero); //0
         }
-
 
     }
 }
