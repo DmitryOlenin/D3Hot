@@ -186,6 +186,13 @@ namespace D3Hot
 
         private void repeatTimer_Tick(object sender, EventArgs e)
         {
+            if (_holdNum > -1 && (!_canPress || _trigPressed[_holdNum] == 0)) //Устраняемся, если надо остановиться
+            {
+                var i1 = _holdNum;
+                new Thread(() => hold_clear(i1)).Start();
+                return;
+            }
+
             if (!_holded) return;
             var timer = sender as Timer;
 
@@ -241,6 +248,13 @@ namespace D3Hot
 
         private void startTimer_Tick(object sender, EventArgs eventArgs)
         {
+            if (_holdNum > -1 && (!_canPress || _trigPressed[_holdNum] == 0)) //Устраняемся, если надо остановиться
+            {
+                var i1 = _holdNum;
+                new Thread(() => hold_clear(i1)).Start();
+                return;
+            }
+
             var timer = sender as Timer;
             if (timer != null) timer.Stop();
 
@@ -359,7 +373,6 @@ namespace D3Hot
                 _repeatTimer[i].Dispose();
             }
         }
-
 
         private void hold_load(int i)
         {

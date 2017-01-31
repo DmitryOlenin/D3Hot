@@ -258,5 +258,5 @@ namespace D3Hot
             TrigSettings = "Settings of trigger";
         }
 
-    }
-}
+    }//end of class
+}//end of namespace

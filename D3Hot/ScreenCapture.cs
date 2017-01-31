@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using D3Hot.Properties;
 
@@ -18,9 +20,17 @@ namespace D3Hot
         // Flag: Has Dispose already been called?
         private bool _disposed; // = false;
 
+        
         public LogFile(string path)
         {
-            _sw = new StreamWriter(path);
+            try
+            {
+                _sw = new StreamWriter(path);
+            }
+            catch
+            {
+                // ignored
+            }
         }
 
         // Public implementation of Dispose pattern callable by consumers.
@@ -32,8 +42,15 @@ namespace D3Hot
 
         public void WriteLine(string str)
         {
-            _sw.WriteLine(str);
-            _sw.Flush();
+            try
+            {
+                _sw.WriteLine(str);
+                _sw.Flush();
+            }
+            catch
+            {
+                //ignored
+            }
         }
 
         // Protected implementation of Dispose pattern.
@@ -205,7 +222,7 @@ namespace D3Hot
             if (log == null || log.Count <= 0) return;
             using (var lf = new LogFile(filename))
             {
-                foreach (var t in log)
+                foreach (var t in log.ToArray())
                     lf.WriteLine(t);
             }
         }
@@ -345,7 +362,7 @@ namespace D3Hot
 
                             for (var i = 0; i < 6; i++)
                                 //if (cdr_run[i] == 1 && skill_yellow[i] != 2)
-                                if (CdrKey[i] == 1 && TmrF[i] == 1 && _skillYellow[i] != 2)
+                                if (CdrKey[i] == 1 && TmrF[i] > 0 && _skillYellow[i] != 2)
                                     //Триггер с кулдауном и активен (то есть может быть включен) и не помечен как серый
                                 {
                                     if (i > 3) jCheck = l;
@@ -701,26 +718,27 @@ namespace D3Hot
             var tmrLocal = (NumericTimer) sender;
             var num = tmrLocal.Number;
 
-            if (TmrPress[num] == 1 || !_progStart || !_progRun) return; //25.01.2017 Не заходим в таймер, пока он работает
-
-             if (_cdrPress[num] != 1) 
-             {
-                 if (CdrRun[num] > 1) CdrRun[num]--; //Сбрасываем необходимость проверять нажатие скилла до 1 (начиная с 1 идёт проверка)
-                 return; //Если не жмём - на выход 23.01.2017
-             }
+            if (!_progStart || !_progRun) return; //25.01.2017 Не заходим в таймер, пока он работает //TmrPress[num] == 1 || 
 
             //if (Monitor.TryEnter(valueLocker, TimeSpan.FromMilliseconds(10))) //55
             //{
             try
             {
-                TmrPress[num] = 1; //помечаем, что таймер работает
+                if (_cdrPress[num] != 1)  // - НЕ Убрал дополнительные ограничения 28.01.2017
+                {
+                    if (CdrRun[num] > 1) CdrRun[num]--; //Сбрасываем необходимость проверять нажатие скилла до 1 (начиная с 1 идёт проверка)
+                    return; //Если не жмём - на выход 23.01.2017
+                }
+
+                //TmrPress[num] = 1; //помечаем, что таймер работает
 
                 //tmrLocal.Stop(); //Останавливаем таймер на время его выполенения
                 //MessageBox.Show(@"Включён ли таймер?" + _tmr[num].Enabled);
 
                 //tmr_cdr_curr = i + 1; 23.06.2016
 
-                if (_trigPressed[num] != 1 || CdrRun[num] <= 0 || _teleportInProgress) return;
+                if (_trigPressed[num] != 1 || CdrRun[num] <= 0 || !_canPress) return; //Если можем жать - жмём!
+
                 var cooldSec = _tmrI[num] > 0 && _cdrWatch != null && _cdrWatch[num] != null &&
                                _cdrWatch[num].IsRunning && _cdrWatch[num].ElapsedMilliseconds < _tmrI[num];
 
@@ -728,22 +746,26 @@ namespace D3Hot
                 //if (cdr_press[3] == 1)
                 //    LogMaker(ref log, 5, "Прожимаем четвёртый скилл");
 
-                _cdrPress[num] = 2; //Эту кнопку больше нажимать не надо (пока проверка не покажет иного)
-                CdrRun[num] = 2;
+                _cdrPress[num] = 2; //Эту кнопку больше нажимать не надо (пока проверка не покажет иного) - НЕ Убрал дополнительные ограничения 28.01.2017
+                CdrRun[num] = 2; // - Убрал дополнительные ограничения 28.01.2017
+                
+                
                 //Один раз (3-1=2 сразу, 2-1=1 второй раз) уменьшать счётчик до повторной проверки (60*1 = 60мс)
 
-                if (_tmrI[num] > 0) //Проверка на "Кулдаун + сек."
+                if (_tmrI[num] > 0 && _cdrWatch != null && _cdrWatch[num] != null) //Проверка на "Кулдаун + сек." // 
                 {
-                    if (_cdrWatch == null)
-                        _cdrWatch = new Stopwatch[6];
+                    _cdrWatch[num] = Stopwatch.StartNew(); //28.01.2017
+                    //if (_cdrWatch == null)
+                    //    _cdrWatch = new Stopwatch[6];
 
-                    if (_cdrWatch[num] == null)
-                        _cdrWatch[num] = new Stopwatch(); //16.11.2015
+                    //if (_cdrWatch[num] == null)
+                    //    _cdrWatch[num] = new Stopwatch(); //16.11.2015
 
-                    _cdrWatch[num].Reset();
-                    _cdrWatch[num].Start(); //15.06.2016
+                    //_cdrWatch[num].Reset();
+                    //_cdrWatch[num].Start(); //15.06.2016
                 }
 
+                Thread.Sleep(TimeSpan.FromMilliseconds(_cooldDelay / 10)); //Ждать перед нажатием 300/10 = 30мс
                 button_press(KeyH[num], KeyV[num]); //Нажать кнопку
             }
             catch
@@ -753,7 +775,9 @@ namespace D3Hot
             finally
             {
                 //if (_tmr[tmrLocal.Number] != null) tmrLocal.Start(); //Запускаем таймер снова после его выполнения
-                TmrPress[num] = 0; //Помечаем, что таймер работу завершил
+                //TmrPress[num] = 0; //Помечаем, что таймер работу завершил
+                if (_tmr[num] != null) 
+                    _tmr[num].Enabled = true; //Запускаем таймер CDR снова 26.01.2017
             }
             //finally { Monitor.Exit(valueLocker); }
             //}

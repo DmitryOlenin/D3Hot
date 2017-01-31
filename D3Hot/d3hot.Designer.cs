@@ -20,6 +20,7 @@
                     components.Dispose();
                 }
 
+                Exit();
                 if (_tmrAll != null) _tmrAll.Dispose();
                 if (_tmrCdr != null) _tmrCdr.Dispose();
                 if (_tmrVer != null) _tmrVer.Dispose();
@@ -1100,20 +1101,18 @@
             this.gb_set.Controls.Add(this.cb_trig_enable);
             this.gb_set.Controls.Add(this.lb_trig_time);
             this.gb_set.Controls.Add(this.nud_trig_time);
-            this.gb_set.Location = new System.Drawing.Point(3, 6);
+            this.gb_set.Location = new System.Drawing.Point(2, 2);
             this.gb_set.Name = "gb_set";
             this.gb_set.Size = new System.Drawing.Size(443, 116);
             this.gb_set.TabIndex = 97;
             this.gb_set.TabStop = false;
             this.gb_set.Text = "Настройка работы триггера";
-            this.gb_set.Visible = false;
-            this.gb_set.Move += new System.EventHandler(this.gb_set_Move);
             // 
             // b_trig_ok
             // 
-            this.b_trig_ok.Location = new System.Drawing.Point(190, 89);
+            this.b_trig_ok.Location = new System.Drawing.Point(186, 84);
             this.b_trig_ok.Name = "b_trig_ok";
-            this.b_trig_ok.Size = new System.Drawing.Size(43, 23);
+            this.b_trig_ok.Size = new System.Drawing.Size(58, 28);
             this.b_trig_ok.TabIndex = 31;
             this.b_trig_ok.Text = "OK";
             this.b_trig_ok.UseVisualStyleBackColor = true;
@@ -1191,6 +1190,7 @@
             this.lb_trig_enable.Size = new System.Drawing.Size(144, 13);
             this.lb_trig_enable.TabIndex = 25;
             this.lb_trig_enable.Text = "Включение после триггера";
+            this.lb_trig_enable.Visible = false;
             // 
             // cb_trig_enable
             // 
@@ -1208,6 +1208,7 @@
             this.cb_trig_enable.Name = "cb_trig_enable";
             this.cb_trig_enable.Size = new System.Drawing.Size(79, 21);
             this.cb_trig_enable.TabIndex = 24;
+            this.cb_trig_enable.Visible = false;
             // 
             // lb_trig_time
             // 
@@ -1279,9 +1280,9 @@
             // pan_set
             // 
             this.pan_set.Controls.Add(this.gb_set);
-            this.pan_set.Location = new System.Drawing.Point(0, 37);
+            this.pan_set.Location = new System.Drawing.Point(4, 50);
             this.pan_set.Name = "pan_set";
-            this.pan_set.Size = new System.Drawing.Size(448, 133);
+            this.pan_set.Size = new System.Drawing.Size(450, 122);
             this.pan_set.TabIndex = 98;
             this.pan_set.Visible = false;
             // 
@@ -1589,12 +1590,15 @@
             // lb_trig5
             // 
             this.lb_trig5.AutoSize = true;
+            this.lb_trig5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.lb_trig5.ForeColor = System.Drawing.SystemColors.ControlText;
             this.lb_trig5.Location = new System.Drawing.Point(306, 27);
             this.lb_trig5.Name = "lb_trig5";
             this.lb_trig5.Size = new System.Drawing.Size(57, 13);
             this.lb_trig5.TabIndex = 54;
             this.lb_trig5.Text = "Триггер 5";
+            this.lb_trig5.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lb_trig_MouseClick);
+            this.lb_trig5.MouseHover += new System.EventHandler(this.cb_trig_tmr_MouseHover);
             // 
             // lb_key1
             // 
@@ -1783,12 +1787,15 @@
             // lb_trig6
             // 
             this.lb_trig6.AutoSize = true;
+            this.lb_trig6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.lb_trig6.ForeColor = System.Drawing.SystemColors.ControlText;
             this.lb_trig6.Location = new System.Drawing.Point(381, 27);
             this.lb_trig6.Name = "lb_trig6";
             this.lb_trig6.Size = new System.Drawing.Size(57, 13);
             this.lb_trig6.TabIndex = 60;
             this.lb_trig6.Text = "Триггер 6";
+            this.lb_trig6.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lb_trig_MouseClick);
+            this.lb_trig6.MouseHover += new System.EventHandler(this.cb_trig_tmr_MouseHover);
             // 
             // lb_tmr2_sec
             // 
@@ -1845,22 +1852,28 @@
             // lb_trig4
             // 
             this.lb_trig4.AutoSize = true;
+            this.lb_trig4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.lb_trig4.ForeColor = System.Drawing.SystemColors.ControlText;
             this.lb_trig4.Location = new System.Drawing.Point(231, 27);
             this.lb_trig4.Name = "lb_trig4";
             this.lb_trig4.Size = new System.Drawing.Size(57, 13);
             this.lb_trig4.TabIndex = 23;
             this.lb_trig4.Text = "Триггер 4";
+            this.lb_trig4.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lb_trig_MouseClick);
+            this.lb_trig4.MouseHover += new System.EventHandler(this.cb_trig_tmr_MouseHover);
             // 
             // lb_trig3
             // 
             this.lb_trig3.AutoSize = true;
+            this.lb_trig3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.lb_trig3.ForeColor = System.Drawing.SystemColors.ControlText;
             this.lb_trig3.Location = new System.Drawing.Point(156, 27);
             this.lb_trig3.Name = "lb_trig3";
             this.lb_trig3.Size = new System.Drawing.Size(57, 13);
             this.lb_trig3.TabIndex = 22;
             this.lb_trig3.Text = "Триггер 3";
+            this.lb_trig3.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lb_trig_MouseClick);
+            this.lb_trig3.MouseHover += new System.EventHandler(this.cb_trig_tmr_MouseHover);
             // 
             // lb_key6
             // 
@@ -1875,12 +1888,15 @@
             // lb_trig2
             // 
             this.lb_trig2.AutoSize = true;
+            this.lb_trig2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.lb_trig2.ForeColor = System.Drawing.SystemColors.ControlText;
             this.lb_trig2.Location = new System.Drawing.Point(81, 27);
             this.lb_trig2.Name = "lb_trig2";
             this.lb_trig2.Size = new System.Drawing.Size(57, 13);
             this.lb_trig2.TabIndex = 21;
             this.lb_trig2.Text = "Триггер 2";
+            this.lb_trig2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lb_trig_MouseClick);
+            this.lb_trig2.MouseHover += new System.EventHandler(this.cb_trig_tmr_MouseHover);
             // 
             // cb_key6
             // 
@@ -1919,12 +1935,15 @@
             // lb_trig1
             // 
             this.lb_trig1.AutoSize = true;
+            this.lb_trig1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.lb_trig1.ForeColor = System.Drawing.SystemColors.ControlText;
             this.lb_trig1.Location = new System.Drawing.Point(6, 27);
             this.lb_trig1.Name = "lb_trig1";
             this.lb_trig1.Size = new System.Drawing.Size(57, 13);
             this.lb_trig1.TabIndex = 20;
             this.lb_trig1.Text = "Триггер 1";
+            this.lb_trig1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lb_trig_MouseClick);
+            this.lb_trig1.MouseHover += new System.EventHandler(this.cb_trig_tmr_MouseHover);
             // 
             // nud_tmr4
             // 
@@ -2034,6 +2053,7 @@
             this.chb_trig1.TabIndex = 63;
             this.chb_trig1.UseVisualStyleBackColor = true;
             this.chb_trig1.CheckedChanged += new System.EventHandler(this.chb_trig_CheckedChanged);
+            this.chb_trig1.MouseHover += new System.EventHandler(this.cb_trig_tmr_MouseHover);
             // 
             // chb_trig2
             // 
@@ -2044,6 +2064,7 @@
             this.chb_trig2.TabIndex = 64;
             this.chb_trig2.UseVisualStyleBackColor = true;
             this.chb_trig2.CheckedChanged += new System.EventHandler(this.chb_trig_CheckedChanged);
+            this.chb_trig2.MouseHover += new System.EventHandler(this.cb_trig_tmr_MouseHover);
             // 
             // chb_trig3
             // 
@@ -2054,6 +2075,7 @@
             this.chb_trig3.TabIndex = 65;
             this.chb_trig3.UseVisualStyleBackColor = true;
             this.chb_trig3.CheckedChanged += new System.EventHandler(this.chb_trig_CheckedChanged);
+            this.chb_trig3.MouseHover += new System.EventHandler(this.cb_trig_tmr_MouseHover);
             // 
             // chb_trig4
             // 
@@ -2064,6 +2086,7 @@
             this.chb_trig4.TabIndex = 66;
             this.chb_trig4.UseVisualStyleBackColor = true;
             this.chb_trig4.CheckedChanged += new System.EventHandler(this.chb_trig_CheckedChanged);
+            this.chb_trig4.MouseHover += new System.EventHandler(this.cb_trig_tmr_MouseHover);
             // 
             // chb_trig5
             // 
@@ -2074,6 +2097,7 @@
             this.chb_trig5.TabIndex = 67;
             this.chb_trig5.UseVisualStyleBackColor = true;
             this.chb_trig5.CheckedChanged += new System.EventHandler(this.chb_trig_CheckedChanged);
+            this.chb_trig5.MouseHover += new System.EventHandler(this.cb_trig_tmr_MouseHover);
             // 
             // chb_trig6
             // 
@@ -2084,6 +2108,7 @@
             this.chb_trig6.TabIndex = 68;
             this.chb_trig6.UseVisualStyleBackColor = true;
             this.chb_trig6.CheckedChanged += new System.EventHandler(this.chb_trig_CheckedChanged);
+            this.chb_trig6.MouseHover += new System.EventHandler(this.cb_trig_tmr_MouseHover);
             // 
             // pan_main
             // 
@@ -2141,6 +2166,7 @@
             this.pan_main.Size = new System.Drawing.Size(455, 165);
             this.pan_main.TabIndex = 75;
             this.pan_main.Paint += new System.Windows.Forms.PaintEventHandler(this.pan_main_Paint);
+            this.pan_main.MouseClick += new System.Windows.Forms.MouseEventHandler(this.D3Hotkeys_MouseClick);
             this.pan_main.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.d3hot_MouseDoubleClick);
             // 
             // D3Hotkeys
@@ -2148,7 +2174,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(459, 316);
-            this.Controls.Add(this.pan_main);
             this.Controls.Add(this.pan_press_type);
             this.Controls.Add(this.lb_help);
             this.Controls.Add(this.button2);
@@ -2171,6 +2196,7 @@
             this.Controls.Add(this.pan_proc);
             this.Controls.Add(this.pan_prog);
             this.Controls.Add(this.pan_set);
+            this.Controls.Add(this.pan_main);
             this.Controls.Add(this.pan_opt);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
@@ -2182,6 +2208,7 @@
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.D3Hotkeys_FormClosed);
             this.Load += new System.EventHandler(this.d3hot_Load);
             this.Shown += new System.EventHandler(this.d3hot_Shown);
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.D3Hotkeys_MouseClick);
             this.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.d3hot_MouseDoubleClick);
             this.Resize += new System.EventHandler(this.d3hot_Resize);
             this.contextMenuStrip1.ResumeLayout(false);

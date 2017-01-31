@@ -336,6 +336,7 @@ namespace D3Hot
             nud_tmr4.Value = Settings.Default.nud_tmr4;
             nud_tmr5.Value = Settings.Default.nud_tmr5;
             nud_tmr6.Value = Settings.Default.nud_tmr6;
+
             cb_prof.SelectedIndex = Settings.Default.prof_curr;
             lb_lang.Text = Settings.Default.lb_lang;
             cb_tp.SelectedIndex = cb_tp.FindStringExact(Settings.Default.cb_tp);
@@ -407,8 +408,16 @@ namespace D3Hot
                 {
                     if (_overview.Dataset == null || _overview.Dataset.Tables.Count == 0) //Старый файл с настройками, переписываем. 19.01.2017
                     {
-                        File.Delete(target);
-                        Save_settings(1);
+                        try
+                        {
+                            file.Dispose();
+                            File.Delete(target);
+                            Save_settings(1);
+                        }
+                        catch 
+                        {
+                            //ignored
+                        }
                         return;
                     }
 
@@ -481,10 +490,46 @@ namespace D3Hot
                             case "nud_rand":
                                 Settings.Default.nud_rand = Convert.ToDecimal(_overview.Dataset.Tables[1].Rows[j][1]);
                                 break;
-                            case "nud_coold":
-                                Settings.Default.nud_coold =
-                                    Convert.ToDecimal(_overview.Dataset.Tables[1].Rows[j][1]);
+                            case "nud_coold": 
+                                Settings.Default.nud_coold = Convert.ToDecimal(_overview.Dataset.Tables[1].Rows[j][1]);
                                 break;
+                            case "nud_trig_time_0":
+                                Settings.Default.nud_trig_time_0 = Convert.ToDecimal(_overview.Dataset.Tables[1].Rows[j][1]);
+                                break;
+                            case "nud_trig_time_1":
+                                Settings.Default.nud_trig_time_1 = Convert.ToDecimal(_overview.Dataset.Tables[1].Rows[j][1]);
+                                break;
+                            case "nud_trig_time_2":
+                                Settings.Default.nud_trig_time_2 = Convert.ToDecimal(_overview.Dataset.Tables[1].Rows[j][1]);
+                                break;
+                            case "nud_trig_time_3":
+                                Settings.Default.nud_trig_time_3 = Convert.ToDecimal(_overview.Dataset.Tables[1].Rows[j][1]);
+                                break;
+                            case "nud_trig_time_4":
+                                Settings.Default.nud_trig_time_4 = Convert.ToDecimal(_overview.Dataset.Tables[1].Rows[j][1]);
+                                break;
+                            case "nud_trig_time_5":
+                                Settings.Default.nud_trig_time_5 = Convert.ToDecimal(_overview.Dataset.Tables[1].Rows[j][1]);
+                                break;
+                            case "nud_trig_delay_0":
+                                Settings.Default.nud_trig_delay_0 = Convert.ToDecimal(_overview.Dataset.Tables[1].Rows[j][1]);
+                                break;
+                            case "nud_trig_delay_1":
+                                Settings.Default.nud_trig_delay_1 = Convert.ToDecimal(_overview.Dataset.Tables[1].Rows[j][1]);
+                                break;
+                            case "nud_trig_delay_2":
+                                Settings.Default.nud_trig_delay_2 = Convert.ToDecimal(_overview.Dataset.Tables[1].Rows[j][1]);
+                                break;
+                            case "nud_trig_delay_3":
+                                Settings.Default.nud_trig_delay_3 = Convert.ToDecimal(_overview.Dataset.Tables[1].Rows[j][1]);
+                                break;
+                            case "nud_trig_delay_4":
+                                Settings.Default.nud_trig_delay_4 = Convert.ToDecimal(_overview.Dataset.Tables[1].Rows[j][1]);
+                                break;
+                            case "nud_trig_delay_5":
+                                Settings.Default.nud_trig_delay_5 = Convert.ToDecimal(_overview.Dataset.Tables[1].Rows[j][1]);
+                                break;
+
                         }
                     for (var k = 0; k < _overview.Dataset.Tables[2].Rows.Count; k++)
                         switch (_overview.Dataset.Tables[2].Rows[k][0].ToString())
@@ -625,8 +670,25 @@ namespace D3Hot
                                 Settings.Default.chb_users = Convert.ToInt32(_overview.Dataset.Tables[2].Rows[k][1]);
                                 break;
                             case "chb_proconly":
-                                Settings.Default.chb_proconly =
-                                    Convert.ToInt32(_overview.Dataset.Tables[2].Rows[k][1]);
+                                Settings.Default.chb_proconly = Convert.ToInt32(_overview.Dataset.Tables[2].Rows[k][1]);
+                                break;
+                            case "chb_trig_once_0":
+                                Settings.Default.chb_trig_once_0 = Convert.ToInt32(_overview.Dataset.Tables[2].Rows[k][1]);
+                                break;
+                            case "chb_trig_once_1":
+                                Settings.Default.chb_trig_once_1 = Convert.ToInt32(_overview.Dataset.Tables[2].Rows[k][1]);
+                                break;
+                            case "chb_trig_once_2":
+                                Settings.Default.chb_trig_once_2 = Convert.ToInt32(_overview.Dataset.Tables[2].Rows[k][1]);
+                                break;
+                            case "chb_trig_once_3":
+                                Settings.Default.chb_trig_once_3 = Convert.ToInt32(_overview.Dataset.Tables[2].Rows[k][1]);
+                                break;
+                            case "chb_trig_once_4":
+                                Settings.Default.chb_trig_once_4 = Convert.ToInt32(_overview.Dataset.Tables[2].Rows[k][1]);
+                                break;
+                            case "chb_trig_once_5":
+                                Settings.Default.chb_trig_once_5 = Convert.ToInt32(_overview.Dataset.Tables[2].Rows[k][1]);
                                 break;
                             //case "cb_hot_prof": Settings.Default.cb_hot_prof = Convert.ToInt32(overview.dataset.Tables[2].Rows[k][1]); break;
 

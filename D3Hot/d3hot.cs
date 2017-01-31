@@ -11,6 +11,7 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using WindowsInput;
 using WindowsInput.Native;
@@ -46,12 +47,13 @@ namespace D3Hot
             _progRun = true,
             _progStart,
             _tmrCdrDisposing,
-            _tmrCdrRunning,
+            //_tmrCdrRunning,
             //_keyPressed,
             _d3Prog,
             _d3Proc,
             _resolution = true,
             _langLoad,
+            _canPress, //Можно ли нажимать кнопку?
             _wasUsed,
             _logEnabled
             //stopped_once
@@ -63,19 +65,25 @@ namespace D3Hot
         //private const bool Warframe = false;
 
 
-        private static int _tPress,
+        private static int 
+            _telePress,
+            _tPress,
             _mapPress,
+            _mPress,
             _returnPress,
             _rPress,
             _returnPressCount,
             _delayPress,
+            _dPress,
             _delayPressInterval,
             _shiftPress,
             _delayWait,
             _trigPressedSum,
             _trigPressedSumDelay,
             _currTrig = -1,
+            _holdNum = -1,
             _tpDelay,
+            _randInterval,
             //_tmrAllCounter,
             _mapDelay,
             _returnDelay,
@@ -109,7 +117,7 @@ namespace D3Hot
             //Массив  работающих триггеров, отмеченных для кулдауна (int) - обновление при каждом круге главного таймера (tmr_all_Elapsed)
             FKeys = new int[11],
             //Массив клавиш F1-F12
-            Hold = {0, 0, 0, 0, 0, 0},
+            //Hold = {0, 0, 0, 0, 0, 0},
             //Массив триггеров, отмеченных для зажатия (int) - обновление при каждом круге главного таймера (tmr_all_Elapsed)
             HoldKey = {0, 0, 0, 0, 0, 0},
             //Массив триггеров, отмеченных для зажатия (int) - обновление при установке галочки зажатия (или старте всей программы)
@@ -121,15 +129,16 @@ namespace D3Hot
             //Массив кнопок выбранных триггеров (int)  - обновление при запуске (Start)
             TmrR = {0, 0, 0, 0, 0, 0},
             //Массив таймеров для обычного прожимания - обновление в процессе работы главного таймера (tmr_all_Elapsed)
-            TmrF = {0, 0, 0, 0, 0, 0},
+            TmrF = { 0, 0, 0, 0, 0, 0 }, //TmrF : 4 - нажатие, 1 - CDR, 2 - CDR + sec, 3 - hold
             //Массив таймеров, которые вообще могут быть нажаты  - обновление при запуске (Start)
-            TmrPress = {0, 0, 0, 0, 0, 0},
+            TmrPress = {0, 0, 0, 0, 0, 0}
             //Массив таймеров, которые прожимаются в данный момент
-            TmrOnce = {0, 0, 0, 0, 0, 0} //Пока не используется
+            //TmrOnce = {0, 0, 0, 0, 0, 0} //Пока не используется
             //TmrCdrN = {0, 0, 0, 0, 0, 0} //30.06.2015
             ;
 
-        private static int[] _trigPressed = {0, 0, 0, 0, 0, 0}; //01.07.2015
+        private static int[] _trigPressed = {0, 0, 0, 0, 0, 0},
+            _chbTrigOnce = { 0, 0, 0, 0, 0, 0 }; //01.07.2015
 
         private static SettingsTable _overview;
         //public static int[] trig_cdr_pressed = {0, 0, 0, 0, 0, 0}; //17.06.2016
@@ -185,17 +194,22 @@ namespace D3Hot
             MaximizeBox = false;
         }
 
-        private void rand_interval(int i)
+        private void timer_interval(int i)
         {
             if (_tmr[i] == null) return;
+            _tmr[i].Interval = _tmrI[i];
+
+            if (_randInterval < 1) return;
+
             var rnd = 0;
             if (nud_rand.Value > 0)
             {
                 _rand = new Random();
-                rnd = _rand.Next(-(int) nud_rand.Value, (int) nud_rand.Value);
+                rnd = _rand.Next(-_randInterval, _randInterval);
                 if (rnd + _tmrI[i] < 1) rnd = 31 - (int) _tmrI[i];
             }
-            if (_tmrI[i] + rnd > 0) _tmr[i].Interval = _tmrI[i] + rnd; //31.05.2016
+            if (rnd > 0 && _tmrI[i] + rnd > 0) 
+                _tmr[i].Interval += rnd; //31.05.2016
         }
 
         /// <summary>
@@ -204,34 +218,36 @@ namespace D3Hot
         /// <param name="i"></param>
         private void timer_load(int i)
         {
-            if (i == -1)
+            if (i == -1 && _tmrAll == null)
             {
                 _tmrAll = new Timer();
                 _tmrAll.Elapsed += tmr_all_Elapsed;
                 _tmrAll.Interval = 30; //07.12.2015
+                _tmrAll.AutoReset = false; //Таймеры не будут запускаться сами, чтобы не перекрывать друг друга 26.01.2017
             }
             else if (_tmr[i] == null) //Создаём таймер, только если его не было 23.01.2017
             {
-                if (CdrKey[i] < 1)
+                _tmr[i] = new NumericTimer(i); //Задержка отдельных таймеров, минимум 100мс для CDR
+                try
                 {
-                    //_tmr[i] = new Timer();
-                    _tmr[i] = new NumericTimer(i); //25.01.2017
-                    _tmr[i].Elapsed += tmr_Elapsed;
-                    rand_interval(i); //&& hold_key[i] < 1
-                    _tmrWatch[i] = new Stopwatch();
-                }
-                else //19.06.2016
-                {
-                    _tmr[i] = new NumericTimer(i); //Задержка отдельных таймеров, минимум 100мс
-                    try
+                    _tmr[i].AutoReset = false; //Таймеры не будут запускаться сами, чтобы не перекрывать друг друга
+                    
+                    if (CdrKey[i] < 1)
                     {
-                        _tmr[i].Interval = _cooldDelay;
+                        _tmr[i].Elapsed += tmr_Elapsed;
+                        timer_interval(i); //Устанавливаем интервал таймера
+                        _tmrWatch[i] = new Stopwatch();
+                    }
+                    else //19.06.2016
+                    {
                         _tmr[i].Elapsed += tmr_cdr_Elapsed;
+                        _tmr[i].Interval = _cooldDelay;
+                        _cdrWatch[i] = new Stopwatch();
                     }
-                    catch
-                    {
-                        _tmr[i].Dispose();
-                    }
+                }
+                catch
+                {
+                    _tmr[i].Dispose();
                 }
             }
         }
@@ -254,6 +270,7 @@ namespace D3Hot
             //    var timenow = DateTime.Now.ToLongTimeString();
             //    MessageBox.Show(timenow + @" Как будто кто-то хочет timer_unload " + i);
             //}
+            //if (_log != null) LogMaker(ref _log, 99999, "Мы выгружаем триггер?: " + i);
 
             var result = false;
 
@@ -274,10 +291,10 @@ namespace D3Hot
 
             var timerElapsed = 0;
 
-            if (i > -1 && i < 88 && _tmr != null && _tmr[i] != null && TmrR[i] == 1)
+            if (i > -1 && i < 88 && _tmr != null && _tmr[i] != null && TmrR[i] == 1) 
                 try
                 {
-                    if (_tmrWatch[i] != null)
+                    if (_tmrWatch != null && _tmrWatch[i] != null)
                     {
                         result = int.TryParse(_tmrWatch[i].ElapsedMilliseconds.ToString(), out timerElapsed);
                         StopWatch(_tmrWatch[i]);
@@ -302,13 +319,13 @@ namespace D3Hot
                 try
                 {
                     for (var j = 0; j < 6; j++)
-                        if (_tmr != null && _tmr[j] != null && TmrR[j] == 1)
+                        if (_tmr != null && _tmr[j] != null && TmrR[j] == 1) 
                         {
                             if (_tmrWatch != null && _tmrWatch[j] != null)
                             {
                                 result = int.TryParse(_tmrWatch[j].ElapsedMilliseconds.ToString(), out timerElapsed);
                                 StopWatch(_tmrWatch[j]);
-                                _tmrWatch[j] = null;
+                                //_tmrWatch[j] = null;
                             }
                             TmrLeft[j] = (int) _tmr[j].Interval > 0 && result
                                 ? (int) _tmr[j].Interval - timerElapsed
@@ -333,10 +350,10 @@ namespace D3Hot
         /// <param name="e"></param>
         private void mouseKeyEventProvider1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (_delayPressInterval > 0 && e.KeyCode.ToString() == _keyDelay) _delayPress = 1;
-            if (e.KeyCode.ToString() == _tpKey) _tPress = 1;
-            if (e.KeyCode.ToString() == _mapKey) _mapPress = 1;
-            if (e.KeyCode.ToString() == "Return") _returnPress = 1;
+            if (_delayPressInterval > 0 && e.KeyCode.ToString() == _keyDelay) _delayPress = 1; // сейчас нажали кнопку задержки
+            if (e.KeyCode.ToString() == _tpKey) _telePress = 1;// сейчас нажали кнопку телепорта
+            if (e.KeyCode.ToString() == _mapKey) _mapPress = 1; // сейчас нажали кнопку карты
+            if (e.KeyCode.ToString() == "Return") _returnPress = 1; // сейчас нажали кнопку Enter
 
             if (Trig[0] == -1 && KeySt[0].Length > 0 && e.KeyCode.ToString() == KeySt[0])
                 TrigPress[0] = TrigHold[0] || !TrigPress[0]; //09.09.2015
@@ -363,18 +380,23 @@ namespace D3Hot
 
         private void mouseKeyEventProvider1_KeyUp(object sender, KeyEventArgs e)
         {
-            if (TrigHold[0] && Trig[0] == -1 && KeySt[0].Length > 0 && e.KeyCode.ToString() == KeySt[0])
-                TrigPress[0] = false;
-            if (TrigHold[1] && Trig[1] == -2 && KeySt[1].Length > 0 && e.KeyCode.ToString() == KeySt[1])
-                TrigPress[1] = false;
-            if (TrigHold[2] && Trig[2] == -3 && KeySt[2].Length > 0 && e.KeyCode.ToString() == KeySt[2])
-                TrigPress[2] = false;
-            if (TrigHold[3] && Trig[3] == -4 && KeySt[3].Length > 0 && e.KeyCode.ToString() == KeySt[3])
-                TrigPress[3] = false;
-            if (TrigHold[4] && Trig[4] == -5 && KeySt[4].Length > 0 && e.KeyCode.ToString() == KeySt[4])
-                TrigPress[4] = false;
-            if (TrigHold[5] && Trig[5] == -6 && KeySt[5].Length > 0 && e.KeyCode.ToString() == KeySt[5])
-                TrigPress[5] = false;
+
+            for (var i = 0; i < 6; i++)
+                if (TrigHold[i] && Trig[i] == -1-i && KeySt[i].Length > 0 && e.KeyCode.ToString() == KeySt[i])
+                    TrigPress[i] = false;
+
+            //if (TrigHold[0] && Trig[0] == -1 && KeySt[0].Length > 0 && e.KeyCode.ToString() == KeySt[0])
+            //    TrigPress[0] = false;
+            //if (TrigHold[1] && Trig[1] == -2 && KeySt[1].Length > 0 && e.KeyCode.ToString() == KeySt[1])
+            //    TrigPress[1] = false;
+            //if (TrigHold[2] && Trig[2] == -3 && KeySt[2].Length > 0 && e.KeyCode.ToString() == KeySt[2])
+            //    TrigPress[2] = false;
+            //if (TrigHold[3] && Trig[3] == -4 && KeySt[3].Length > 0 && e.KeyCode.ToString() == KeySt[3])
+            //    TrigPress[3] = false;
+            //if (TrigHold[4] && Trig[4] == -5 && KeySt[4].Length > 0 && e.KeyCode.ToString() == KeySt[4])
+            //    TrigPress[4] = false;
+            //if (TrigHold[5] && Trig[5] == -6 && KeySt[5].Length > 0 && e.KeyCode.ToString() == KeySt[5])
+            //    TrigPress[5] = false;
         }
 
         private void mouseKeyEventProvider1_MouseDown(object sender, MouseEventArgs e)
@@ -397,106 +419,113 @@ namespace D3Hot
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         protected override void WndProc(ref Message m)
         {
-            const int wmSyscommand = 0x0112;
-            const int scMinimize = 0xF020;
+            try
+            {
+                const int wmSyscommand = 0x0112;
+                const int scMinimize = 0xF020;
 
-            if (m.Msg == wmSyscommand)
-                if (m.WParam.ToInt32() == scMinimize)
-                {
-                    if (Location.X > 0) Settings.Default.pos_x = Location.X; //14.05.2015
-                    if (Location.Y > 0) Settings.Default.pos_y = Location.Y;
-                    if (Location.X > 0 || Location.Y > 0) Settings.Default.Save();
-
-                    if (pan_opt.Visible || _optClick == 1) b_opt_Click(null, null);
-                    error_not(2); //17.04.2015
-                    error_select();
-                    if (!_startMain || !_startOpt) // this.WindowState = FormWindowState.Minimized;
+                if (m.Msg == wmSyscommand)
+                    if (m.WParam.ToInt32() == scMinimize)
                     {
-                        m.Result = IntPtr.Zero;
-                        error_show(2);
-                        return;
+                        if (Location.X > 0) Settings.Default.pos_x = Location.X; //14.05.2015
+                        if (Location.Y > 0) Settings.Default.pos_y = Location.Y;
+                        if (Location.X > 0 || Location.Y > 0) Settings.Default.Save();
+
+                        if (pan_opt.Visible || _optClick == 1) b_opt_Click(null, null);
+                        error_not(2); //17.04.2015
+                        error_select();
+                        if (!_startMain || !_startOpt) // this.WindowState = FormWindowState.Minimized;
+                        {
+                            m.Result = IntPtr.Zero;
+                            error_show(2);
+                            return;
+                        }
+                    }
+
+                if (m.Msg == NativeMethods.WmShowme)
+                    ShowMe();
+
+                base.WndProc(ref m);
+
+                if (m.Msg != 0x0312) return;
+                /* Note that the three lines below are not needed if you only want to register one hotkey.
+                     * The below lines are useful in case you want to register multiple keys, which you can use a switch with the id as argument, or if you want to know which key/modifier was pressed for some particular reason. */
+
+                //var key = (Keys) (((int) m.LParam >> 16) & 0xFFFF); // The key of the hotkey that was pressed.
+                //var modifier = (KeyModifier) ((int) m.LParam & 0xFFFF); // The modifier of the hotkey that was pressed.
+                var id = m.WParam.ToInt32(); // The id of the hotkey that was pressed.
+
+                var j = 0;
+
+                if (id == 0)
+                {
+                    cb_start.Checked = !cb_start.Checked; //cb_start_CheckedChanged(null, null);
+                }
+                else if ((id == 1 || id == 2 || id == 3) && !_hotkeyPressed && cb_hot_prof.Enabled)
+                {
+                    _hotkeyPressed = true;
+                    switch (id)
+                    {
+                        case 1:
+                            if (cb_prof.SelectedIndex != 1)
+                            {
+                                if (cb_start.Checked)
+                                {
+                                    j = 1;
+                                    cb_start.Checked = !cb_start.Checked;
+                                    //cb_start_CheckedChanged(null, null);
+                                }
+                                //System.Threading.Thread.Sleep(40);
+                                cb_prof.SelectedIndex = 1;
+                                cb_prof_SelectionChangeCommitted(null, null);
+                                //System.Threading.Thread.Sleep(40);
+                                if (j == 1)
+                                    cb_start.Checked = !cb_start.Checked;
+                            }
+                            break;
+                        case 2:
+                            if (cb_prof.SelectedIndex != 2)
+                            {
+                                if (cb_start.Checked)
+                                {
+                                    j = 1;
+                                    cb_start.Checked = !cb_start.Checked;
+                                    //cb_start_CheckedChanged(null, null);
+                                }
+                                //System.Threading.Thread.Sleep(40);
+                                cb_prof.SelectedIndex = 2;
+                                cb_prof_SelectionChangeCommitted(null, null);
+                                //System.Threading.Thread.Sleep(40);
+                                if (j == 1)
+                                    cb_start.Checked = !cb_start.Checked;
+                            }
+                            break;
+                        case 3:
+                            if (cb_prof.SelectedIndex != 3)
+                            {
+                                if (cb_start.Checked)
+                                {
+                                    j = 1;
+                                    cb_start.Checked = !cb_start.Checked;
+                                    //cb_start_CheckedChanged(null, null);
+                                }
+                                //System.Threading.Thread.Sleep(40);
+                                cb_prof.SelectedIndex = 3;
+                                cb_prof_SelectionChangeCommitted(null, null);
+                                //System.Threading.Thread.Sleep(40);
+                                if (j == 1)
+                                    cb_start.Checked = !cb_start.Checked;
+                            }
+                            break;
                     }
                 }
-
-            if (m.Msg == NativeMethods.WmShowme)
-                ShowMe();
-
-            base.WndProc(ref m);
-
-            if (m.Msg != 0x0312) return;
-            /* Note that the three lines below are not needed if you only want to register one hotkey.
-                 * The below lines are useful in case you want to register multiple keys, which you can use a switch with the id as argument, or if you want to know which key/modifier was pressed for some particular reason. */
-
-            //var key = (Keys) (((int) m.LParam >> 16) & 0xFFFF); // The key of the hotkey that was pressed.
-            //var modifier = (KeyModifier) ((int) m.LParam & 0xFFFF); // The modifier of the hotkey that was pressed.
-            var id = m.WParam.ToInt32(); // The id of the hotkey that was pressed.
-
-            var j = 0;
-
-            if (id == 0)
-            {
-                cb_start.Checked = !cb_start.Checked; //cb_start_CheckedChanged(null, null);
+                // do something
+                _hotkeyPressed = false;
             }
-            else if ((id == 1 || id == 2 || id == 3) && !_hotkeyPressed && cb_hot_prof.Enabled)
+            catch
             {
-                _hotkeyPressed = true;
-                switch (id)
-                {
-                    case 1:
-                        if (cb_prof.SelectedIndex != 1)
-                        {
-                            if (cb_start.Checked)
-                            {
-                                j = 1;
-                                cb_start.Checked = !cb_start.Checked;
-                                //cb_start_CheckedChanged(null, null);
-                            }
-                            //System.Threading.Thread.Sleep(40);
-                            cb_prof.SelectedIndex = 1;
-                            cb_prof_SelectionChangeCommitted(null, null);
-                            //System.Threading.Thread.Sleep(40);
-                            if (j == 1)
-                                cb_start.Checked = !cb_start.Checked;
-                        }
-                        break;
-                    case 2:
-                        if (cb_prof.SelectedIndex != 2)
-                        {
-                            if (cb_start.Checked)
-                            {
-                                j = 1;
-                                cb_start.Checked = !cb_start.Checked;
-                                //cb_start_CheckedChanged(null, null);
-                            }
-                            //System.Threading.Thread.Sleep(40);
-                            cb_prof.SelectedIndex = 2;
-                            cb_prof_SelectionChangeCommitted(null, null);
-                            //System.Threading.Thread.Sleep(40);
-                            if (j == 1)
-                                cb_start.Checked = !cb_start.Checked;
-                        }
-                        break;
-                    case 3:
-                        if (cb_prof.SelectedIndex != 3)
-                        {
-                            if (cb_start.Checked)
-                            {
-                                j = 1;
-                                cb_start.Checked = !cb_start.Checked;
-                                //cb_start_CheckedChanged(null, null);
-                            }
-                            //System.Threading.Thread.Sleep(40);
-                            cb_prof.SelectedIndex = 3;
-                            cb_prof_SelectionChangeCommitted(null, null);
-                            //System.Threading.Thread.Sleep(40);
-                            if (j == 1)
-                                cb_start.Checked = !cb_start.Checked;
-                        }
-                        break;
-                }
+                // ignored
             }
-            // do something
-            _hotkeyPressed = false;
         }
 
         private void d3hot_Load(object sender, EventArgs e)
@@ -794,54 +823,70 @@ namespace D3Hot
         {
             if (!_progStart || !_progRun) return; //Если выключаемся, выходим
 
+            timer_load(i); //Создаём таймер (Внутри проверка, если его ещё нет).
+
             if (CdrKey[i] == 1) //Триггер с кулдауном
             {
-                if (_tmrCdr == null)
-                {
-                    _tmrCdr = new Timer(); //30мс - общий таймер 23.01.2017
+                //if (_tmrCdr == null)
+                //{
+                //    _tmrCdr = new Timer(); //30мс - общий таймер 23.01.2017
 
-                    try
-                    {
-                        _tmrCdr.Interval = _tmrCdrInt;
-                        _tmrCdr.Elapsed += Cooldown_Tick;
-                    }
-                    catch
-                    {
-                        _tmrCdr.Dispose();
-                        return;
-                    }
-                }
-                if (!_tmrCdr.Enabled)
-                    _tmrCdr.Start();
+                //    try
+                //    {
+                //        _tmrCdr.Interval = _tmrCdrInt;
+                //        _tmrCdr.Elapsed += Cooldown_Tick;
+                //        _tmrCdr.AutoReset = false; //Не перезапускаем общий таймер проверки CDR
+                //    }
+                //    catch
+                //    {
+                //        _tmrCdr.Dispose();
+                //        return;
+                //    }
+                //}
 
-                timer_load(i); //Создаём таймер (Внутри проверка, если его ещё нет).
-                if (_tmr[i] != null && !_tmr[i].Enabled) _tmr[i].Enabled = true; //19.01.2017
+                //if (!_tmrCdr.Enabled)
+                //{
+                //    // ReSharper disable once AccessToDisposedClosure
+                //    new Thread(() => Cooldown_Tick(_tmrCdr, null)).Start(); //Чтобы таймер с проверкой CDR отрабатал при запуске один раз
+                //    _tmrCdr.Start();
+                //}
+
+                if (_tmr[i] == null || _tmr[i].Enabled) return;
+                //tmr_cdr_Elapsed(_tmr[i], null); //Чтобы таймер с прожатием CDR отрабатал при запуске один раз
+                new Thread(() => tmr_cdr_Elapsed(_tmr[i], null)).Start();  //Чтобы таймер с прожатием CDR отрабатал при запуске один раз
+                //_tmr[i].Enabled = true; //Запускаем таймер прожатия с кулдауном - 19.01.2017
             }
 
-            else if (HoldKey[i] == 1 && Hold[i] == 0) //18.03.2015 //cdr_key[i] == 0 && 
-            {
-                Hold[i] = 1;
-                hold_load(i);
-            }
+            //else if (HoldKey[i] == 1) //18.03.2015 //cdr_key[i] == 0 &&  //&& Hold[i] == 0
+            //{
+            //    //Hold[i] = 1;
+            //    hold_load(i);
+            //}
 
-            else if (TmrR[i] == 0 && HoldKey[i] == 0) //cdr_key[i] == 0 && 
+            else if (TmrF[i] == 4 && TmrR[i] == 0) //cdr_key[i] == 0 && //TmrR[i] == 0 && HoldKey[i] == 0
             {
-                TmrR[i] = 1;
-                timer_load(i);
+                //TmrR[i] = 1;
 
                 if (TmrLeft[i] != 0 && TmrLeft[i] - _delayWait > 0)
+                {
                     _tmr[i].Interval = TmrLeft[i] - _delayWait;
+                    _delayWait = 0;
+                    TmrLeft[i] = 0;
+                    _tmr[i].Enabled = true; //Запускаем после остатка времени
+                }
+
                 else if (_tmr[i] != null)
-                    tmr_Elapsed(_tmr[i], null); //Чтобы отрабатало при запуске один раз
+                    new Thread(() => tmr_Elapsed(_tmr[i], null)).Start();
+                        //Чтобы таймер с прожатием обычным отрабатал при запуске один раз
+                //tmr_Elapsed(_tmr[i], null); //Чтобы отрабатало при запуске один раз
 
 
-                if (_tmr[i] == null || TmrOnce[i] >= 1) return; //Пока не используется
+                //if (_tmr[i] == null || TmrOnce[i] >= 1) return; //Пока не используется
 
-                if (!_tmr[i].Enabled)
-                    _tmr[i].Enabled = true;
+                //if (!_tmr[i].Enabled) _tmr[i].Enabled = true; //Запускаем таймер прожатия без кулдауна //Разового запуска хватит, сам себя активирует
 
-                if (_tmrWatch[i] != null && !_tmrWatch[i].IsRunning)
-                    _tmrWatch[i].Start();
+                //if (_tmrWatch[i] != null && !_tmrWatch[i].IsRunning)
+                //    _tmrWatch[i].Start();
             }
         }
 
@@ -852,268 +897,367 @@ namespace D3Hot
         /// <param name="e"></param>
         private void tmr_all_Elapsed(object sender, EventArgs e)
         {
-            //if (_tmrAllCounter == 3) return; //пропускаем круг, если проверяются триггеры 19.01.2017
-
-            if (!_progStart || !_progRun) //|| _tmrAllCounter > 0
-                return;
-
-            //_tmrAllCounter = 10;
-
-            if (_debug)
+            try
             {
-                LogMaker(ref _log, 1, "Первый круг общего цикла!");
+                //if (_tmrAllCounter == 3) return; //пропускаем круг, если проверяются триггеры 19.01.2017
 
-                var timersStatus = "";
-                if (_tmrAll != null) timersStatus += "_tmrAll: " + _tmrAll.Enabled;
-                if (_tmrCdr != null) timersStatus += ", _tmrCdr: " + _tmrCdr.Enabled;
-                if (_tmr[0] != null) timersStatus += ", _tmr[0]: " + _tmr[0].Enabled;
-                if (_tmr[1] != null) timersStatus += ", _tmr[1]: " + _tmr[1].Enabled;
-                if (_tmr[2] != null) timersStatus += ", _tmr[2]: " + _tmr[2].Enabled;
-                if (_tmr[3] != null) timersStatus += ", _tmr[3]: " + _tmr[3].Enabled;
-                if (_tmr[4] != null) timersStatus += ", _tmr[4]: " + _tmr[4].Enabled;
-                if (_tmr[5] != null) timersStatus += ", _tmr[5]: " + _tmr[5].Enabled;
-                if (TmrPress.Sum() > 0)
-                    timersStatus += " Кнопок прожимается: " + TmrPress.Sum(); //TmrPress.Count(i => i > 0);
-
-                LogMaker(ref _log, 99999, timersStatus);
-            }
-
-            //Проверяем, есть ли процесс в памяти
-            if (_d3Proc && _procId > 0)
-                try
-                {
-                    Process.GetProcessById(_procId);
-                }
-                catch
-                {
-                    //MessageBox.Show(@"Вы вышли из программы!");
-                    //if (!_progStart) return;
-                    TimerStop(99); //Останавливаем все таймеры, включая главный
-                    BeginInvoke((Action) (() => cb_proc.SelectedIndex = -1)); //Сбрасываем выбранный процесс
-                    BeginInvoke((Action) (() => cb_start.Checked = false));
-                    //_tmrAllCounter = 0;
-                    //if (_startStop != 0 && _progStart)
-                    //{
-                    //    _inp.Keyboard.KeyPress((VirtualKeyCode)_startStop);
-                    //}
-                    //else if (_progStart)
-                    //{
-                    //     BeginInvoke((Action)(() => cb_start.Checked = false));
-                    //}
-
+                if (!_progStart || !_progRun) //|| _tmrAllCounter > 0
                     return;
-                }
 
-            if (_returnDelay > 0 && _returnPress == 1) //(pause == 2 || pause == 3)
-            {
-                _returnPressCount++;
-                _returnPress = 0;
-                if (_returnPressCount == 1)
+                //_tmrAllCounter = 10;
+
+                if (_debug)
                 {
-                    _returnWatch = new Stopwatch();
-                    _returnWatch.Start();
+                    LogMaker(ref _log, 1, "Первый круг общего цикла!");
+
+                    var timersStatus = "";
+                    if (_tmrAll != null) timersStatus += "_tmrAll: " + _tmrAll.Enabled;
+                    if (_tmrCdr != null) timersStatus += ", _tmrCdr: " + _tmrCdr.Enabled;
+                    if (_tmr[0] != null) timersStatus += ", _tmr[0]: " + _tmr[0].Enabled;
+                    if (_tmr[1] != null) timersStatus += ", _tmr[1]: " + _tmr[1].Enabled;
+                    if (_tmr[2] != null) timersStatus += ", _tmr[2]: " + _tmr[2].Enabled;
+                    if (_tmr[3] != null) timersStatus += ", _tmr[3]: " + _tmr[3].Enabled;
+                    if (_tmr[4] != null) timersStatus += ", _tmr[4]: " + _tmr[4].Enabled;
+                    if (_tmr[5] != null) timersStatus += ", _tmr[5]: " + _tmr[5].Enabled;
+                    if (TmrPress.Sum() > 0)
+                        timersStatus += " Кнопок прожимается: " + TmrPress.Sum(); //TmrPress.Count(i => i > 0);
+
+                    LogMaker(ref _log, 99999, timersStatus);
                 }
-            }
 
-            if (_returnWatch != null &&
-                (_returnPressCount > 1 ||
-                 _returnDelay > 0 && (int) _returnWatch.ElapsedMilliseconds > _returnDelay * 1000))
-                //Обработка количества Enter для работы с Shift
-            {
-                //return_press_count = 0; //01.06.2016
-                _returnPress = 0;
-                _delayWait = (int) _returnWatch.ElapsedMilliseconds;
-                _returnWatch.Stop();
-            }
+                //Проверяем, есть ли процесс в памяти
+                if (_d3Proc && _procId > 0)
+                    try
+                    {
+                        Process.GetProcessById(_procId);
+                    }
+                    catch
+                    {
+                        //MessageBox.Show(@"Вы вышли из программы!");
+                        //if (!_progStart) return;
+                        TimerStop(99); //Останавливаем все таймеры, включая главный
+                        BeginInvoke((Action) (() => cb_proc.SelectedIndex = -1)); //Сбрасываем выбранный процесс
+                        BeginInvoke((Action) (() => cb_start.Checked = false));
+                        //_tmrAllCounter = 0;
+                        //if (_startStop != 0 && _progStart)
+                        //{
+                        //    _inp.Keyboard.KeyPress((VirtualKeyCode)_startStop);
+                        //}
+                        //else if (_progStart)
+                        //{
+                        //     BeginInvoke((Action)(() => cb_start.Checked = false));
+                        //}
 
-            //if (seconds_count > 0) seconds_count++;
+                        return;
+                    }
 
-            _trigPressed = some_trig_press(); //проверяем, какие триггеры активны и нажаты
-            _trigPressedSum = _trigPressed.Sum();
+                if (_returnDelay > 0 && _returnPress == 1) //(pause == 2 || pause == 3)
+                {
+                    _returnPressCount++;
+                    _returnPress = 0;
+                    if (_returnPressCount == 1)
+                    {
+                        _returnWatch = new Stopwatch();
+                        _returnWatch.Start();
+                    }
+                }
 
-            for (var i = 0; i < 6; i++)
-                if (_trigPressed[i] == 1 && CdrKey[i] == 1 && CdrRun[i] < 1) //trig_cdr_pressed[i] == 0
-                    CdrRun[i] = 1;
-            //else if (_trigPressed[i] == 0)
-            //    CdrRun[i] = 0;
-
-            //if (CdrRun[3] == 1) //Для записи логов
-            //    LogMaker(ref _log, 5,
-            //        "Триггеры нажаты: " + _trigPressed[0] + _trigPressed[1] + _trigPressed[2] + _trigPressed[3] +
-            //        _trigPressed[4] + _trigPressed[5]);
-
-            //Работаем только если хоть что-то из триггеров зажато/переключено.
-            if (_trigPressedSum > 0)
-            {
-                _wasUsed = true;
-                if (_returnPressCount > 1 ||
-                    _returnDelay > 0 && _returnWatch != null &&
-                    (int) _returnWatch.ElapsedMilliseconds > _returnDelay * 1000)
+                if (_returnWatch != null &&
+                    (_returnPressCount > 1 ||
+                     _returnDelay > 0 && (int) _returnWatch.ElapsedMilliseconds > _returnDelay * 1000))
                     //Обработка количества Enter для работы с Shift
-                    _returnPressCount = 0; //01.06.2016
-
-                if (_returnWatch != null && _returnWatch.IsRunning && _rPress == 0)
                 {
-                    _rPress = 1;
-
-                    MainTimerStop(88); //Удаляем данные по обычным таймерам, а также кулдауна и зажатия
-                }
-
-                //if ((r_press == 1 && return_press == 1) || (delay_watch != null && (int)delay_watch.ElapsedMilliseconds > 30000)) 
-                else if (_rPress == 1 && (_returnWatch == null || !_returnWatch.IsRunning))
-                {
-                    _rPress = 0;
-                    _tPress = 0;
-                    _mapPress = 0;
-                    //r_press = 0; return_press = 0; t_press = 0; map_press = 0; return_press_count = 0;
-                    //delay_wait = (int)delay_watch.ElapsedMilliseconds;
-                    //delay_watch.Stop();
-                }
-
-                //Проверка на нажатие T.
-                if (_teleWatch != null && _teleWatch.ElapsedMilliseconds >= _tpDelay * 1000)
-                    //tp_delay > 0 && t_press > 0 && tmr_all.Interval == tp_delay * 1000
-                {
-                    _delayWait = (int) _teleWatch.ElapsedMilliseconds;
-                    _tPress = 0;
-                    //tmr_all.Interval = 1; //01.06.2015
-                    StopWatch(_teleWatch); //delay_timers(33);
+                    //return_press_count = 0; //01.06.2016
                     _returnPress = 0;
+                    _delayWait = (int) _returnWatch.ElapsedMilliseconds;
+                    _returnWatch.Stop();
                 }
 
-                if (!(_teleWatch != null && _teleWatch.IsRunning) && _tpDelay > 0 && _tPress > 0 && _rPress == 0)
-                    //(pause == 1 || pause == 3)
+                //if (seconds_count > 0) seconds_count++;
+
+                _trigPressed = some_trig_press(); //проверяем, какие триггеры активны и нажаты
+                _trigPressedSum = _trigPressed.Sum();
+
+                for (var i = 0; i < 6; i++)
+                    if (_trigPressed[i] == 1 && CdrKey[i] == 1 && CdrRun[i] < 1) //trig_cdr_pressed[i] == 0
+                        CdrRun[i] = 1;
+                //else if (_trigPressed[i] == 0)
+                //    CdrRun[i] = 0;
+
+                //if (CdrRun[3] == 1) //Для записи логов
+                //    LogMaker(ref _log, 5,
+                //        "Триггеры нажаты: " + _trigPressed[0] + _trigPressed[1] + _trigPressed[2] + _trigPressed[3] +
+                //        _trigPressed[4] + _trigPressed[5]);
+
+                //Работаем только если хоть что-то из триггеров зажато/переключено.
+                if (_trigPressedSum > 0)
                 {
-                    MainTimerStop(88); //Удаляем данные по обычным таймерам, а также кулдауна и зажатия
-                    RestartWatch(out _teleWatch);
+                    _wasUsed = true;
+                    if (_returnPressCount > 1 ||
+                        _returnDelay > 0 && _returnWatch != null &&
+                        (int) _returnWatch.ElapsedMilliseconds > _returnDelay * 1000)
+                        //Обработка количества Enter для работы с Shift
+                        _returnPressCount = 0; //01.06.2016
+
+                    if (_returnWatch != null && _returnWatch.IsRunning && _rPress == 0)
+                    {
+                        _rPress = 1;
+                        //MainTimerStop(88); //Удаляем данные по обычным таймерам, а также кулдауна и зажатия
+                    }
+
+                    //if ((r_press == 1 && return_press == 1) || (delay_watch != null && (int)delay_watch.ElapsedMilliseconds > 30000)) 
+                    else if (_rPress == 1 && (_returnWatch == null || !_returnWatch.IsRunning))
+                    {
+                        _rPress = 0;
+                        _telePress = 0;
+                        _mapPress = 0;
+                        //r_press = 0; return_press = 0; t_press = 0; map_press = 0; return_press_count = 0;
+                        //delay_wait = (int)delay_watch.ElapsedMilliseconds;
+                        //delay_watch.Stop();
+                    }
+
+                    //Проверка на нажатие T.
+                    if (_teleWatch != null && _teleWatch.ElapsedMilliseconds >= _tpDelay * 1000)
+                        //tp_delay > 0 && t_press > 0 && tmr_all.Interval == tp_delay * 1000
+                    {
+                        _delayWait = (int) _teleWatch.ElapsedMilliseconds;
+                        _telePress = 0;
+                        _tPress = 0;  //Отпустили кнопку телепорта
+                        //tmr_all.Interval = 1; //01.06.2015
+                        StopWatch(_teleWatch); //delay_timers(33);
+                        //_returnPress = 0; Зачем? O_o
+
+                    }
+
+                    if (!(_teleWatch != null && _teleWatch.IsRunning) && _tpDelay > 0 && _telePress > 0) // && _rPress == 0 Зачем? O_o
+                        //(pause == 1 || pause == 3)
+                    {
+                        _telePress = 0;
+                        _tPress = 1;
+                        //MainTimerStop(88); //Удаляем данные по обычным таймерам, а также кулдауна и зажатия
+                        RestartWatch(out _teleWatch);
+                    }
+
+                    if (_tpDelay > 0 && _rPress > 0 && _telePress > 0)  //Отпустили кнопку телепорта
+                        _telePress = 0; 
+
+                    //Проверка на нажатие M.
+                    if (_mapWatch != null && _mapWatch.ElapsedMilliseconds >= _mapDelay * 1000)
+                        //map_delay > 0 && map_press > 0 && tmr_all.Interval == map_delay * 1000
+                    {
+                        _delayWait = (int) _mapWatch.ElapsedMilliseconds;
+                        _mapPress = 0;
+                        _mPress = 0;  //Отпустили кнопку карты
+                        //tmr_all.Interval = 1; //01.06.2015
+                        StopWatch(_mapWatch); //delay_timers(32);
+                        _returnPress = 0;
+                    }
+
+                    if (!(_mapWatch != null && _mapWatch.IsRunning) && _mapDelay > 0 && _mapPress > 0 && _rPress == 0)
+                    {
+                        _mapPress = 0;
+                        _mPress = 1;
+                        //MainTimerStop(88); //Удаляем данные по обычным таймерам, а также кулдауна и зажатия
+                        RestartWatch(out _mapWatch);
+                    }
+
+                    if (_mapDelay > 0 && _rPress > 0 && _mapPress > 0) 
+                        _mapPress = 0;
+
+                    //13.01.2017 Задержка по клавише. Уменьшаем количество нажатых триггеров, если их отжали во время работы таймера
+                    if (_keyWatch != null && _keyWatch.IsRunning && _trigPressedSumDelay > _trigPressedSum)
+                        _trigPressedSumDelay = _trigPressedSum;
+                    //Если отпустили триггер, актуализируем зафиксированное количество
+
+                    //16.03.2015 Проверка на клавишу задержки - отмена или окончание паузы
+                    if (_keyWatch != null && _keyWatch.IsRunning &&
+                        (_trigPressedSum > _trigPressedSumDelay || _keyWatch.ElapsedMilliseconds >= _delayPressInterval))
+                        //delay_press > 0 && tmr_all.Interval == delay_press_interval
+                    {
+                        if (_delayWait == 0) _delayWait = (int) _keyWatch.ElapsedMilliseconds; //Сохранили сколько мс мы паузили
+                        _delayPress = 0;
+                        _dPress = 0; //Отпустили кнопку задержки
+                        StopWatch(_keyWatch); //delay_timers(31);
+                        //tmr_all.Interval = 1;
+                    }
+
+                    //16.03.2015 Проверка на клавишу задержки - запуск задержки
+                    if (_delayPress > 0 && _delayPressInterval > 0 && _rPress == 0 && _mapPress == 0 && _telePress == 0)
+                        //&& !key_press(1)
+                    {
+                        if (_keyWatch == null || !_keyWatch.IsRunning)
+                            _delayWait = 0; //11.01.2017 Анализ PVS Studio - упрощение конструкции
+                        else
+                            _delayWait += (int) _keyWatch.ElapsedMilliseconds;
+                        //(key_watch != null && key_watch.IsRunning)
+
+                        //MainTimerStop(88); //Удаляем данные по обычным таймерам, а также кулдауна и зажатия
+
+                        _delayPress = 0;
+                        _dPress = 1;
+                        _trigPressedSumDelay = _trigPressedSum; //Сохранили количество нажатых триггеров 12.01.2017
+                        RestartWatch(out _keyWatch); //delay_timers(21);
+                    }
+
+                    //if (_returnDelay > 0 && _rPress > 0 && _delayPress > 0) //Зачем? O_o
+                    //    _delayPress = 0; //(pause == 2 || pause == 3)
+
+                    //if (_teleportInProgress && Hold.Any(item => item == 1)) //Проверка на телепорт при включённом кулдауне
+                    //{
+                    //    var holded = Array.IndexOf(Hold, 1);
+                    //    if (holded > -1) MainTimerStop(holded);
+                    //    //timer_unload(88); //Не надо отжимать таймер, пусть работает!
+                    //    //hold_clear(88);
+                    //}
+
+                    //for (var i = 0; i < 6; i++)
+                    //{
+                    //    if (_trigPressed[i] == 0 && TmrF[i] == 4 && _tmr[i] != null && _tmr[i].Interval > 20)
+                    //        _tmr[i].Interval = 20;
+                    //    //if (_trigPressed[i]>0 || _tmrWatch == null || _tmrWatch[i].ElapsedMilliseconds < 1 || _tmrI[i] < 1) return;
+                    //    //if (_tmrWatch[i] != null) _tmrWatch[i].Stop();
+                    //}
+
+
+                    if (_teleportInProgress || _dPress + _rPress + _tPress + _mPress>0)
+                    {
+                        _canPress = false;
+                        MainTimerStop(88); //Удаляем данные по обычным таймерам, а также кулдауна и зажатия
+                    }
+                    else
+                    {
+                        //for (var i = 0; i < 6; i++)
+                        //{
+                        //    if (_tmrWatch == null || _tmrWatch[i].ElapsedMilliseconds < 1 || _tmrI[i] < 1) return;
+                        //    if (_tmrWatch[i].ElapsedMilliseconds > _delayWait)
+                        //        _tmr[i].Interval = 1;
+                        //}
+                        
+                        _canPress = true;
+                    }
+
+
+                    for (var i = 0; i < 6; i++) //Запускаем/останавливаем индивидуальные таймеры кроме зажатия кнопки
+                    {
+                        //if (TmrF[i] == 3) _holdNum = i;
+                        if (TmrF[i] == 0 || TmrF[i] == 3) continue; //4 - нажатие, 1 - CDR, 2 - CDR + sec, 3 - hold
+                        var i1 = i;
+
+
+                        if (_trigPressed[i] == 1 && _canPress)
+                            new Thread(() => trig_check(i1)).Start();
+                        else
+                            new Thread(() => MainTimerStop(i1)).Start();
+                    }
+
+
+                    //Работаем с зажатием
+                    if (_holdNum <= -1) return;
+                    
+                        var i2 = _holdNum;
+                        if (_canPress && _trigPressed[_holdNum] == 1)
+                            new Thread(() => hold_load(i2)).Start();
+                        else if (!_canPress || _trigPressed[_holdNum] == 0)
+                            new Thread(() => hold_clear(i2)).Start();
+                    
+                    //Ничего не делаем, запускаем таймеры сразу после старта программы 27.01.2017
+                    //Если T|Enter не нажаты, запускаем таймеры триггеров 1-2-3-4-5-6 при активном состоянии и останавливаем при отключенном.
+                    //else if (_mapPress == 0 && _tPress == 0 && _rPress == 0 && _delayPress == 0 &&
+                    //         (_keyWatch == null || !_keyWatch.IsRunning)) //!teleport_in_progress && 
+                    //{
+                    //    //_tmrAllCounter = 3;
+
+                    //    for (var i = 0; i < 6; i++) //31.01.2016
+                    //    {
+                    //        //if (i == 4) LogMaker(ref _log, 99999, "Что там с триггером 4?: " + _trigPressed[i] + " | " + TrigUsed[i]);
+                    //        if (_trigPressed[i] == 1 && TrigUsed[i] != 1)
+                    //            //Триггер нажат и не отрабатывает сейчас 25.01.2017 //
+                    //        {
+                    //            TrigUsed[i] = 1;
+                    //            //_tmrAllCounter++;
+                    //            //LogMaker(ref _log, 99999, "Сколько раз сюда зашли: " + _tmrAllCounter);
+                    //            //trig_check(i);
+                    //            var i1 = i;
+                    //            new Thread(() => trig_check(i1)).Start();
+                    //            //Запускаем каждый таймер в отдельном потоке, почти одновременно
+                    //        }
+                    //        //else if (_trigPressed[i] == 0 && TrigUsed[i] == 1) //Триггер не нажат, но был нажат когда-то
+                    //        //{
+                    //        //    //if (_debug)
+                    //        //    //{
+                    //        //    //    var timenow = DateTime.Now.ToLongTimeString();
+                    //        //    //    MessageBox.Show(timenow + @" Как будто кто-то отжал триггер " + i);
+                    //        //    //}
+                    //        //    if (i == 4) LogMaker(ref _log, 99999, "Что там с триггером !!! 4?: " + _trigPressed[i] + " | " + TrigUsed[i]);
+                    //        //    MainTimerStop(i);
+                    //        //    TmrLeft[i] = 0;
+                    //        //    TrigUsed[i] = 0;
+                    //        //}
+                    //        if (_trigPressed[i] == 0 && Hold[i] == 1)
+                    //            MainTimerStop(i);
+                    //    }
+                        
+                    //    //_delayWait = 0;
+                    //    //_tmrAllCounter = 2; //19.01.2017
+                    //}
+
+
                 }
 
-                if (_tpDelay > 0 && _rPress > 0 && _tPress > 0) _tPress = 0; //(pause == 1 || pause == 3)
-
-                //Проверка на нажатие M.
-                if (_mapWatch != null && _mapWatch.ElapsedMilliseconds >= _mapDelay * 1000)
-                    //map_delay > 0 && map_press > 0 && tmr_all.Interval == map_delay * 1000
+                //Надо ли останавливать таймеры? Не уверен. 27.01.2017
+                else if (_wasUsed) //Ни один триггер не нажат //08.12.2015
                 {
-                    _delayWait = (int) _mapWatch.ElapsedMilliseconds;
-                    _mapPress = 0;
-                    //tmr_all.Interval = 1; //01.06.2015
-                    StopWatch(_mapWatch); //delay_timers(32);
-                    _returnPress = 0;
+                    TimerStop(88); //Останавливаем все таймеры, кроме главного
                 }
 
-                if (!(_mapWatch != null && _mapWatch.IsRunning) && _mapDelay > 0 && _mapPress > 0 && _rPress == 0)
-                {
-                    MainTimerStop(88); //Удаляем данные по обычным таймерам, а также кулдауна и зажатия
-                    RestartWatch(out _mapWatch);
-                }
 
-                if (_mapDelay > 0 && _rPress > 0 && _mapPress > 0) _mapPress = 0;
-
-                //13.01.2017 Задержка по клавише. Уменьшаем количество нажатых триггеров, если их отжали во время работы таймера
-                if (_keyWatch != null && _keyWatch.IsRunning && _trigPressedSumDelay > _trigPressedSum)
-                    _trigPressedSumDelay = _trigPressedSum;
-                //Если отпустили триггер, актуализируем зафиксированное количество
-
-                //16.03.2015 Проверка на клавишу задержки - отмена или окончание паузы
-                if (_keyWatch != null && _keyWatch.IsRunning &&
-                    (_trigPressedSum > _trigPressedSumDelay || _keyWatch.ElapsedMilliseconds >= _delayPressInterval))
-                    //delay_press > 0 && tmr_all.Interval == delay_press_interval
-                {
-                    if (_delayWait == 0) _delayWait = (int) _keyWatch.ElapsedMilliseconds;
-                    _delayPress = 0;
-                    StopWatch(_keyWatch); //delay_timers(31);
-                    //tmr_all.Interval = 1;
-                }
-
-                //16.03.2015 Проверка на клавишу задержки - запуск задержки
-                if (_delayPress > 0 && _delayPressInterval > 0 && _rPress == 0 && _mapPress == 0 && _tPress == 0)
-                    //&& !key_press(1)
-                {
-                    if (_keyWatch == null || !_keyWatch.IsRunning)
-                        _delayWait = 0; //11.01.2017 Анализ PVS Studio - упрощение конструкции
-                    else _delayWait += (int) _keyWatch.ElapsedMilliseconds; //(key_watch != null && key_watch.IsRunning)
-
-                    MainTimerStop(88); //Удаляем данные по обычным таймерам, а также кулдауна и зажатия
-
-                    _delayPress = 0;
-                    _trigPressedSumDelay = _trigPressedSum; //Сохранили количество нажатых триггеров 12.01.2017
-                    RestartWatch(out _keyWatch); //delay_timers(21);
-                }
-
-                if (_returnDelay > 0 && _rPress > 0 && _delayPress > 0) _delayPress = 0; //(pause == 2 || pause == 3)
-
-                if (_teleportInProgress) //Проверка на телепорт при включённом кулдауне
-                {
-                    timer_unload(88);
-                    hold_clear(88);
-                }
-
-                //Если T|Enter не нажаты, запускаем таймеры триггеров 1-2-3-4-5-6 при активном состоянии и останавливаем при отключенном.
-                else if (_mapPress == 0 && _tPress == 0 && _rPress == 0 && _delayPress == 0 &&
-                         (_keyWatch == null || !_keyWatch.IsRunning)) //!teleport_in_progress && 
-                {
-                    //_tmrAllCounter = 3;
-
-                    for (var i = 0; i < 6; i++) //31.01.2016
-                        if (_trigPressed[i] == 1)
-                            //Триггер нажат и не отрабатывает сейчас 25.01.2017 //&& TrigUsed[i] != 1
-                        {
-                            TrigUsed[i] = 1;
-                            //_tmrAllCounter++;
-                            //LogMaker(ref _log, 99999, "Сколько раз сюда зашли: " + _tmrAllCounter);
-                            trig_check(i);
-                        }
-                        else if (_trigPressed[i] == 0 && TrigUsed[i] == 1) //Триггер не нажат, но был нажат когда-то
-                        {
-                            //if (_debug)
-                            //{
-                            //    var timenow = DateTime.Now.ToLongTimeString();
-                            //    MessageBox.Show(timenow + @" Как будто кто-то отжал триггер " + i);
-                            //}
-
-                            MainTimerStop(i);
-                            TmrLeft[i] = 0;
-                            TrigUsed[i] = 0;
-                        }
-
-                    _delayWait = 0;
-                    //_tmrAllCounter = 2; //19.01.2017
-                }
+                //_tmrAllCounter = 0;
             }
-            else if (_wasUsed) //Ни один триггер не нажат //08.12.2015
+            catch
             {
-                TimerStop(88); //Останавливаем все таймеры, кроме главного
+                //ignore
             }
-            //_tmrAllCounter = 0;
+            finally
+            {
+                if (_tmrAll != null) _tmrAll.Enabled = true;
+            }
         }
 
         private void hold_clear(int i)
         {
-            if (i < 6 && HoldKey[i] == 0)
-                return;
+
+            if (_holdNum < 0 || !_holded) return; //Выходим, если ничего не зажато
+
+            if (i == 4) LogMaker(ref _log, 99999, "Зажатие триггера 4 как проходит?: " + _trigPressed[i] + " | " + TrigUsed[i] + " | " + HoldKey[i]);
+            
+            //if (i < 6 && HoldKey[i] == 0)
+            //    return;
 
             _holded = false;
 
             Array.Clear(_stTimerR, 0, 6); //Очищаем список зажатых кнопок
             Array.Clear(_rTimerR, 0, 6); //Очищаем список зажатых кнопок
 
-            if (i < 6)
-            {
-                if (Hold[i] <= 0) return;
-                Keyup(i); //20.03.2015
-                hold_unload(i);
-                Hold[i] = 0;
-            }
-            else
-            {
-                for (var j = 0; j < 6; j++)
-                    if (Hold[j] > 0)
-                    {
-                        hold_unload(j);
-                        Keyup(j);
-                        Hold[j] = 0;
-                    }
-            }
+            Keyup(_holdNum);
+            hold_unload(_holdNum);
+
+            //if (i < 6)
+            //{
+            //    if (Hold[i] <= 0) return
+            //    Keyup(i); //20.03.2015
+            //    hold_unload(i);
+            //    //Hold[i] = 0;
+            //}
+            //else
+            //{
+            //    for (var j = 0; j < 6; j++)
+            //        if (Hold[j] > 0)
+            //        {
+            //            hold_unload(j);
+            //            Keyup(j);
+            //            //Hold[j] = 0;
+            //        }
+            //}
         }
 
         //public enum WMessages : int //Убрал 19.03.2015
@@ -1188,8 +1332,7 @@ namespace D3Hot
             var tmrLocal = (NumericTimer) sender;
             var num = tmrLocal.Number;
 
-            if (TmrPress[num] == 1 || _trigPressed[num] != 1 || !_progStart || !_progRun)
-                return; //25.01.2017 Не заходим в таймер, пока он работает
+            if (!_progStart || !_progRun) return; //25.01.2017 Не заходим в таймер, пока он работает //TmrPress[num] == 1 || || 
 
             //if (_keyPressed) //13.11.2015
             //    Thread.Sleep(TimeSpan.FromMilliseconds(10)); //09.12.2015
@@ -1197,7 +1340,11 @@ namespace D3Hot
 
             try
             {
-                TmrPress[num] = 1; //Кнопка прожимается, пока не пытаться жать
+                TmrR[num] = 1; // Отметили, что триггер прожимается
+                //TmrPress[num] = 1; //Кнопка прожимается, пока не пытаться жать
+                //LogMaker(ref _log, 99999, "Что там с триггером 4?: " + _trigPressed[num] + " | " + TrigUsed[num]);
+
+                if (_trigPressed[num] != 1 || !_canPress) return; //Нажимаем, только если ничего не мешает нажимать
 
                 VirtualKeyCode key; //VirtualKeyCode.VK_0; //VirtualKeyCode.ESCAPE;
                 var keyForHold = timer_key(_tmr[num], out key); //tmrLocal
@@ -1210,8 +1357,10 @@ namespace D3Hot
                 //uint scanCode = MapVirtualKey(key_for_hold, 0);
                 //MessageBox.Show("(byte)key_for_hold: " + ((byte)key_for_hold).ToString() + " scanCode: " + scanCode.ToString() + " (byte)scanCode: " + ((byte)scanCode).ToString());
 
-                rand_interval(num);
-                RestartWatch(out _tmrWatch[num]);
+                if ((int) _tmr[num].Interval != (int) _tmrI[num] || _randInterval > 0) timer_interval(num);
+                if (_tmrWatch[num] != null) // && !_tmrWatch[num].IsRunning
+                    RestartWatch(out _tmrWatch[num]);
+
                 for (var i = 0; i < _multikeys; i++)
                     button_press(keyForHold, key);
 
@@ -1257,7 +1406,34 @@ namespace D3Hot
             }
             finally
             {
-                TmrPress[num] = 0; //Кнопка прожалась, можно прожимать снова
+                //TmrPress[num] = 0; //Кнопка прожалась, можно прожимать снова
+                if (_tmr[num] != null)
+                {
+
+                    //if (_trigPressed[num] == 1)
+                    //{
+                    //    _tmr[num].Interval = _tmrI[num];
+                    //    rand_interval(num);
+                    //}
+                    //else
+                    //{
+                    //    _tmr[num].Interval = 20;
+                    //}
+
+                    //if (_trigPressed[num] == 1 && _canPress && _tmrWatch[num] != null &&
+                    //    _tmrWatch[num].ElapsedMilliseconds > 0)
+                    //{
+                    //    _tmr[num].Interval = _tmrI[num];
+                    //    rand_interval(num);
+                    //}
+                    //else
+                    //{
+                    //    if (_tmrWatch[num] != null) _tmrWatch[num].Stop();
+                    //    _tmr[num].Interval = 20;
+                    //}
+
+                    _tmr[num].Enabled = true; //Запускаем таймер снова 26.01.2017
+                }
             }
         }
 
@@ -1407,6 +1583,8 @@ namespace D3Hot
         {
             _cooldDelay = Convert.ToDouble(nud_coold.Value);
 
+            _log = new List<string>();
+
             if (chb_log.Checked) _logEnabled = true;
             _pressType = cb_press_type.SelectedIndex;
             lb_lang_name.Focus();
@@ -1445,7 +1623,7 @@ namespace D3Hot
                         cb_proc.SelectedIndex = -1;
                 }
 
-                if (chb_hold.Checked == false &&
+                if (!chb_hold.Checked &&
                     (cb_key1.SelectedItem.ToString().Contains("Shift") ||
                      cb_key2.SelectedItem.ToString().Contains("Shift") ||
                      cb_key3.SelectedItem.ToString().Contains("Shift") ||
@@ -1468,26 +1646,22 @@ namespace D3Hot
             if (cb_start.Checked) //Стартанули
             {
                 _progStart = true; //отметили, что стартанули
-                if (_logEnabled) _log = new List<string>(); //23.04.2016
 
-                int[] settCbTrig =
+                _randInterval = (int) nud_rand.Value;
+
+                _chbTrigOnce = new int[]
                 {
                     Settings.Default.chb_trig_once_0, Settings.Default.chb_trig_once_1, Settings.Default.chb_trig_once_2,
                     Settings.Default.chb_trig_once_3, Settings.Default.chb_trig_once_4, Settings.Default.chb_trig_once_5
                 };
-                if (settCbTrig.Sum() > 0)
-                    for (var i = 0; i < 6; i++)
-                        TmrOnce[i] = settCbTrig[i];
 
                 //tmr_all_count = 0;
                 _tmr = new Timer[6]; //09.07.2015
                 _tmrWatch = new Stopwatch[6]; //09.07.2015
-                //test_sw.Start(); //07.07.2015
+                _cdrWatch = new Stopwatch[6]; //09.07.2015
                 Array.Clear(KeyH, 0, 6);
-                //key_h[0] = 0; key_h[1] = 0; key_h[2] = 0; key_h[3] = 0; key_h[4] = 0; key_h[5] = 0; //24.04.2015
                 Array.Clear(KeySt, 0, 6); //08.09.2015
                 Array.Clear(KeyV, 0, 6); //08.09.2015
-                //key_v[0] = 0; key_v[1] = 0; key_v[2] = 0; key_v[3] = 0; key_v[4] = 0; key_v[5] = 0; //24.04.2015
                 d3hot_Activated(null, null); //27.04.2015
 
                 //if (d3proc) proc_watch = new Stopwatch(); //06.04.2015
@@ -1506,157 +1680,44 @@ namespace D3Hot
                 cb_start.Text = @"Stop";
                 tt_key.SetToolTip(cb_start, _lng.TtStop);
 
-                if ((nud_tmr1.Value > 0 || CdrKey[0] == 1 || HoldKey[0] == 1) && cb_trig_tmr1.SelectedIndex > 0 &&
-                    cb_key1.SelectedIndex > 0) //02.09.2015 chb_key1.Checked
-                {
-                    if (lb_tmr1_sec.Text != _lng.CbTmrCdr && lb_tmr1_sec.Text != _lng.CbTmrHold)
-                        lb_tmr1_sec.Text = Math.Round(nud_tmr1.Value / 1000, 2) + @" " + _lng.LangSec;
-                    if (nud_tmr1.Enabled) _tmrI[0] = Convert.ToDouble(nud_tmr1.Value); //16.11.2015
-                    //trig[0] = cb_trig_tmr1.SelectedIndex;
-                    if (cb_trig_tmr1.SelectedIndex > 4)
-                    {
-                        key_codes(7);
-                        Trig[0] = -1;
-                        key_codes(1);
-                    }
-                    else
-                    {
-                        key_codes(1);
-                        Trig[0] = cb_trig_tmr1.SelectedIndex;
-                    }
-                    TmrF[0] = 1;
-                }
-                if ((nud_tmr2.Value > 0 || CdrKey[1] == 1 || HoldKey[1] == 1) && cb_trig_tmr2.SelectedIndex > 0 &&
-                    cb_key2.SelectedIndex > 0) //02.09.2015 chb_key2.Checked
-                {
-                    if (lb_tmr2_sec.Text != _lng.CbTmrCdr && lb_tmr2_sec.Text != _lng.CbTmrHold)
-                        lb_tmr2_sec.Text = Math.Round(nud_tmr2.Value / 1000, 2) + @" " + _lng.LangSec;
-                    if (nud_tmr2.Enabled) _tmrI[1] = Convert.ToDouble(nud_tmr2.Value); //16.11.2015
+                TriggersCheck(); //Проверяем все триггеры на необходимость работы по ним. 27.01.2017
 
-                    if (cb_trig_tmr2.SelectedIndex > 4)
-                    {
-                        key_codes(8);
-                        Trig[1] = -2;
-                        key_codes(2);
-                    }
-                    else
-                    {
-                        key_codes(2);
-                        Trig[1] = cb_trig_tmr2.SelectedIndex;
-                    }
-                    TmrF[1] = 1;
-                }
-
-                if ((nud_tmr3.Value > 0 || CdrKey[2] == 1 || HoldKey[2] == 1) && cb_trig_tmr3.SelectedIndex > 0 &&
-                    cb_key3.SelectedIndex > 0) //02.09.2015 chb_key3.Checked
+                if (TmrF.Sum() > 0) //Если есть, что нажимать, запускаем таймеры
                 {
-                    if (lb_tmr3_sec.Text != _lng.CbTmrCdr && lb_tmr3_sec.Text != _lng.CbTmrHold)
-                        lb_tmr3_sec.Text = Math.Round(nud_tmr3.Value / 1000, 2) + @" " + _lng.LangSec;
-                    if (nud_tmr3.Enabled) _tmrI[2] = Convert.ToDouble(nud_tmr3.Value); //16.11.2015
-                    if (cb_trig_tmr3.SelectedIndex > 4)
-                    {
-                        key_codes(9);
-                        Trig[2] = -3;
-                        key_codes(3);
-                    }
-                    else
-                    {
-                        key_codes(3);
-                        Trig[2] = cb_trig_tmr3.SelectedIndex;
-                    }
-                    TmrF[2] = 1;
-                }
-
-                if ((nud_tmr4.Value > 0 || CdrKey[3] == 1 || HoldKey[3] == 1) && cb_trig_tmr4.SelectedIndex > 0 &&
-                    cb_key4.SelectedIndex > 0) //02.09.2015 chb_key4.Checked
-                {
-                    if (lb_tmr4_sec.Text != _lng.CbTmrCdr && lb_tmr4_sec.Text != _lng.CbTmrHold)
-                        lb_tmr4_sec.Text = Math.Round(nud_tmr4.Value / 1000, 2) + @" " + _lng.LangSec;
-                    if (nud_tmr4.Enabled) _tmrI[3] = Convert.ToDouble(nud_tmr4.Value); //16.11.2015
-                    if (cb_trig_tmr4.SelectedIndex > 4)
-                    {
-                        key_codes(10);
-                        Trig[3] = -4;
-                        key_codes(4);
-                    }
-                    else
-                    {
-                        key_codes(4);
-                        Trig[3] = cb_trig_tmr4.SelectedIndex;
-                    }
-                    TmrF[3] = 1;
-                }
-                if ((nud_tmr5.Value > 0 || CdrKey[4] == 1 || HoldKey[4] == 1) && cb_trig_tmr5.SelectedIndex > 0 &&
-                    cb_key5.SelectedIndex > 0) //02.09.2015 chb_key5.Checked
-                {
-                    if (lb_tmr5_sec.Text != _lng.CbTmrCdr && lb_tmr5_sec.Text != _lng.CbTmrHold)
-                        lb_tmr5_sec.Text = Math.Round(nud_tmr5.Value / 1000, 2) + @" " + _lng.LangSec;
-                    if (nud_tmr5.Enabled) _tmrI[4] = Convert.ToDouble(nud_tmr5.Value); //16.11.2015
-                    if (cb_trig_tmr5.SelectedIndex > 4)
-                    {
-                        key_codes(11);
-                        Trig[4] = -5;
-                        key_codes(5);
-                    }
-                    else
-                    {
-                        key_codes(5);
-                        Trig[4] = cb_trig_tmr5.SelectedIndex;
-                    }
-                    TmrF[4] = 1;
-                }
-                if ((nud_tmr6.Value > 0 || CdrKey[5] == 1 || HoldKey[5] == 1) && cb_trig_tmr6.SelectedIndex > 0 &&
-                    cb_key6.SelectedIndex > 0) //02.09.2015 chb_key6.Checked
-                {
-                    if (lb_tmr6_sec.Text != _lng.CbTmrCdr && lb_tmr6_sec.Text != _lng.CbTmrHold)
-                        lb_tmr6_sec.Text = Math.Round(nud_tmr6.Value / 1000, 2) + @" " + _lng.LangSec;
-                    if (nud_tmr6.Enabled) _tmrI[5] = Convert.ToDouble(nud_tmr6.Value); //16.11.2015
-                    if (cb_trig_tmr6.SelectedIndex > 4)
-                    {
-                        key_codes(12);
-                        Trig[5] = -6;
-                        key_codes(6);
-                    }
-                    else
-                    {
-                        key_codes(6);
-                        Trig[5] = cb_trig_tmr6.SelectedIndex;
-                    }
-                    TmrF[5] = 1;
-                }
-
-                //bool coold = false;
-                //for (int i = 0; i < 6; i++)
-                //    if (trig[i] > 0 && cdr_key[i] > 0)
-                //    {
-                //        coold = true;
-                //        break;
-                //    }
-                //if (coold)
-                //    screen_capt_pre();//screen_capt_prereq(cdr_key);
-
-
-                //if (tmr_f[0] + tmr_f[1] + tmr_f[2] + tmr_f[3] + tmr_f[4] + tmr_f[5] > 0)
-                if (TmrF.Any(item => item == 1))
-                {
+                    _holdNum = Array.IndexOf(TmrF, 3);
                     timer_load(-1);
                     //_tmrAllCounter = 0;
-                    if (!_tmrAll.Enabled) _tmrAll.Enabled = true;
-                    if (!_screenCaptPrepared && CdrKey.Sum() > 0) screen_capt_pre(); //31.05.2015
+                    if (!_tmrAll.Enabled) //Запускаем таймер проверок остановок
+                    {
+                        new Thread(() => tmr_all_Elapsed(_tmrAll, null)).Start(); //Чтобы таймер с проверкой CDR отрабатал при запуске один раз
+                        //_tmrAll.Start(); //Сразу запускаем
+                    }
+
+                    if (CdrKey.Sum() > 0) //Запускаем таймер проверки CDR
+                    {
+                        if (!_screenCaptPrepared) screen_capt_pre(); //31.05.2015
+
+                        if (_tmrCdr == null) //Создаём таймер проверки CDR при запуске программы. 26.01.2017
+                        {
+                            _tmrCdr = new Timer(); //30мс - общий таймер 23.01.2017
+
+                            try
+                            {
+                                _tmrCdr.Interval = _tmrCdrInt;
+                                _tmrCdr.Elapsed += Cooldown_Tick;
+                                _tmrCdr.AutoReset = false; //Не перезапускаем общий таймер проверки CDR
+                                _tmrCdr.Start(); //Сразу запускаем
+                            }
+                            catch
+                            {
+                                _tmrCdr.Dispose();
+                                return;
+                            }
+                        }
+                    }
                 }
 
-                //Блокирование элементов настройки, пока программа работает
-                tb_prof_name.Enabled = false;
-                foreach (var numud in pan_main.Controls.OfType<NumericUpDown>()) numud.Enabled = false;
-                foreach (var cb in pan_main.Controls.OfType<ComboBox>()) cb.Enabled = false;
-                foreach (var cbm in Controls.OfType<ComboBox>()) cbm.Enabled = false;
-                cb_prog.Enabled = false;
-                cb_proc.Enabled = false;
-                cb_press_type.Enabled = false;
-                if (chb_hold.Checked)
-                    foreach (var chb in pan_main.Controls.OfType<CheckBox>()) chb.Enabled = false;
-                //b_opt.Enabled = false;
-                foreach (var b in Controls.OfType<Button>()) b.Enabled = false; //13.08.2015
+                BlockForm(false); //Блокирование элементов настройки, пока программа работает
             }
             else //Остановили работу программы
             {
@@ -1685,39 +1746,72 @@ namespace D3Hot
                 if (!chb_hold.Checked || cb_tmr6.SelectedIndex == 0 || cb_tmr6.SelectedIndex == 2)
                     nud_tmr6.Enabled = true; //02.09.2015 chb_key6.Checked
 
-                //foreach (NumericUpDown numud in this.pan_main.Controls.OfType<NumericUpDown>()) numud.Enabled = true;
-                tb_prof_name.Enabled = true;
-                foreach (var cb in pan_main.Controls.OfType<ComboBox>()) cb.Enabled = true;
-                foreach (var cbm in Controls.OfType<ComboBox>()) cbm.Enabled = true;
-                cb_prog.Enabled = true;
-                cb_proc.Enabled = true;
-                cb_press_type.Enabled = true;
-                if (chb_hold.Checked)
-                    foreach (var chb in pan_main.Controls.OfType<CheckBox>())
-                        chb.Enabled = true;
-                //if (cb_proc.SelectedIndex > 0) cb_prog.Enabled = false; //17.04.2015
-                //b_opt.Enabled = true;
-                foreach (var b in Controls.OfType<Button>()) b.Enabled = true; //13.08.2015
+                BlockForm(true);
 
                 _procSelected = false; //Отменяем выбор процесса после остановки
 
                 cb_start.Text = @"Start";
                 tt_key.SetToolTip(cb_start, _lng.TtStart);
 
-                //for (int i = 0; i < 6; i++) //16.11.2015
-                //{
-                //    if (cdr_watch != null && cdr_watch[i] != null) StopWatch(cdr_watch[i]);
-                //    //if (tmr[i] != null) timer_unload(i);
-                //}
+            }
+        }
 
-                //TimerStop(99); //Останавливаем все таймеры, включая главный
-                //stopped_once = true;
+        /// <summary>
+        /// Блокирование элементов формы при запуске. false - блокировка, true - разблокировка.
+        /// </summary>
+        /// <param name="flag"></param>
+        private void BlockForm(bool flag)
+        {
+            //Блокирование элементов настройки, пока программа работает
+            tb_prof_name.Enabled = flag;
+            foreach (var numud in pan_main.Controls.OfType<NumericUpDown>()) numud.Enabled = flag;
+            foreach (var cb in pan_main.Controls.OfType<ComboBox>()) cb.Enabled = flag;
+            foreach (var cbm in Controls.OfType<ComboBox>()) cbm.Enabled = flag;
+            cb_prog.Enabled = flag;
+            cb_proc.Enabled = flag;
+            cb_press_type.Enabled = flag;
+            if (chb_hold.Checked)
+                foreach (var chb in pan_main.Controls.OfType<CheckBox>()) chb.Enabled = flag;
+            foreach (var b in Controls.OfType<Button>()) b.Enabled = flag; //13.08.2015
+        }
 
-                //timer_unload(99);
-                //hold_clear(88);
-                //tmr_cdr_destroy();
-                //if (_returnWatch != null && _returnWatch.IsRunning)
-                //    _returnWatch.Stop();
+        private void TriggersCheck()
+        {
+            ComboBox[] cbTmr = { cb_tmr1, cb_tmr2, cb_tmr3, cb_tmr4, cb_tmr5, cb_tmr6 }; //Перечень типов прожатия в меню 0 - нажатие, 1 - CDR, 2 - CDR + sec, 3 - hold
+            ComboBox[] cbTrigTmr = { cb_trig_tmr1, cb_trig_tmr2, cb_trig_tmr3, cb_trig_tmr4, cb_trig_tmr5, cb_trig_tmr6 }; //Перечень триггеров
+            ComboBox[] cbKey = { cb_key1, cb_key2, cb_key3, cb_key4, cb_key5, cb_key6 }; //Перечень выбранных кнопок
+            Label[] lbTmrSec = { lb_tmr1_sec, lb_tmr2_sec, lb_tmr3_sec, lb_tmr4_sec, lb_tmr5_sec, lb_tmr6_sec }; //Лейблы с секундами под временем
+            NumericUpDown[] nudTmr = { nud_tmr1, nud_tmr2, nud_tmr3, nud_tmr4, nud_tmr5, nud_tmr6 }; //Перечень времени нажатия
+
+            for (var i = 0; i < 6; i++)
+            {
+                if (cbKey[i].SelectedIndex < 1 || cbTrigTmr[i].SelectedIndex < 1 //Должны быть выбраны кнопка и триггер
+                    || nudTmr[i].Value == 0 && (cbTmr[i].SelectedIndex == 0 || !_d3Proc)) //Должно быть выбрано время для обычного прожатия
+                    continue;
+
+                var j = i + 1;
+
+                if (cbTmr[i].SelectedIndex == 0 || !_d3Proc) TmrF[i] = 4; //TmrF : 4 - нажатие, 1 - CDR, 2 - CDR + sec, 3 - hold
+                else TmrF[i] = cbTmr[i].SelectedIndex;
+
+                if (TmrF[i] == 2 || TmrF[i] == 4)
+                {
+                    lbTmrSec[i].Text = Math.Round(nudTmr[i].Value / 1000, 2) + @" " + _lng.LangSec; //Прописываем секунды
+                    _tmrI[i] = Convert.ToDouble(nudTmr[i].Value); //Запоминаем интервал
+                }
+
+                if (cbTrigTmr[i].SelectedIndex > 4)
+                {
+                    key_codes(7);
+                    Trig[i] = -1 * j;
+                }
+                else
+                {
+                    key_codes(j);
+                    Trig[i] = cbTrigTmr[i].SelectedIndex;
+                }
+
+                key_codes(j);
             }
         }
 
@@ -1782,6 +1876,57 @@ namespace D3Hot
             //chb_hold_CheckedChanged(null, null);
         }
 
+        private void Lang_trig()
+        {
+            Label[] lbTrig = { lb_trig1, lb_trig2, lb_trig3, lb_trig4, lb_trig5, lb_trig6 };
+            string[] lngLbTrig = { _lng.LbTrig1, _lng.LbTrig2, _lng.LbTrig3, _lng.LbTrig4, _lng.LbTrig5, _lng.LbTrig6 };
+
+            int[] settCbTrigOnce =
+            {
+                Settings.Default.chb_trig_once_0, Settings.Default.chb_trig_once_1, Settings.Default.chb_trig_once_2,
+                Settings.Default.chb_trig_once_3, Settings.Default.chb_trig_once_4, Settings.Default.chb_trig_once_5
+            };
+
+            decimal[] settNudTrigTime =
+            {
+                Settings.Default.nud_trig_time_0, Settings.Default.nud_trig_time_1, Settings.Default.nud_trig_time_2,
+                Settings.Default.nud_trig_time_3, Settings.Default.nud_trig_time_4, Settings.Default.nud_trig_time_5
+            };
+            decimal[] settNudTrigDelay =
+            {
+                Settings.Default.nud_trig_delay_0, Settings.Default.nud_trig_delay_1, Settings.Default.nud_trig_delay_2,
+                Settings.Default.nud_trig_delay_3, Settings.Default.nud_trig_delay_4, Settings.Default.nud_trig_delay_5
+            };
+
+            
+            for (var i = 0; i < 6; i++)
+            {
+                lbTrig[i].Text = lngLbTrig[i];
+                lbTrig[i].Font = settCbTrigOnce[i] + settNudTrigTime[i] + settNudTrigDelay[i] > 0 ? 
+                    new Font(lbTrig[i].Font, FontStyle.Bold | FontStyle.Underline) : new Font(lbTrig[i].Font, FontStyle.Underline);
+            }
+
+            //lb_trig1.Text = _lng.LbTrig1;
+            //lb_trig2.Text = _lng.LbTrig2;
+            //lb_trig3.Text = _lng.LbTrig3;
+            //lb_trig4.Text = _lng.LbTrig4;
+            //lb_trig5.Text = _lng.LbTrig5;
+            //lb_trig6.Text = _lng.LbTrig6;
+
+            //if (Settings.Default.chb_trig_once_0 + Settings.Default.nud_trig_time_0 + Settings.Default.nud_trig_delay_0 > 0)
+            //    lb_trig1.Font = new Font(lb_trig1.Font, FontStyle.Bold | FontStyle.Underline);
+            //if (Settings.Default.chb_trig_once_1 + Settings.Default.nud_trig_time_1 + Settings.Default.nud_trig_delay_1 > 0)
+            //    lb_trig2.Font = new Font(lb_trig2.Font, FontStyle.Bold | FontStyle.Underline);
+            //if (Settings.Default.chb_trig_once_2 + Settings.Default.nud_trig_time_2 + Settings.Default.nud_trig_delay_2 > 0)
+            //    lb_trig3.Font = new Font(lb_trig3.Font, FontStyle.Bold | FontStyle.Underline);
+            //if (Settings.Default.chb_trig_once_3 + Settings.Default.nud_trig_time_3 + Settings.Default.nud_trig_delay_3 > 0)
+            //    lb_trig4.Font = new Font(lb_trig4.Font, FontStyle.Bold | FontStyle.Underline);
+            //if (Settings.Default.chb_trig_once_4 + Settings.Default.nud_trig_time_4 + Settings.Default.nud_trig_delay_4 > 0)
+            //    lb_trig5.Font = new Font(lb_trig5.Font, FontStyle.Bold | FontStyle.Underline);
+            //if (Settings.Default.chb_trig_once_5 + Settings.Default.nud_trig_time_5 + Settings.Default.nud_trig_delay_5 > 0)
+            //    lb_trig6.Font = new Font(lb_trig6.Font, FontStyle.Bold | FontStyle.Underline);
+        }
+
         /// <summary>
         ///     Метод обработки языка
         /// </summary>
@@ -1789,12 +1934,7 @@ namespace D3Hot
         {
             _langLoad = true;
 
-            lb_trig1.Text = _lng.LbTrig1;
-            lb_trig2.Text = _lng.LbTrig2;
-            lb_trig3.Text = _lng.LbTrig3;
-            lb_trig4.Text = _lng.LbTrig4;
-            lb_trig5.Text = _lng.LbTrig5;
-            lb_trig6.Text = _lng.LbTrig6;
+            Lang_trig(); //Описание триггеров.
 
             lb_key1.Text = _lng.LbKey1;
             lb_key2.Text = _lng.LbKey2;
@@ -1850,7 +1990,7 @@ namespace D3Hot
             chb_mult.Text = _lng.ChbMult;
             chb_users.Text = _lng.ChbUsers;
             //chb_proconly.Text = lng.chb_proconly; 17.04.2015
-            b_opt.Text = _lng.BOpt;
+            b_opt.Text = _lng.BOpt; //-V3127
             lb_key_delay_ms.Text = _lng.LbKeyDelayMs;
             lb_key_delay.Text = _lng.LbKeyDelay;
 
@@ -2256,7 +2396,7 @@ namespace D3Hot
                 _tmrAll.Dispose();
                 _tmrAll = null;
             }
-            if (flag > 5 && _tmrCdr != null)
+            if (flag > 88 && _tmrCdr != null) //5 
             {
                 _tmrCdr.Dispose();
                 _tmrCdr = null;
@@ -2269,14 +2409,24 @@ namespace D3Hot
             }
 
             timer_unload(flag); //Удаляем данные по обычным таймерам: _tmrAll, _tmrWatch[j], _tmr[j], TmrR[j], TmrPress
-            tmr_cdr_destroy(flag);
-                //Удаляем данные по таймерам кулдауна: _tmrCdr, _cdrWatch[i], _tmr[i], CdrRun[i], TmrPress
-            hold_clear(flag);
-                //Удаляем данные по зажатым клавишам: _startTimer[h], _repeatTimer[h], Hold[h], _stTimerR, _rTimerR
+            tmr_cdr_destroy(flag); //Удаляем данные по таймерам кулдауна: _cdrWatch[i], _tmr[i], CdrRun[i], TmrPress //_tmrCdr, 
+            hold_clear(flag); //Удаляем данные по зажатым клавишам: _startTimer[h], _repeatTimer[h], Hold[h], _stTimerR, _rTimerR
 
-            Array.Clear(TrigUsed, 0, 6);
-            Array.Clear(TrigPress, 0, 6);
-            Array.Clear(_trigPressed, 0, 6);
+            if (_log != null) LogMaker(ref _log, 99999, "Через мейн выгружали?: " + flag);
+
+            if (flag < 6)
+            {
+                TrigUsed[flag] = 0;
+                TrigPress[flag] = false;
+                _trigPressed[flag] = 0;
+            }
+                else
+            {
+                Array.Clear(TrigUsed, 0, 6);
+                Array.Clear(TrigPress, 0, 6);
+                Array.Clear(_trigPressed, 0, 6);                
+            }
+
         }
 
         /// <summary>
@@ -2294,15 +2444,18 @@ namespace D3Hot
 
             _delayWait = 0;
             _returnPress = 0;
-            _rPress = 0;
+            _dPress = 0;
             _tPress = 0;
+            _mPress = 0;
+            _rPress = 0;
+            _telePress = 0;
             _mapPress = 0;
             _delayPress = 0;
             //_tmrCdrInt = 30;
             _returnPressCount = 0;
             _shiftPress = 0;
 
-            _wasUsed = false;
+            //_wasUsed = false;
 
             Array.Clear(TmrLeft, 0, 6);
 
@@ -3773,15 +3926,6 @@ namespace D3Hot
                     case 1:
                         CdrKey[num] = 1;
                         lbTmrSec[num].Text = _lng.CbTmrCdr;
-
-                        //11.11.2015
-                        //if (form_shown && !loading)
-                        //{
-                        //    if (num == 4) cb_key[num].SelectedItem = "LMouse"; //28.08.2015
-                        //    else if (num == 5) cb_key[num].SelectedItem = "RMouse"; //28.08.2015
-                        //    else cb_key[num].SelectedIndex = num + 1; //28.08.2015
-                        //}
-
                         break;
                     case 2:
                         CdrKey[num] = 1;
@@ -3908,7 +4052,7 @@ namespace D3Hot
             var res = true;
 
             foreach (var cb in pan_main.Controls.OfType<ComboBox>())
-                if (cb.Name.Contains("cb_tmr") && (cb.SelectedIndex > 2 || !_resolution && cb.SelectedIndex > 0))
+                if (cb.Name.Contains("cb_tmr") && (cb.SelectedIndex > 2 || !_resolution && cb.SelectedIndex > 0)) //-V3130
                     //16.11.2015
                     res = false;
 
@@ -4017,8 +4161,24 @@ namespace D3Hot
 
         //}
 
+        private void test(int i)
+        {
+            Thread.Sleep(2000);
+            var timenow = DateTime.Now.ToLongTimeString();
+            if (i == 5) MessageBox.Show(@"5 " + timenow);
+            if (i == 10) MessageBox.Show(@"10" + timenow);
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
+
+            for (var i = 0; i < 11; i++)
+            {
+                var i1 = i;
+                new Thread(() => test(i1)).Start();
+                //test(i);
+            }
+
             //ScreenCapTeleport(CdrRun);
 
             //string path = Path.GetDirectoryName(Application.ExecutablePath);
@@ -4077,12 +4237,17 @@ namespace D3Hot
 
         private void Cooldown_Tick(object sender, EventArgs eventArgs)
         {
-            if (_tmrCdrRunning || !_progStart || !_progRun || CdrRun.Sum() == 0)
+            if (!_progStart || !_progRun) //_tmrCdrRunning || 
                 return; //Выходим, если нечего прожимать или уже проверяем
 
             try
             {
-                _tmrCdrRunning = true; //Отмечаем, что проверка работает
+                if (CdrRun.Sum() == 0)
+                {
+                    Array.Clear(_cdrPress,0,6); //Нечего прожимать, значит всё помечаем как недоступное
+                    return;
+                }
+                //_tmrCdrRunning = true; //Отмечаем, что проверка работает
                 _cdrPress = ScreenCapture(CdrRun);
             }
             catch
@@ -4091,7 +4256,8 @@ namespace D3Hot
             }
             finally
             {
-                _tmrCdrRunning = false;
+                //_tmrCdrRunning = false;
+                if (_tmrCdr != null) _tmrCdr.Enabled = true;  //Запускаем таймер снова 26.01.2017
             }
         }
 
@@ -4100,13 +4266,8 @@ namespace D3Hot
             if (_tmrCdrDisposing) return;
             _tmrCdrDisposing = true;
 
-            if (flag > 5)
+            if (flag > 88)
             {
-                _teleportInProgress = false; //31.05.2016
-                Array.Clear(CdrRun, 0, 6);
-                Array.Clear(_cdrPress, 0, 6); //09.12.2015
-                Array.Clear(TmrPress, 0, 6); //Отмечаем, что таймеры не прожимаются в данный момент
-                _tmrCdrRunning = false; //Отмечаем, что сейчас не идёт проверка на CDR
                 if (_tmrCdr != null) // && _tmrCdr.Enabled
                 {
                     _tmrCdr.Stop();
@@ -4119,23 +4280,36 @@ namespace D3Hot
                     //    MessageBox.Show(timenow + @" Кто-то хочет закрыть таймер CDR из tmr_cdr_destroy");
                     //}
                 }
+            }
 
-                if (_cdrWatch != null) //31.05.2016
-                {
-                    for (var i = 0; i < 6; i++)
-                    {
-                        StopWatch(_cdrWatch[i]);
-                        _cdrWatch[i] = null;
-                    }
-                    _cdrWatch = null;
-                }
+            if (flag > 5)
+            {
+                _teleportInProgress = false; //31.05.2016
+                Array.Clear(CdrRun, 0, 6);
+                Array.Clear(_cdrPress, 0, 6); //09.12.2015
+                Array.Clear(TmrPress, 0, 6); //Отмечаем, что таймеры не прожимаются в данный момент
+                //_tmrCdrRunning = false; //Отмечаем, что сейчас не идёт проверка на CDR
+
+                //if (_cdrWatch != null) //31.05.2016
+                //{
+                //    for (var i = 0; i < 6; i++)
+                //    {
+                //        StopWatch(_cdrWatch[i]);
+                //        _cdrWatch[i] = null;
+                //    }
+                //    //_cdrWatch = null;
+                //}
 
                 for (var i = 0; i < 6; i++) //Удаляем информацию о запущенных таймерах CDR
-                    if (TmrF[i] == 1 && CdrKey[i] == 1 && _tmr[i] != null)
+                {
+                    if ((TmrF[i] == 1 || TmrF[i] == 2) && _tmr[i] != null) //TmrF : 4 - нажатие, 1 - CDR, 2 - CDR + sec, 3 - hold
                     {
                         _tmr[i].Dispose();
                         _tmr[i] = null;
                     }
+                    if (_cdrWatch != null && _cdrWatch[i] != null)
+                        StopWatch(_cdrWatch[i]);
+                }
             }
             else
             {
@@ -4145,7 +4319,7 @@ namespace D3Hot
                     _tmr[flag] = null;
 
                     if (_cdrWatch != null && _cdrWatch[flag] != null)
-                        _cdrWatch[flag] = null;
+                        StopWatch(_cdrWatch[flag]);
 
                     CdrRun[flag] = 0; //Помечаем, что этот триггер пока не готов к прожатию
                     _cdrPress[flag] = 0;
@@ -4171,7 +4345,7 @@ namespace D3Hot
             int[] result = {0, 0, 0, 0, 0, 0};
 
             for (var i = 0; i < 6; i++)
-                if (TmrF[i] == 1 && key_press(Trig[i])) //Если триггер активен и нажат
+                if (TmrF[i] > 0 && key_press(Trig[i])) //Если триггер активен и нажат
                     result[i] = 1;
 
             return result;
@@ -4184,23 +4358,27 @@ namespace D3Hot
 
         private void cb_trig_tmr_MouseHover(object sender, EventArgs e)
         {
-            var tmr = (ComboBox) sender;
+            if (pan_set.Visible) return;
 
             ComboBox[] cbTrig = {cb_trig_tmr1, cb_trig_tmr2, cb_trig_tmr3, cb_trig_tmr4, cb_trig_tmr5, cb_trig_tmr6};
-            //Label[] lbTrig = {lb_trig1, lb_trig2, lb_trig3, lb_trig4, lb_trig5, lb_trig6};
+            CheckBox[] chbTrig = { chb_trig1, chb_trig2, chb_trig3, chb_trig4, chb_trig5, chb_trig6 };
+            Label[] lbTrig = { lb_trig1, lb_trig2, lb_trig3, lb_trig4, lb_trig5, lb_trig6 };
 
-            for (var i = 0; i < 6; i++)
-                if (tmr == cbTrig[i])
-                    _currTrig = i;
+            if (sender.GetType() == typeof(ComboBox)) _currTrig = Array.IndexOf(cbTrig, (ComboBox)sender);
+            else if (sender.GetType() == typeof(CheckBox)) _currTrig = Array.IndexOf(chbTrig, (CheckBox)sender);
+            else if (sender.GetType() == typeof(Label)) _currTrig = Array.IndexOf(lbTrig, (Label)sender);
 
-            _hoverWatch = new Stopwatch();
-            _hoverWatch.Start();
+            //_hoverWatch = new Stopwatch();
+            //_hoverWatch.Start();
+            _hoverWatch = Stopwatch.StartNew();
 
+            if (_tmrHover != null) return;
 
             _tmrHover = new Timer();
             try
             {
                 _tmrHover.AutoReset = false;
+                _tmrHover.Interval = 100;
                 _tmrHover.Elapsed += tmr_hover_Elapsed;
                 _tmrHover.Start();
             }
@@ -4212,15 +4390,24 @@ namespace D3Hot
 
         private void tmr_hover_Elapsed(object sender, EventArgs e)
         {
-            //while (hover_watch.ElapsedMilliseconds < 5000)
-            //{
-            //}
+            try
+            {
+                if (_hoverWatch == null || _hoverWatch.ElapsedMilliseconds < 2000) return; //!_debug || 
 
-            if (_hoverWatch == null || _hoverWatch.ElapsedMilliseconds <= 994999) return;
-            _hoverWatch.Reset();
-            //MessageBox.Show("Мышку зачем так долго держишь над кнопкой?");
-            //this.BeginInvoke((Action)(() => gb_set.Location = new Point(6, 57))); 
-            trig_settings();
+                BeginInvoke((MethodInvoker)delegate { TrigSettingsShow(true); }); //form.BeginInvoke((Action<int>)DoWork, param);
+
+                //MessageBox.Show("Мышку зачем так долго держишь над кнопкой?");
+                //this.BeginInvoke((Action)(() => gb_set.Location = new Point(6, 57))); 
+            }
+
+            catch
+            {
+                //ignore
+            }
+            finally
+            {
+                if (_tmrHover != null) _tmrHover.Start();
+            }
         }
 
         private void cb_trig_tmr_MouseLeave(object sender, EventArgs e)
@@ -4229,47 +4416,101 @@ namespace D3Hot
             {
                 _tmrHover.Stop();
                 _tmrHover.Dispose();
+                _tmrHover = null;
             }
-            if (_hoverWatch != null && _hoverWatch.IsRunning)
-                _hoverWatch.Reset();
+            if (_hoverWatch == null) return;
+            _hoverWatch.Reset();
+            _hoverWatch = null;
 
             //gb_set.Location = new Point(500, 47);
         }
 
-        private void trig_settings()
+        private void TrigSettingsShow(bool show)
         {
-            ComboBox[] cbTrig = {cb_trig_tmr1, cb_trig_tmr2, cb_trig_tmr3, cb_trig_tmr4, cb_trig_tmr5, cb_trig_tmr6};
 
-            BeginInvoke((Action) (() => tt_key.SetToolTip(cbTrig[_currTrig], "")));
-            //this.BeginInvoke((Action)(() => gb_set.Location = new Point(6, 57)));
-            BeginInvoke((Action) (() => pan_set.Visible = true));
+            cb_trig_tmr_MouseLeave(null, null); //Останавливаем таймер наблюдения, если он был
 
-            //this.BeginInvoke((Action)(() => tt_key.Active = false));
-            //this.BeginInvoke((Action)(() => gb_set.Text = curr_trig));
+            ComboBox[] cbTrig = { cb_trig_tmr1, cb_trig_tmr2, cb_trig_tmr3, cb_trig_tmr4, cb_trig_tmr5, cb_trig_tmr6 };
+            Label[] lbTrig = { lb_trig1, lb_trig2, lb_trig3, lb_trig4, lb_trig5, lb_trig6 };
+            CheckBox[] chbTrig = { chb_trig1, chb_trig2, chb_trig3, chb_trig4, chb_trig5, chb_trig6 };
+            int[] settChbTrigOnce =
+            {
+                Settings.Default.chb_trig_once_0, Settings.Default.chb_trig_once_1, Settings.Default.chb_trig_once_2,
+                Settings.Default.chb_trig_once_3, Settings.Default.chb_trig_once_4, Settings.Default.chb_trig_once_5
+            };
+            decimal[] settNudTrigTime =
+            {
+                Settings.Default.nud_trig_time_0, Settings.Default.nud_trig_time_1, Settings.Default.nud_trig_time_2,
+                Settings.Default.nud_trig_time_3, Settings.Default.nud_trig_time_4, Settings.Default.nud_trig_time_5
+            };
+            decimal[] settNudTrigDelay =
+            {
+                Settings.Default.nud_trig_delay_0, Settings.Default.nud_trig_delay_1, Settings.Default.nud_trig_delay_2,
+                Settings.Default.nud_trig_delay_3, Settings.Default.nud_trig_delay_4, Settings.Default.nud_trig_delay_5
+            };
 
-            //for (int i = 499; i > 5; i-=2) //Плавно выезжает
-            //{
-            //    this.BeginInvoke((Action)(() => gb_set.Location = new Point(i, 57)));
-            //    Thread.Sleep(2);
-            //}
+            for (var i = 0; i < 6; i++)
+            {
+                cbTrig[i].Enabled = !show;
+                chbTrig[i].Enabled = !show;
+                if (i != _currTrig) lbTrig[i].Enabled = !show;
+                foreach (var control in Controls.OfType<ComboBox>())
+                    control.Enabled = !show;
+                foreach (var control in Controls.OfType<Button>())
+                    control.Enabled = !show;
+                foreach (var control in Controls.OfType<Label>())
+                    control.Enabled = !show;
+                foreach (var control in Controls.OfType<CheckBox>())
+                    control.Enabled = !show;
+                pan_hold.Enabled = !show;
+                pan_proc.Enabled = !show;
+                pan_press_type.Enabled = !show;
+                pan_prof_name.Enabled = !show;
+                pan_prog.Enabled = !show;
+            }
+
+            cb_start.Enabled = !show;
+            b_opt.Enabled = !show;
+
+            if (show)
+            {
+                pan_set.BorderStyle = BorderStyle.FixedSingle; //BeginInvoke((Action)(() => //))
+                tt_key.SetToolTip(cbTrig[_currTrig], "");
+                //lbTrig[_currTrig].Font = new Font(lbTrig[_currTrig].Font, FontStyle.Bold);
+                pan_set.Visible = true;
+                pan_opt.SendToBack(); //SendToBack()
+                pan_main.SendToBack(); //SendToBack()
+                cb_trig_once_CheckedChanged(null, null);
+                cb_trig_once.Checked = settChbTrigOnce[_currTrig] == 1;
+                nud_trig_time.Value = settNudTrigTime[_currTrig];
+                nud_trig_delay.Value = settNudTrigDelay[_currTrig]; 
+                gb_set.Text = _lng.TrigSettings + @" № " + (_currTrig + 1); 
+            }
+            else
+            {
+                error_select();
+                tt_key.SetToolTip(cbTrig[_currTrig], lbTrig[_currTrig].Text);
+                //lbTrig[_currTrig].Font = new Font(lbTrig[_currTrig].Font, FontStyle.Underline); 
+                pan_set.Visible = false;
+                pan_opt.BringToFront(); //SendToBack()
+                pan_main.BringToFront(); //SendToBack()
+             }
         }
 
         private void cb_trig_once_CheckedChanged(object sender, EventArgs e)
         {
-            if (_currTrig <= -1 || TmrOnce == null) return;
-            var res = true;
-            TmrOnce[_currTrig] = 0;
-
-            if (cb_trig_once.Checked)
-                res = false;
-
+            if (_currTrig <= -1) return;
+            var res = cb_trig_once.Checked;
             nud_trig_time.Enabled = res;
             lb_trig_time.Enabled = res;
         }
 
-        private void b_trig_ok_Click(object sender, EventArgs e)
+        private void b_trig_ok_Click(object sender, EventArgs e) //130%
         {
             cb_trig_tmr_MouseLeave(null, null);
+
+            TrigSettingsShow(false);
+
             //gb_set.Location = new Point(500, 47);
             pan_set.Visible = false;
 
@@ -4277,152 +4518,116 @@ namespace D3Hot
                 if (cb.Name.Contains("trig"))
                     tt_key.SetToolTip(cb, _lng.TtTrig);
 
-            int[] settCbTrig =
+            int[] settCbTrigOnce =
             {
                 Settings.Default.chb_trig_once_0, Settings.Default.chb_trig_once_1, Settings.Default.chb_trig_once_2,
                 Settings.Default.chb_trig_once_3, Settings.Default.chb_trig_once_4, Settings.Default.chb_trig_once_5
             };
 
-            var currState = cb_trig_once.Checked ? 1 : 0;
-
-            if (settCbTrig[_currTrig] != currState)
-            {
-                switch (_currTrig)
-                {
-                    case 0:
-                        Settings.Default.chb_trig_once_0 = currState;
-                        break;
-                    case 1:
-                        Settings.Default.chb_trig_once_1 = currState;
-                        break;
-                    case 2:
-                        Settings.Default.chb_trig_once_2 = currState;
-                        break;
-                    case 3:
-                        Settings.Default.chb_trig_once_3 = currState;
-                        break;
-                    case 4:
-                        Settings.Default.chb_trig_once_4 = currState;
-                        break;
-                    case 5:
-                        Settings.Default.chb_trig_once_5 = currState;
-                        break;
-                }
-                Settings.Default.Save();
-            }
-
-            //decimal[] sett_nud_time =
-            //{
-            //    Settings.Default.nud_trig_time_0, Settings.Default.nud_trig_time_1, Settings.Default.nud_trig_time_2,
-            //    Settings.Default.nud_trig_time_3, Settings.Default.nud_trig_time_4, Settings.Default.nud_trig_time_5
-            //};
-
-            var workTime = nud_trig_time.Value;
-
-            if (settCbTrig[_currTrig] != workTime)
-            {
-                switch (_currTrig)
-                {
-                    case 0:
-                        Settings.Default.nud_trig_time_0 = workTime;
-                        break;
-                    case 1:
-                        Settings.Default.nud_trig_time_1 = workTime;
-                        break;
-                    case 2:
-                        Settings.Default.nud_trig_time_2 = workTime;
-                        break;
-                    case 3:
-                        Settings.Default.nud_trig_time_3 = workTime;
-                        break;
-                    case 4:
-                        Settings.Default.nud_trig_time_4 = workTime;
-                        break;
-                    case 5:
-                        Settings.Default.nud_trig_time_5 = workTime;
-                        break;
-                }
-                Settings.Default.Save();
-            }
-
-            decimal[] settNudDelay =
+            decimal[] settNudTrigTime =
             {
                 Settings.Default.nud_trig_time_0, Settings.Default.nud_trig_time_1, Settings.Default.nud_trig_time_2,
                 Settings.Default.nud_trig_time_3, Settings.Default.nud_trig_time_4, Settings.Default.nud_trig_time_5
             };
 
-            var nudDelay = nud_trig_delay.Value;
+            decimal[] settNudTrigDelay =
+            {
+                Settings.Default.nud_trig_delay_0, Settings.Default.nud_trig_delay_1, Settings.Default.nud_trig_delay_2,
+                Settings.Default.nud_trig_delay_3, Settings.Default.nud_trig_delay_4, Settings.Default.nud_trig_delay_5
+            };
 
-            if (settNudDelay[_currTrig] == nudDelay) return;
+            var currOnce = cb_trig_once.Checked ? 1 : 0;
+            var currTime = nud_trig_time.Value;
+            var currDelay = nud_trig_delay.Value;
+
+            if (settCbTrigOnce[_currTrig] == currOnce && settNudTrigTime[_currTrig] == currTime &&
+                settNudTrigDelay[_currTrig] == currDelay) return;
+            
             switch (_currTrig)
             {
                 case 0:
-                    Settings.Default.nud_trig_delay_0 = nudDelay;
+                    Settings.Default.chb_trig_once_0 = currOnce;
+                    Settings.Default.nud_trig_time_0 = currTime;
+                    Settings.Default.nud_trig_delay_0 = currDelay;
                     break;
                 case 1:
-                    Settings.Default.nud_trig_delay_1 = nudDelay;
+                    Settings.Default.chb_trig_once_1 = currOnce;
+                    Settings.Default.nud_trig_time_1 = currTime;
+                    Settings.Default.nud_trig_delay_1 = currDelay;
                     break;
                 case 2:
-                    Settings.Default.nud_trig_delay_2 = nudDelay;
+                    Settings.Default.chb_trig_once_2 = currOnce;
+                    Settings.Default.nud_trig_time_2 = currTime;
+                    Settings.Default.nud_trig_delay_2 = currDelay;
                     break;
                 case 3:
-                    Settings.Default.nud_trig_delay_3 = nudDelay;
+                    Settings.Default.chb_trig_once_3 = currOnce;
+                    Settings.Default.nud_trig_time_3 = currTime;
+                    Settings.Default.nud_trig_delay_3 = currDelay;
                     break;
                 case 4:
-                    Settings.Default.nud_trig_delay_4 = nudDelay;
+                    Settings.Default.chb_trig_once_4 = currOnce;
+                    Settings.Default.nud_trig_time_4 = currTime;
+                    Settings.Default.nud_trig_delay_4 = currDelay;
                     break;
                 case 5:
-                    Settings.Default.nud_trig_delay_5 = nudDelay;
+                    Settings.Default.chb_trig_once_5 = currOnce;
+                    Settings.Default.nud_trig_time_5 = currTime;
+                    Settings.Default.nud_trig_delay_5 = currDelay;
                     break;
             }
             Settings.Default.Save();
+
+            Lang_trig(); //Устанавливаем подпись со звёздочкой, если есть изменения
+
         }
 
-        private void gb_set_Move(object sender, EventArgs e)
-        {
-            cb_trig_once_CheckedChanged(null, null);
+        //private void gb_set_Move(object sender, EventArgs e)
+        //{
+        //    cb_trig_once_CheckedChanged(null, null);
 
-            ComboBox[] cbTrig = {cb_trig_tmr1, cb_trig_tmr2, cb_trig_tmr3, cb_trig_tmr4, cb_trig_tmr5, cb_trig_tmr6};
-            Label[] lbTrig = {lb_trig1, lb_trig2, lb_trig3, lb_trig4, lb_trig5, lb_trig6};
+        //    ComboBox[] cbTrig = { cb_trig_tmr1, cb_trig_tmr2, cb_trig_tmr3, cb_trig_tmr4, cb_trig_tmr5, cb_trig_tmr6 };
+        //    Label[] lbTrig = { lb_trig1, lb_trig2, lb_trig3, lb_trig4, lb_trig5, lb_trig6 };
 
-            if (gb_set.Location == new Point(500, 47))
-            {
-                for (var i = 0; i < 6; i++)
-                {
-                    cbTrig[i].Enabled = true;
-                    lbTrig[i].Enabled = true;
-                    lbTrig[i].Font = new Font(lbTrig[i].Font, FontStyle.Regular);
-                }
-            }
-            else if (gb_set.Location == new Point(6, 57))
-            {
-                int[] settCbTrig =
-                {
-                    Settings.Default.chb_trig_once_0, Settings.Default.chb_trig_once_1, Settings.Default.chb_trig_once_2,
-                    Settings.Default.chb_trig_once_3, Settings.Default.chb_trig_once_4, Settings.Default.chb_trig_once_5
-                };
+        //    //if (gb_set.Location == new Point(500, 47))
+        //    //{
+        //    //    for (var i = 0; i < 6; i++)
+        //    //    {
+        //    //        cbTrig[i].Enabled = true;
+        //    //        lbTrig[i].Enabled = true;
+        //    //        lbTrig[i].Font = new Font(lbTrig[i].Font, FontStyle.Regular);
+        //    //    }
+        //    //}
+        //    //else if (gb_set.Location == new Point(6, 57))
+        //    //{
+        //    int[] settCbTrig =
+        //        {
+        //            Settings.Default.chb_trig_once_0, Settings.Default.chb_trig_once_1, Settings.Default.chb_trig_once_2,
+        //            Settings.Default.chb_trig_once_3, Settings.Default.chb_trig_once_4, Settings.Default.chb_trig_once_5
+        //        };
 
-                cb_trig_once.Checked = settCbTrig[_currTrig] == 1;
-                //cb_trig_once.Checked = settCbTrig[_currTrig] == 1 ? true : false;
+        //    cb_trig_once.Checked = settCbTrig[_currTrig] == 1;
+        //    //cb_trig_once.Checked = settCbTrig[_currTrig] == 1 ? true : false;
 
-                gb_set.Text = _lng.TrigSettings + @" № " + (_currTrig + 1);
-                cb_trig_enable.Items.Clear();
-                cb_trig_enable.Items.Add("");
-                for (var i = 0; i < 6; i++)
-                {
-                    cbTrig[i].Enabled = false;
-                    if (_currTrig == i)
-                    {
-                        lbTrig[i].Font = new Font(lbTrig[i].Font, FontStyle.Bold);
-                    }
-                    else
-                    {
-                        lbTrig[i].Enabled = false;
-                        cb_trig_enable.Items.Add(lbTrig[i].Text);
-                    }
-                }
-            }
-        }
+        //    gb_set.Text = _lng.TrigSettings + @" № " + (_currTrig + 1);
+        //    //cb_trig_enable.Items.Clear();
+        //    //cb_trig_enable.Items.Add("");
+        //    //for (var i = 0; i < 6; i++)
+        //    //{
+        //    //    var i1 = i;
+        //    //    BeginInvoke((Action)(() => cbTrig[i1].Enabled = false)); 
+        //    //    if (_currTrig == i1)
+        //    //    {
+        //    //        BeginInvoke((Action)(() => lbTrig[i1].Font = new Font(lbTrig[i1].Font, FontStyle.Bold))); 
+        //    //    }
+        //    //else
+        //    //{
+        //    //    BeginInvoke((Action)(() => lbTrig[i1].Enabled = false));
+        //    //    BeginInvoke((Action)(() => cb_trig_enable.Items.Add(lbTrig[i1].Text))); 
+        //    //}
+        //    //}
+        //    //}
+        //}
 
         //private void trb_coold_Scroll(object sender, EventArgs e)
         //{
@@ -4450,5 +4655,26 @@ namespace D3Hot
             //Shift = 4,
             //WinKey = 8
         }
+
+        private void D3Hotkeys_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (pan_set.Visible) b_trig_ok_Click(null, null);
+        }
+
+        private void lb_trig_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (pan_set.Visible) return;
+
+            var lbTrig = (Label) sender;
+
+            Label[] lbTrigAr = { lb_trig1, lb_trig2, lb_trig3, lb_trig4, lb_trig5, lb_trig6 };
+
+            for (var i = 0; i < 6; i++)
+                if (lbTrig == lbTrigAr[i])
+                    _currTrig = i;
+
+            TrigSettingsShow(true);
+        }
+
     }
 }
